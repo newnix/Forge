@@ -119,3 +119,29 @@ void
 volatile
 wchar_t *
 while
+
+// Some addressing operators related to pointers and data structures
+
+s->m:
+'s' is a structure pointer and 'm' is a member. This expression accesses the
+'m' memeber of the structure pointed to by 's'.
+
+*a.p:
+'a' is a structure variable and 'p', a pointer is a member. This expression
+dereferences the value pointed to by 'p'.
+
+(*s).m:
+'s' is a structure pointer and 'm' is a member. The '*' operator dereferences
+'s', causing the expression to access the member of the structure pointed to
+by 's'. This expression is the same as s->m. 
+
+*s->p:
+'s' is a structure pointer and 'p', a pointer, is a member of the structure
+pointed to by 's'. This expression accesses the value pointed to by 'p'. ( the
+-> operator dereferences 's' and the '*' operator dereferences 'p'.)
+
+*(*s).p:
+'s' is a structure pointer and 'p', a pointer, is a member of the structure
+pointed to by 's'. This expression accesses the value pointed to by 'p'. (*s)
+dereferences 's' and the outermost '*' operator dereferences 'p'. This is
+equivalent to *s->p.
