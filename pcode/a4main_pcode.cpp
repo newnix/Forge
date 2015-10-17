@@ -2,6 +2,7 @@
 // This needs to simulate a vending machine
 #include <iostream>
 #include <string>
+using namespace std;
 
 int getChoice(Drink []);
 void transaction(Drink [], int, double &);
