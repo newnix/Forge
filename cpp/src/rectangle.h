@@ -17,7 +17,18 @@ class rectangle
         double getw() const;
         double getl() const;
         double geta() const;
+        rectangle();
 };
+
+/*
+ * define the constructor rectangle()
+ */
+
+rectangle::rectangle()
+{
+    width = 0.0;
+    length = 0.0;
+}
 
 /*
  * define setw, which sets the rectangle width
@@ -63,3 +74,5 @@ double rectangle::geta() const
 {
     return length * width;
 }
+
+#endif
