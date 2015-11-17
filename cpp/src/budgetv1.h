@@ -13,11 +13,11 @@ class Budget
     public:
         Budget()
             { divisionBudget = 0; }
-        void addBudget(double b)
+        void addBudget(double b)    // Add each budget request to the static var corpBudget
             { divisionBudget += b; corpBudget += b; }
-        double getDivisionBudget() const
+        double getDivisionBudget() const    // Returns the budget request for a given division
             { return divisionBudget; }
-        double getCorpBudget() const
+        double getCorpBudget() const    // Return the static var
             { return corpBudget; }
 };
 

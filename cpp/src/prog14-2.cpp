@@ -17,7 +17,7 @@ int main()
     for ( count = 0; count < NUM_DIVISIONS; count ++ )
     {
         double budgetAmount;
-        cout << "Enter the budget request for division " << (count + 1) << " :" ;
+        cout << "Enter the budget request for division " << (count + 1) << ": " ;
         cin >> budgetAmount;
         divisions[count].addBudget(budgetAmount);
     }
