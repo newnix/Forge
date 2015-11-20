@@ -9,6 +9,8 @@
 
 using namespace std;
 
+double Budget::corpBudget = 0; // Declaring a definition and initial value in the global scope
+
 int main()
 {
     int count;      // Loop counter
