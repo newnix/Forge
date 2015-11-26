@@ -29,7 +29,7 @@ class finalExam : public gradedActivity
 
         // Mutator functions
         void set(int,int);  // Defined in finalExamv2.cpp
-        void adjScore();    // Defined in finalExamv2.cpp
+        void adjustScore();    // Defined in finalExamv2.cpp
 
         // Accessor functions
         double getQ() const
@@ -37,7 +37,7 @@ class finalExam : public gradedActivity
             return numQ;
         }
 
-        double pointsE() const
+        double getP() const
         {
             return points;
         }

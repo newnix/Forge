@@ -11,10 +11,17 @@ class meter
         float time; // Time the car can be parked
 
     public:
+
+    // Constructor
+        meter()
+        {
+            time = 0.0;
+        }
+
         void setTime(float t)
             { time = t; }
 
         float getTime() const   // Return the time alloted, in minutes
             { return time; }
 };
-#define METER_H
+#endif

@@ -14,9 +14,26 @@
 class ticket
 {
     private:
-        float cost; // Cost of the parking ticket
-        const float RATE;   // Rate of the parking ticket costs
+        float cost;              // Cost of the parking ticket
+        const float RATE = 25;   // Base rate of the parking ticket costs
+        const float aRATE = 10;  // Rate of the parking ticket after the initial hour
         
     public:
-        
-
+       float ticketCost(float meter.time, float car.time )
+       {    
+            float c;
+            c = car.time - meter.time;
+            if ( c > 0 )
+            {
+                if ( c > 60 )
+                {
+                    return ( ((c/60) * aRATE) + ((c%60) * aRATE) + RATE)
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+};
+#endif

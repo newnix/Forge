@@ -9,7 +9,7 @@
 #include <string>
 
 class car
-(
+{
     private:
         string make;    // Make of the car
         string model;   // Model of the car
@@ -28,13 +28,6 @@ class car
             plate = p;
             time = 0.0;
         }
-
-    // Destructor
-        ~car()
-        {
-            delete [] car;
-        }
-
 
     // Void functions, set the car variables
         void setMake(string m)
