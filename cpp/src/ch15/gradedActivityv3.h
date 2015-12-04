@@ -42,6 +42,13 @@ class gradedActivity
             score = 0.0;
         }
 
+        // Constructor with arguments
+        gradedActivity(double s)
+        {
+            score = s;
+            determineGrade();
+        }
+
         // Mutator function
         void setScore(double s)
         {
