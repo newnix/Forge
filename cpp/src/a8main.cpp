@@ -1,124 +1,14 @@
-// Pseudocode for assignment 8.
+// Assignment 8 source code
 
 #include <iostream>
 #include <iomanip>
-#include "shapes.h"
+#include "circle.h"
+#include "rectangle.h"
 
 using namespace std;
 
 int main()
 {
-    class shapes
-    {
-        private: 
-            double area;
-        public:
-            // Accessor
-            double getArea() const
-            {
-                return area;
-            }
-
-            // Calculate the area
-            virtual void calcArea() const;
-
-            // Return the area
-            virtual double getA() const;
-    }
-
-    // Derived class
-    class circle : public shapes
-    {
-        private:
-            long centerx;   // X variable for the center
-            long centery;   // Y variable for the center
-            double radius;  // radius of the circle
-        public:
-            // default constructor
-            cirlcle()
-            {
-                radius = 0.0;
-                centerx = 0;
-                centery = 0;
-            }
-
-            // Constructor with arguments
-            circle(int x, int y, double r)
-            {
-                radius = r;
-                centerx = x;
-                centery = y;
-            }
-            
-            // Calculate the area
-            virtual void calcArea() const
-            {
-                area = (3.14159 * radius * radius);
-            }
-
-            // Return the center coordinates
-            long getx() const
-            {
-                return centerx;
-            }
-
-            long gety() const
-            {
-                return centery;
-            }
-
-            virtual double getA() const
-            {
-                return area;
-            }
-            
-    }
-
-    // Derived class again, different shape
-    class rectangle : public shapes
-    {
-        private:
-            long width; // The width of the rectangle
-            long length;    // Length of the rectangle
-        public:
-            // Default constructor
-            rectangle()
-            {
-                width = 0.0;
-                length = 0.0;
-            }
-
-            // Constructor with arguments
-            rectangle(long w, long l)
-            {
-                width = w;
-                length = l;
-            }
-
-            // Accessors
-            long getw() const
-            {
-                return width;
-            }
-
-            long getl() const
-            {
-                return length;
-            }
-
-            // Calculate the area
-            virtual void calcArea() const
-            {
-                area = (width * length);
-            }
-            
-            virtual double getA() const
-            {
-                return area;
-            }
-
-    }
-
     // Declare a couple of variables for shape parameters
     long x; // Circle x value
     long y; // Circle y value
@@ -126,11 +16,43 @@ int main()
     long w; // Rectangle width
     long l; // Rectangle length
 
+    // Declare a blank circle and rectangle object
+    rectangle rect;
+    circle circ;
+
     // Get the imput from the user
     // Assign input to the relevant shapes
-
+    cout << "This program calculates the area of a shape."<< endl;
+    cout << "First we'll create a circle." << endl;
+    cout << "Please enter the radius: ";
+    cin >> r;
+    circ.setRadius(r);
+    cout << "What's the X coordinate of the circle's centerpoint? ";
+    cin >> x;
+    circ.setX(x);
+    cout << "And the Y coordinate of the circle's centerpoint? ";
+    cin >> y;
+    circ.setY(y);
+    cout << endl << "Now for a rectangle."<< endl;
+    cout << "Please enter the width of the rectangle: ";
+    cin >> w;
+    rect.setWidth(w);
+    cout << "And the length: ";
+    cin >> l;
+    rect.setLength(l);
+    
     // Calculate the areas
     // print the areas to stdout.
+
+    rect.calcArea();
+    
+    cout << fixed << setprecision(2) << showpoint;
+    cout << "The circle is centered around the point (" << circ.getX() << ", " << circ.getY() << ")." << endl;
+    cout << "With a radius of " << circ.getRadius() << " units, and area of " << circ.getArea() << " square units.\n";
+    cout << endl;
+    cout << endl;
+    cout << "The rectangle has a length of " << rect.getLength() << " units and width of " << rect.getWidth() << " units.";
+    cout << "The rectangle has an area of " << rect.getArea() << " square units." << endl;
 
     return 0;
 }
