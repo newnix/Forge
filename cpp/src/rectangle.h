@@ -1,78 +1,60 @@
-// Rectangle header file
-// This should keep me from having to redefine rectangle objects
+// Rectangle definition
+// Derived class from the shape class
 
-// Header guard, make sure the code doesn't get duplicated
+// Header guard
 #ifndef RECTANGLE_H
-
 #define RECTANGLE_H
 
-class rectangle
+#include "shape.h"
+
+class rectangle : public shapes
 {
     private:
-        double width;
-        double length;
+        long width; // Rectangle width
+        long length;// Rectangle length
     public:
-        void setw(double);
-        void setl(double);
-        double getw() const;
-        double getl() const;
-        double geta() const;
-        rectangle();
+        // Default constructor
+        rectangle()
+        {
+            width = 0;
+            length = 0;
+            calcArea();
+        }
+
+        // Constructor
+        rectangle(long w, long l)
+        {
+            width = w;
+            length = l;
+            calcArea();
+        }
+
+        // Accessor functions
+        long getWidth() const
+        {
+            return width;
+        }
+
+        long getLength() const
+        {
+            return length;
+        }
+
+        // Mutator functions
+        void setWidth(long w)
+        {
+            width = w;
+        }
+
+        void setLength(long l)
+        {
+            length = l;
+        }
+
+        // Define the calcArea function for rectangles
+        void calcArea()
+        {
+            area = (length * width);
+        }
 };
-
-/*
- * define the constructor rectangle()
- */
-
-rectangle::rectangle()
-{
-    width = 0.0;
-    length = 0.0;
-}
-
-/*
- * define setw, which sets the rectangle width
- */
-
-void rectangle::setw(double w)
-{
-    width = w;
-}
-
-/*
- * define setl, which sets the rectangle length
- */
-
-void rectangle::setl(double l)
-{
-    length = l;
-}
-
-/*
- * getw returns the width of the object
- */
-
-double rectangle::getw() const
-{
-    return width;
-}
-
-/*
- * getl returns the length of the object
- */
-
-double rectangle::getl() const
-{
-    return length;
-}
-
-/*
- * geta returns the area of the rectangle
- */
-
-double rectangle::geta() const
-{
-    return length * width;
-}
-
 #endif

@@ -1,50 +1,75 @@
-// Header file for circle objects
+// Circle class definition
+// derived from the shapes class
 
-// Header guard, make sure the contents aren't duplicated
-
+// Header guard
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-class circle
+#include "shape.h"
+
+class circle : public shapes
 {
     private:
-        float radius;
-        float pi = 3.14159;
+        double PI = 3.14159;    // Approximate value of pi
+        double radius;                       // Holds the radius of the circle
+        long centerX;                        // Center point x value
+        long centerY;                        // Center point y value
     public:
-        // Construct blank circle
+        // Default Constructor
         circle()
         {
+            centerX = 0;
+            centerY = 0;
             radius = 0.0;
+            calcArea();
         }
 
-        // Set the radius
-        void setr(float r)
+        // Constructor
+        circle(double r, long x, long y)
+        {
+            centerX = x;
+            centerY = y;
+            radius = r;
+            calcArea();
+        }
+
+        // Mutator functions
+        void setRadius(double r) 
         {
             radius = r;
+            calcArea();
         }
 
-        // Get the area
-        float  geta() const
+        void setX(long x)
         {
-            return pi * radius * radius;
+            centerX = x;
         }
 
-        // Get the circumference
-        float getcir() const
+        void setY(long y)
         {
-            return (2 * pi * radius);
+            centerY = y;
         }
 
-        // Get the diameter
-        float getdia() const
+        // Accessors
+        double getRadius() const
         {
-            return 2 * radius;
+            return radius;
         }
 
-        // Destroy the circle
-        ~circle()
+        long getX() const
         {
+            return centerX;
+        }
+
+        long getY() const
+        {
+            return centerY;
+        }
+
+        // Redefined calcArea()
+        void calcArea()
+        {
+            area = (PI * radius * radius);
         }
 };
-
 #endif
