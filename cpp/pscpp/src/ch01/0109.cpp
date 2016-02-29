@@ -11,8 +11,46 @@ int main()
 {
     // set up the one variable we need
     float s;    // Seconds falling
+    
+    // Set selection variables
+    char pic;   // empirical or metric selection
+    char go;    // new calculation
 
+    // Let the user know what we're doing
+    std::cout << "Hello, I'll calcuate the drop distance of an object given a time it's falling!\n";
 
+    do
+    {
+        std::cout << "First, we'll need to determine if we're calculating things in metric units or empirical units.";
+        std::cout << "\nFor metric units press \'m\', for empirical or US customary, press \'u\': ";
+        std::cin >> pic;
+
+        if (toupper(pic) == 'M')
+        {
+            std::cout << "\nEnter the time the object was falling: ";
+            std::cin >> s;
+            std::cout << "\nThe distance this object fell was " << dm(s) << " meters."
+        }
+
+        else if (toupper(pic) == 'U')
+        {
+            std::cout << "\nEnter the time the object was falling: ";
+            std::cin >> s;
+            std::cout << "\nThe distance this object fell was " << du(s) << " feet."
+        }
+
+        else
+        {
+            std::cout << "\nThat was not a valid entry, do you want to leave? [Y/N]";
+            std::cin >> go;
+        }
+        
+        std::cout << "\nWould you like to run another calculation? [Y/N] ";
+        std::cin >> go;
+
+    }while(toupper(go) == 'Y');
+
+    return 0;
 
 }
 
