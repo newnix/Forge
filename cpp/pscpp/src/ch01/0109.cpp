@@ -5,7 +5,7 @@
 #include <iostream>
 
 double dm (float);   // Metric conversion
-double de (float);   // Empirical conversion
+double du (float);   // Empirical conversion
 
 int main()
 {
@@ -29,14 +29,14 @@ int main()
         {
             std::cout << "\nEnter the time the object was falling: ";
             std::cin >> s;
-            std::cout << "\nThe distance this object fell was " << dm(s) << " meters."
+            std::cout << "\nThe distance this object fell was " << dm(s) << " meters.\n";
         }
 
         else if (toupper(pic) == 'U')
         {
             std::cout << "\nEnter the time the object was falling: ";
             std::cin >> s;
-            std::cout << "\nThe distance this object fell was " << du(s) << " feet."
+            std::cout << "\nThe distance this object fell was " << du(s) << " feet.\n";
         }
 
         else
