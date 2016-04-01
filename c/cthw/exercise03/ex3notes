@@ -1,0 +1,42 @@
+This file is meant to explain what's happening in the file ex3.c
+
+First we #include <stdio.h>, which is the standard input/output library.
+Next is some variable declarations.
+Now we have printf, which prints a string. The %d character gets replaced by the int specified after the comma.
+
+printf escape codes: 
+
+\a  07  Bell
+\b  08  Backspace
+\f  0C  Formfeed
+\n  0A  Newline
+\r  0D  Carriage return
+\t  09  Horizontal tab
+\v  0B  Vertical tab
+\\  5C  Backslash
+\'  27  Single quote
+\"  22  Double quote
+\?  3F  Question mark
+\nnn    Interpret nnn as octal
+\xhh    Interpret hh as hex
+
+Format placeholders:
+
+syntax for these placeholders is:
+    
+    %[parameter][flags][width][.precision][length]type
+
+n$  n is the number of the parameter to display thi format specifier. (see wikipedia for more)
+
+Flags:
+
+-   Left-align the output of this placeholder
++   Prepend a plus for positive signed numeric types. positive='+' negative='-'
+    (space) prepends a space for positive signed numeric types positive=' ', negative='-'
+0   when width is specified, prepends zeroes for numeric types (default is spaces)
+#   alternate form:
+    for 'g' and 'G' types, trailing zeroes are removed
+    for 'f', 'F', 'e', 'E', 'g', 'G' types output always has a decimal point
+    for 'o', 'x', 'X' types, the text '0', '0x', and '0X' respectively is prepended to non-zero numbers
+
+
