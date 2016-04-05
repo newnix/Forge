@@ -4,21 +4,39 @@ First we #include <stdio.h>, which is the standard input/output library.
 Next is some variable declarations.
 Now we have printf, which prints a string. The %d character gets replaced by the int specified after the comma.
 
-printf escape codes: 
+The rest of this document is meant to describe some of the escape codes and special sequences for the printf() function.
 
-\a  07  Bell
-\b  08  Backspace
-\f  0C  Formfeed
-\n  0A  Newline
-\r  0D  Carriage return
-\t  09  Horizontal tab
-\v  0B  Vertical tab
-\\  5C  Backslash
-\'  27  Single quote
-\"  22  Double quote
-\?  3F  Question mark
-\nnn    Interpret nnn as octal
-\xhh    Interpret hh as hex
+printf escape codes: 
+---------------------------------------------
+|  esc  | hex |      desc                   |
+--------+-----+------------------------------
+| \a    |  07 |     Bell                    |
+--------+-----+------------------------------
+| \b    |  08 |     Backspace               |
+--------+-----+------------------------------
+| \f    |  0C |     Formfeed                |
+--------+-----+------------------------------
+| \n    |  0A |     Newline                 |
+--------+-----+------------------------------
+| \r    |  0D |     Carriage return         |
+--------+-----+------------------------------
+| \t    |  09 |     Horizontal tab          |
+--------+-----+------------------------------
+| \v    |  0B |     Vertical tab            |
+--------+-----+------------------------------
+| \\    |  5C |     Backslash               |
+--------+-----+------------------------------
+| \'    |  27 |     Single quote            |
+--------+-----+------------------------------
+| \"    |  22 |     Double quote            |
+--------+-----+------------------------------
+| \?    |  3F |     Question mark           |
+--------+-----+------------------------------
+| \nnn  |     |     Interpret nnn as octal  |
+--------+-----+------------------------------
+| \xhh  |     |     Interpret hh as hex     |
+---------------------------------------------
+
 
 Format placeholders:
 
@@ -38,5 +56,126 @@ Flags:
     for 'g' and 'G' types, trailing zeroes are removed
     for 'f', 'F', 'e', 'E', 'g', 'G' types output always has a decimal point
     for 'o', 'x', 'X' types, the text '0', '0x', and '0X' respectively is prepended to non-zero numbers
+
+Width field:
+
+This is a POSIX extension, and not in C99. This field is safe to omit, or it can be the following:
+
+n$ n is the number of the parameter to display using this format specifier, allowing the parameters provided to be output multiple times, using varying format specifiers or in different orders. If any single placeholder specifies a parameter, all the rest of the placeholders MUST also specify a parameter. For example: " printf("%2$d %2$#x; %1$d %1$#x",16,17) " will produce " 17 0x11; 16 0x10 "
+
+# The width field specifies a minimum number of character to output, and is typically used to pad fixed width fields in tabulated output where the fields would otherwise be smaller, although it does not cause truncation of oversized fields.
+# The width field may be omitted, or a numeric integer value, or a dynamic value when passed as another argument when indicated by an asterisk. For example 'printf("%*d",5,10)' will result in '   10' being printed, with a total width of 5 characters.
+# Though not part of the width field, a leading zero is interpreted as the zero-padding flag mentioned above, and a negative value is treated as the positive value in conjunction with the left-alignment '-' flag also mentioned above.
+
+Precision field:
+
+The precision field usually specifies a maximum limit on the output, depending on the particular formatting type. For floating point numeric types, it specifies the number of digits to the right of the decimal point that the output should be rounded. For the string type, it limits the number of characters that should be output, after which the string is truncated.
+The precision field may be omitted, or a numeric integer value, or a dynamic value when passed as another argument when indicated by an asterisk. For example 'printf("%.*s",3,"abcdef" will result in "abc" being printed.
+
+Length field:
+
+The length field can be omitted or can be any of:
+
+---------------------------------------------------------------------------------------------------------------
+| char |                                Desc                                                                  |
+-------+-------------------------------------------------------------------------------------------------------
+|  hh  | For integer types, causes printf to expect an int-sized int argument which was promoted from a char  |
+-------+-------------------------------------------------------------------------------------------------------
+|   h  | For integer types, causes printf to expect an int-sized int argument which was promoted from a short |
+-------+-------------------------------------------------------------------------------------------------------
+|   l  | For integer types, causes printf to expect a long-sized integer argument                             |
+-------+-------------------------------------------------------------------------------------------------------
+|   l  | For floating point types, causes printf to expect a double argument                                  |
+-------+-------------------------------------------------------------------------------------------------------
+|  ll  | For integer types, causes printf to expect a long long-sized integer argument                        |
+-------+-------------------------------------------------------------------------------------------------------
+|   L  | For floating point types, causes printf to expect a long double argument                             |
+-------+-------------------------------------------------------------------------------------------------------
+|   z  | For floating point types, causes printf to expect a size_t-sized integer argument                    |
+-------+-------------------------------------------------------------------------------------------------------
+|   j  | For integer types, causes printf to expect a intmax_t-sized integer argument                         |
+-------+-------------------------------------------------------------------------------------------------------
+|   t  | For integer types, causes printf to expect a ptrdiff_t-sized integer argument                        |
+---------------------------------------------------------------------------------------------------------------
+
+Additionally, several platform specific length options came to exist prior to the widespread use of the ISO C99 extensions:
+
+----------------------------------------------------------------------------------------------------------------------------------
+| char |                                    Desc                                                                                 |
+-------+--------------------------------------------------------------------------------------------------------------------------
+|   I  | For signed int types, causes printf to expect prtdiff_t-sized int argument; for unsigned int types, causes printf to    |
+-------+--------------------------------------------------------------------------------------------------------------------------
+|      | expect size_t-sized int argument. Commonly found on the Windows 32/64 platforms.                                        |
+-------+--------------------------------------------------------------------------------------------------------------------------
+| I32  | For integer types, causes printf to expect a 32-bit (double word) int argument. Commonly found on the windows platforms |
+-------+--------------------------------------------------------------------------------------------------------------------------
+| I64  | For integer types, causes printf to expect a 64-bit (quad word) int argument. Commonly found on the windows platforms   |
+-------+--------------------------------------------------------------------------------------------------------------------------
+|   q  | For integer types, causes printf to expect a 64-bit (quad word) int argument. Commonly found on the bsd platforms       |
+----------------------------------------------------------------------------------------------------------------------------------
+
+ISO C99 includes the inttypes.h header file that includes a number of macros for use in platform-independendant printf codeing.
+These need to not be inside double quotes, e.g. printf("%" PRId64 "\n",t );
+
+Exmple macros include:
+
+-------------------------------------------------------------------------------------
+|  macro  |                         Desc                                            |
+----------+--------------------------------------------------------------------------
+| PRId32  | Typically equivalent to I32d (windows) or d                             |
+----------+--------------------------------------------------------------------------
+| PRId64  | Typically equivalent to I64d (windows), lld (i386) or ld (amd64)        |
+----------+--------------------------------------------------------------------------
+| PRIi32  | Typically equivalent to I32i (windows), or i                            |
+----------+--------------------------------------------------------------------------
+| PRIi64  | Typically equivalent to I64i (windows), lli (i386) or li (amd64)        |
+----------+--------------------------------------------------------------------------
+| PRIu32  | Typically equivalent to I32u (windows), or u                            |
+----------+--------------------------------------------------------------------------
+| PRIu64  | Typically equivalent to I64u (windows), llu (i386) or lu (amd64)        |
+----------+--------------------------------------------------------------------------
+| PRIx32  | Typically equivalent to I32x (windows), or x                            |
+----------+--------------------------------------------------------------------------
+| PRIx64  | Typically equivalent to I64x (windows), llx (i386) or lx (amd64)        |
+-------------------------------------------------------------------------------------
+
+The type field can be any of:
+
+---------------------------------------------------------------------------------------------------------------------------------
+| char |                                                    Desc                                                                |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   %  | Prints a literal '%' character (this tye doesn't accept any flags, width, precision, length fields)                    |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| d,i  | int as a signed decimal number. '%d' and '%i' are synonymous for output, but are different when used with scanf() for  |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|      | input (where using %i will interpret a number as hexadecimal if it's preceeded by 0x, and octal if it preceeded by 0)  |
+|   u  | print decimal unsigned int                                                                                             |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| f,F  | double in normal (fixed-point) notation. 'f' and 'F' only differs in how the strings for an infinite number or NaN are |
+|      | printed ('inf','infinity' and 'nan' for 'f','INF','INFINITY', and 'NAN' for 'F')                                       |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| e,E  | double value in standard form([-]d.ddd e[+/-]ddd). An E conversion uses the letter E (rather than e) to introduce      |
+|      | the exponent. The exponent always contains at least two digits; if the value is zero, the exponent is 00. in Windows   |
+|      | the exponent contains three digits by default, but this can be altered by the MS-specific _set_output_format function  |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| g,G  | double in either normal or exponential notation, which ever is more appropriate for its magnitude. 'g' uses lower-case |
+|      | letters, 'G' uses upper-case letters. This type differs slightly from fixed-point notation in that insignificant       |
+|      | zeroes to the right of the decimal point are not included. Also, the decimal point is not included on whole numbers    |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| x,X  | unsigned int as a hexadecimal number, 'x' uses lower-case letters and 'X' uses upper-case                              |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   o  | unsigned int in octal                                                                                                  |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   s  | null-terminated string                                                                                                 |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   c  | char (character)                                                                                                       |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   p  | void * (a pointer to void) in an implementation-defined format                                                         |
+-------+-------------------------------------------------------------------------------------------------------------------------
+| a,A  | double in hexadecimal notation, starting with "0x" or "0X". 'a' uses lower-case, 'A' uses upper-case. (C++11 iostreams |
+|      | have a hexfloat that works the same)                                                                                   |
+-------+-------------------------------------------------------------------------------------------------------------------------
+|   n  | Print nothing, but writes the number of characters successfully written so far to an integer pointer parameter         | 
+---------------------------------------------------------------------------------------------------------------------------------
 
 
