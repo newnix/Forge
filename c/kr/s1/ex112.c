@@ -22,5 +22,19 @@ main()
 		 * program would be best here, then while the character entered is NOT
 		 * one of the values defining a word boundary, we dump the value into 'word'
 		 */
+		if ( c != ' ' && c != '\t' && c != '\n' ) 
+		{
+			state = IN;
+			putchar(c);
+		}
+		else
+		{
+			if (state == IN)
+			{
+				state = OUT;
+				putchar('\n');
+			}
+		}
+
 	}
 }
