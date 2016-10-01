@@ -17,7 +17,7 @@
 #include <stdio.h>
 #define MAXLINE 1000 /* max input line size */
 
-int getline(char line[], int maxline);
+int get_line(char s[], int lim); /* get_line instead of get_line, as get_line is already defined in glibc */
 void copy(char to[], char from[]);
 
 /* print the longest input line */
@@ -29,7 +29,7 @@ main()
 	char longest[MAXLINE];	/* longest line saved here */
 
 	max = 0;
-	while ((len = getline(line, MAXLINE)) > 0)
+	while ((len = get_line(line, MAXLINE)) > 0)
 		if (len > max)
 		{
 			max = len;
@@ -42,8 +42,8 @@ main()
 	}
 }
 
-/* getline: read a line into s, return length */
-int getline(char s[], int lim)
+/* get_line: read a line into s, return length */
+int get_line(char s[], int lim)
 {
 	int c, i;
 
