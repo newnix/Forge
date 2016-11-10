@@ -16,13 +16,19 @@ void reverse(char s[], int len, char r[]);
 int main()
 {
 	/* vars for main() */
-	char str[MAX], rts[MAX]; /* string and reverse string */
+	char str[MAX],rts[MAX]; /* string and reverse string */
 	int len;	/* length of the string 'str' */
+	int dbg = 0;
 	len = 0;
+
 	while ((len = getline(str, MAX)) > 0)
 	{
 		printf("%s\n",str);
-		reverse(str, len, rts);
+		for (dbg = 0; dbg < len; dbg++)
+		{
+			printf("str[%d] = %c\n",dbg,str[dbg]);
+		}
+		reverse(str,len,rts);
 		printf("%s\n",rts);
 	}
 	return 0;
@@ -48,16 +54,16 @@ int getline(char s[], int lim)
 void reverse(char s[], int len, char r[])
 {
 	int i;	/* track the decrement of str and increment of rts */
-	int o,m;
-	i = len;
-	m = 0;
-	for (o = 1 ; (i-o) >= 0; ++o )
-	{
-		r[m] = s[o];
-		/* show me the process */
-		printf("i=%d\ts[%d] = %c\tr[%d] = %c\n",o,o,s[o],o,r[o]);
-		++m;
-	}
-	r[i+1] = '\0';
-}
+	int l;
+	l = len;
 
+	for (i=1; i <= l; i++)
+	{
+		
+		r[i] = s[l-i];
+		/* show me the process */
+		printf("s[%d] = %c\tr[%d] = %c\n",l-i,s[l-i],i,r[i]);
+	}
+	i++;
+	r[i]='\0';
+}
