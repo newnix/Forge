@@ -64,11 +64,17 @@ char * condense(char s[])
 
 		/* s[b] should always be the character after s[a] */
 		b = (a + 1);
+		c = b;
 
 		if (((s[a] == ' ') || (s[a] == '\t')) && ((s[b] == ' ') || (s[b] == '\t'))) /* test for consectutive whitespace */
 		{
 			/* we found some whitespace, scan for the next non-whitespace character */
 			/* since s[a] is already whitespace, set s[b] to the next non-whitespace character */
+			while ((s[c] == ' ') || (s[c] == '\t'))
+			{
+				c++;
+			}
+			s[c] = '\0';
 		}
 	}
 	return s;
