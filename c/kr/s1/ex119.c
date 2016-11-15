@@ -55,15 +55,16 @@ void reverse(char s[], int len, char r[])
 {
 	int i;	/* track the decrement of str and increment of rts */
 	int l;
-	l = len;
+	/* strip off the null and newline chars */
+	l = (len - 2);
 
-	for (i=1; i <= l; i++)
+	for (i=0; i <= l; i++)
 	{
 		
 		r[i] = s[l-i];
 		/* show me the process */
 		printf("s[%d] = %c\tr[%d] = %c\n",l-i,s[l-i],i,r[i]);
 	}
-	i++;
+	/* No need to increment again, loop has put i at the right point for the null bit */
 	r[i]='\0';
 }
