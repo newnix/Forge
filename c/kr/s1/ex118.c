@@ -54,7 +54,12 @@ void copy(char to[], char from[])
 
 /* This is meant to test for adjacent whitespace
  * and skip over repeats
- */
+ *
+ * Lunch break is not long enough to look at reworking this function right now, but 
+ * I'm thinking this should be changed to type void, and run two concurrent loops
+ * one to write from the string collected by stdin, one to strip out excess whitespace when encountered.
+ * It's not as efficient as filtering the input directly, but I'm not ready to takle that issue just yet.
+ * /
 char * condense(char s[])
 {
 	int a,b,c;
