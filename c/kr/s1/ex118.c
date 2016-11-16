@@ -8,18 +8,19 @@
 
 /* forward declarations */
 int get_line(char s[], int lim); /* get a line from stdin */
-char * condense(char s[]); /* condense whitespace */
+void condense(char s[], c[]); /* condense whitespace */
 void copy(char to[], char from[]); /* copy one string into another */
 
 int main()
 {
 	/* declare main vars */
-	char curstr[MAX], printstr[MAX]; /* char arrays for the copy function */
+	char curstr[MAX], printstr[MAX], constr[MAX]; /* char arrays for the copy function */
 	int len; /* count the length of a string of input */
 
 	while ((len = get_line(curstr, MAX)) > 0 )
 	{
-		copy(printstr, condense(curstr));
+		condense(curstr,constr);
+		copy(printstr,constr);
 		printf("%s", printstr);
 	}
 	/* program ends if it reaches EOF or len == 0 */
@@ -59,8 +60,9 @@ void copy(char to[], char from[])
  * I'm thinking this should be changed to type void, and run two concurrent loops
  * one to write from the string collected by stdin, one to strip out excess whitespace when encountered.
  * It's not as efficient as filtering the input directly, but I'm not ready to takle that issue just yet.
- * /
-char * condense(char s[])
+ */
+ 
+void condense(char s[], char c[])
 {
 	int a,b,c;
 	for (a=0; ((a < MAX) && (s[a] !='\0')); a++)
