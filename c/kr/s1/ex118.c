@@ -8,7 +8,7 @@
 
 /* forward declarations */
 int get_line(char s[], int lim); /* get a line from stdin */
-void condense(char s[], c[]); /* condense whitespace */
+void condense(char s[], char c[]); /* condense whitespace */
 void copy(char to[], char from[]); /* copy one string into another */
 
 int main()
@@ -21,7 +21,7 @@ int main()
 	{
 		condense(curstr,constr);
 		copy(printstr,constr);
-		printf("%s", printstr);
+		printf("%s\n", printstr);
 	}
 	/* program ends if it reaches EOF or len == 0 */
 	return 0;
@@ -64,25 +64,31 @@ void copy(char to[], char from[])
  
 void condense(char s[], char c[])
 {
-	int a,b,c;
-	for (a=0; ((a < MAX) && (s[a] !='\0')); a++)
+	/* declare two ints so we can track the position in two separate strings */
+	int a,b; /* a will track s[], b will track c[] */
+	a = b = 0;
+	for (a = 0; a <= MAX && s[a] != '\0'; a++)
 	{
-		printf("s[%d]'s value is: %c\n", a,s[a]);/*	used for testing positions in the string */
-
-		/* s[b] should always be the character after s[a] */
-		b = (a + 1);
-		c = b;
-
-		if (((s[a] == ' ') || (s[a] == '\t')) && ((s[b] == ' ') || (s[b] == '\t'))) /* test for consectutive whitespace */
+		/* help with debugging, show me each char value in the string */
+		printf("s[%d] = %c\n",a,s[a]);
+		
+		/* search for whitespace */
+		if ((s[a] == ' ' || s[a] == '\t') && (s[a+1] == ' ' || s[a+1] == '\t'))
 		{
-			/* we found some whitespace, scan for the next non-whitespace character */
-			/* since s[a] is already whitespace, set s[b] to the next non-whitespace character */
-			while ((s[c] == ' ') || (s[c] == '\t'))
+
+			/* we have whitespace, start looking for next non-whitespace char */
+			while (s[a] == ' ' && s[a] == '\t')
 			{
-				c++;
+				/* help with debugging */
+				printf("s[%d] = %c\n",a,s[a]);
+				a++;
 			}
-			s[c] = '\0';
+			c[b] = s[a];
 		}
+		else
+		{
+			c[b] = s[a];
+		}
+		b++;
 	}
-	return s;
 }
