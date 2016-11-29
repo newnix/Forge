@@ -75,7 +75,8 @@ void condense(char s[], char c[])
 		/* search for whitespace */
 		if ((s[a] == ' ' || s[a] == '\t') && (s[a+1] == ' ' || s[a+1] == '\t'))
 		{
-
+			c[b] = s[a];
+			b++;
 			/* we have whitespace, start looking for next non-whitespace char */
 			do
 			{
