@@ -77,12 +77,13 @@ void condense(char s[], char c[])
 		{
 
 			/* we have whitespace, start looking for next non-whitespace char */
-			while (s[a] == ' ' && s[a] == '\t')
+			do
 			{
 				/* help with debugging */
 				printf("s[%d] = %c\n",a,s[a]);
 				a++;
-			}
+			}while (s[a] == ' ' || s[a] == '\t');
+
 			c[b] = s[a];
 		}
 		else
@@ -91,4 +92,6 @@ void condense(char s[], char c[])
 		}
 		b++;
 	}
+	/* set the last byte in the array as NULL */
+	c[b] = '\0';
 }
