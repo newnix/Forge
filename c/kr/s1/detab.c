@@ -29,6 +29,9 @@ int main()
 		 * much extra space in the array needs to be available to expand all the tabs,
 		 * and throw an error should the projected length of tabstr not be small enough to fit with MAX
 		 */
+		printf("%s\n",instr);
+		printf("%s\n",tabstr);
+	}
 	return 0;
 }
 
@@ -63,5 +66,33 @@ void expand_tab(char in[], char out[])
 	 * then pause inside of one loop to substitute 4 spaces instead,
 	 * otherwise, the content of in[] should not be modified.
 	 */
-	int a,b; /* counters for each string */
+	int a,b,c; /* counters for each string */
+
+	a = b = c = 0; 
+
+	for (a = 0; in[a] != EOF && in[a] != '\0'; a++)
+	{
+		printf("in[%d] = %c\n",a,in[a]);
+		if (in[a] == '\t')
+		{
+			/* ensure b == 0 so we can effectively use the following loop */
+			b = 0;
+			do
+			{
+				out[a+b] = ' ';
+				b++; 
+				c++;
+
+			} while (b < SPACES);
+		}
+		in[a] = out[c];
+		c++;
+	}
+	c++;
+	out[c] = '\0';
+
+	for (a = 0; out[a] != EOF && out[a] != '\0'; a++)
+	{
+		printf("out[%d] = %c\n",a,out[a]);
+	}
 }
