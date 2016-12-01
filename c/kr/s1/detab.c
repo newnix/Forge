@@ -73,20 +73,23 @@ void expand_tab(char in[], char out[])
 	for (a = 0; in[a] != EOF && in[a] != '\0'; a++)
 	{
 		printf("in[%d] = %c\n",a,in[a]);
-		if (in[a] == '\t')
+
+		if (in[a] != '\t')
+		{
+			out[c] = in[a];
+			c++;
+		}
+		else
 		{
 			/* ensure b == 0 so we can effectively use the following loop */
-			b = 0;
-			do
+			for (b = 0; b < SPACES; b++)
 			{
-				out[a+b] = ' ';
-				b++; 
+				out[c] = ' ';
+				printf("out[%d] = %c\n",c,out[c]);
 				c++;
-
-			} while (b < SPACES);
+			}
+			
 		}
-		in[a] = out[c];
-		c++;
 	}
 	c++;
 	out[c] = '\0';
