@@ -61,6 +61,7 @@ int get_line2(char s[], int lim)
 			if (c != '\n') /* newline means new string */
 			{
 				s[i] = c;
+				++i;
 			}
 			else if (c == '\n')
 			{
@@ -68,12 +69,6 @@ int get_line2(char s[], int lim)
 				s[i+1] = '\0';
 				return i; /* this should kill the loop and return the necessary value */
 			}
-		else if (c == EOF)
-		{
-			/* we just hit the EOF, terminate the loop */
-			s[i] = '\0'; /* because strings are supposed to be null-terminated */
-			return i;
-		}
 		}
 
 	} ++i;
