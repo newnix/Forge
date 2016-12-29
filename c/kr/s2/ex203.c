@@ -100,4 +100,26 @@ int htoi(char s[])
 void hexcon(h[])
 {
 	/* here we convert things to an int */
+	/* This will simply hold the decimal values of the hex characters */
+	/*
+	 * 0 = 0
+	 * 1 = 1
+	 * 2 = 2
+	 * 3 = 3
+	 * 4 = 4
+	 * 5 = 5
+	 * 6 = 6
+	 * 7 = 7
+	 * 8 = 8
+	 * 9 = 9
+	 * A = 10
+	 * B = 11
+	 * C = 12
+	 * D = 13
+	 * E = 14
+	 * F = 15
+	 */
+	/* formatting will need some work, but this is the translation
+	 * case, of course, will not matter in the translation process
+	 */
 }
