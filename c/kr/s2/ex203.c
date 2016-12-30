@@ -4,13 +4,13 @@
  * then convert it from hex to an integer
  */
 
-#define max 100 /* because wtf are you thinking if you give me more than than in hex?? */
+#define max 20 /* because wtf are you thinking if you give me more than than in hex?? */
 
 /* htoi() -> hex to int */
 /* This should return an int from a given string */
 int htoi(char s[], int len);
 int get_line(char s[], int lim);
-void hexcon(char h[], int len); /* essentially a switch statement with hex values */
+int hexcon(char h[], int len); /* essentially a switch statement with hex values */
 
 #include <stdio.h>
 
@@ -97,7 +97,7 @@ int htoi(char s[], int len)
  * With the current setup, the power limit's 99, this is likely going to be excessive.
  * I think I'll lower it to something more sensible like 20.
  */
-void hexcon(h[], int len)
+int hexcon(h[], int len)
 {
 	/* here we convert things to an int */
 	/* This will simply hold the decimal values of the hex characters */
@@ -115,4 +115,10 @@ void hexcon(h[], int len)
   int i; /* for running through the string */
 
   /* calculate the values independantly, then return the calculated int value */
+
+	for (i = 0; i < len; i++)
+	{
+		/* determine the value of each character in the string */
+		/* should be a switch/case block, since we're basically getting chars to look at */
+	}
 }
