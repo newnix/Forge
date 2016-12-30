@@ -8,9 +8,9 @@
 
 /* htoi() -> hex to int */
 /* This should return an int from a given string */
-int htoi(char s[]);
+int htoi(char s[], int len);
 int get_line(char s[], int lim);
-void hexcon(char h[]); /* essentially a switch statement with hex values */
+void hexcon(char h[], int len); /* essentially a switch statement with hex values */
 
 #include <stdio.h>
 
@@ -50,7 +50,7 @@ int get_line(char s[], int lim)
 	return i;
 }
 
-int htoi(char s[])
+int htoi(char s[], int len)
 {
 	/* will have to check the string for valid hex values */
 	int i; /* used to step through the string, checking for invalid values */
@@ -97,29 +97,22 @@ int htoi(char s[])
  * With the current setup, the power limit's 99, this is likely going to be excessive.
  * I think I'll lower it to something more sensible like 20.
  */
-void hexcon(h[])
+void hexcon(h[], int len)
 {
 	/* here we convert things to an int */
 	/* This will simply hold the decimal values of the hex characters */
 	/*
-	 * 0 = 0
-	 * 1 = 1
-	 * 2 = 2
-	 * 3 = 3
-	 * 4 = 4
-	 * 5 = 5
-	 * 6 = 6
-	 * 7 = 7
-	 * 8 = 8
-	 * 9 = 9
-	 * A = 10
-	 * B = 11
-	 * C = 12
-	 * D = 13
-	 * E = 14
-	 * F = 15
-	 */
-	/* formatting will need some work, but this is the translation
-	 * case, of course, will not matter in the translation process
-	 */
+	 * 0 = 0    8 = 8
+	 * 1 = 1    9 = 9
+	 * 2 = 2    A = 10
+	 * 3 = 3    B = 11
+	 * 4 = 4    C = 12
+	 * 5 = 5    D = 13
+	 * 6 = 6    E = 14
+	 * 7 = 7    F = 15
+   */
+  
+  int i; /* for running through the string */
+
+  /* calculate the values independantly, then return the calculated int value */
 }
