@@ -11,6 +11,7 @@
 int htoi(char s[], int len);
 int get_line(char s[], int lim);
 int hexcon(char h[], int len); /* essentially a switch statement with hex values */
+char upper(int c); /* convert lower char to upper */
 
 #include <stdio.h>
 
@@ -58,13 +59,13 @@ int htoi(char s[], int len)
 	char hex[max]; /* verified hex string */
 
 	/* switch for the possibility of a preceeding '0x' */
-	if ((s[0] == '0') && ((s[1] == 'x') || s[1] == 'X'))
+	if ((s[0] == '0') && (upper(s[1]) == 'X'))
 	{
 		/* start i at 2 */
 		for (i = 2; i < max -1; i++)
 		{
 			/* test for the int values for various valid characters */
-			if ((s[i] >= 'A' && s[i] <= 'F') || (s[i] >= 'a' && s[i] <= 'f') || (s[i] >='0' && s[i] <= '9'))
+			if ((upper(s[i]) >= 'A' && upper(s[i]) <= 'F') || (s[i] >='0' && s[i] <= '9'))
 			{
 				/* collect the values so we can turn them into an int later */
 				hex[h] = s[i]; 
@@ -78,7 +79,7 @@ int htoi(char s[], int len)
 		for (i = 0; i < max -1; i++)
 		{
 			/* test for the int values for various valid characters */
-			if ((s[i] >= 'A' && s[i] <= 'F') || (s[i] >= 'a' && s[i] <= 'f') || (s[i] >='0' && s[i] <= '9'))
+			if ((upper(s[i]) >= 'A' && upper(s[i]) <= 'F') || (s[i] >='0' && s[i] <= '9'))
 			{
 				/* collect the values so we can turn them into an int later */
 				hex[h] = s[i];
@@ -97,7 +98,7 @@ int htoi(char s[], int len)
  * With the current setup, the power limit's 99, this is likely going to be excessive.
  * I think I'll lower it to something more sensible like 20.
  */
-int hexcon(h[], int len)
+int hexcon(h[], int len, int intcal[])
 {
 	/* here we convert things to an int */
 	/* This will simply hold the decimal values of the hex characters */
@@ -113,6 +114,7 @@ int hexcon(h[], int len)
    */
   
   int i; /* for running through the string */
+	intcal[len * 2]; /* this should be large enough to store both the value and the power multiplier */
 
   /* calculate the values independantly, then return the calculated int value */
 
@@ -120,5 +122,28 @@ int hexcon(h[], int len)
 	{
 		/* determine the value of each character in the string */
 		/* should be a switch/case block, since we're basically getting chars to look at */
+		switch(upper(h[i]))
+		{
+			case 'A' :
+			/* put the value of the position into an array, along with the exponent to use for it */
+				array[i] = 10;
+				array[i+1] = len - (1 + i);
+			case 'B' :
+			case 'C' :
+			case 'D' :
+			case 'E' :
+			case 'F' :
+			default :
 	}
+}
+
+char upper(int c)
+{
+	int upperdiff; /* value between upper and lower letters */
+	upperdiff = (97 - 65); /* difference between 'a' and 'A' */
+
+	if ((c <= 122) && (c >= 97) /* between lower 'z' and 'a' */
+		c = (c - upperdiff);
+	
+	return c;
 }
