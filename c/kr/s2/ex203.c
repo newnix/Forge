@@ -98,7 +98,7 @@ int htoi(char s[], int len)
  * With the current setup, the power limit's 99, this is likely going to be excessive.
  * I think I'll lower it to something more sensible like 20.
  */
-int hexcon(h[], int len, int intcal[])
+int hexcon(h[], int len)
 {
 	/* here we convert things to an int */
 	/* This will simply hold the decimal values of the hex characters */
@@ -114,8 +114,7 @@ int hexcon(h[], int len, int intcal[])
    */
   
   int i; /* for running through the string */
-	intcal[len * 2]; /* this should be large enough to store both the value and the power multiplier */
-
+	int hexval[len-1], hexpow[len-1]; /* should be the right size arrays for the value and power of each character to convert */
   /* calculate the values independantly, then return the calculated int value */
 
 	for (i = 0; i < len; i++)
@@ -126,14 +125,27 @@ int hexcon(h[], int len, int intcal[])
 		{
 			case 'A' :
 			/* put the value of the position into an array, along with the exponent to use for it */
-				array[i] = 10;
-				array[i+1] = len - (1 + i);
+				hexval[i] = 10;
+				hexpow[i] = len - (i + 1);
 			case 'B' :
+				hexval[i] = 11;
+				hexpow[i] = len - (i + 1);
 			case 'C' :
+				hexval[i] = 12;
+				hexpow[i] = len - (i + 1);
 			case 'D' :
+				hexval[i] = 13;
+				hexpow[i] = len - (i + 1);
 			case 'E' :
+				hexval[i] = 14;
+				hexpow[i] = len - (i + 1);
 			case 'F' :
+				hexval[i] = 15;
+				hexpow[i] = len - (i + 1);
 			default :
+				hexval[i] = h[i];
+				hexpow[i] = len - (i + 1);
+		}
 	}
 }
 
