@@ -6,19 +6,19 @@
 
 #define max 20 /* because wtf are you thinking if you give me more than than in hex?? */
 
+#include <stdio.h>
+#include <math.h>
+
 /* htoi() -> hex to int */
 /* This should return an int from a given string */
-int htoi(char s[], int len);
+double htoi(char s[], int len);
 int get_line(char s[], int lim);
-int hexcon(char h[], int len); /* essentially a switch statement with hex values */
+double hexcon(char h[], int len); /* essentially a switch statement with hex values */
 char upper(int c); /* convert lower char to upper */
-
-#include <stdio.h>
 
 int main()
 {
 	char hexin[max]; /* string containing the hex value */
-	int lim = max; /* string limits */
 	int hex;	/* integer value of the hex string */
 	int len;
 	
@@ -28,7 +28,7 @@ int main()
 	{
 		/* not sure what to put here yet */
 		printf("%s\n",hexin);
-		printf("%u\n",hexin); /* this appears to be doing some interesting conversions on the string values, not sure exactly what */
+		printf("Is %.2f when converted to an integer.\n",htoi(hexin,len));
 	}
 
 	return 0;
@@ -51,7 +51,7 @@ int get_line(char s[], int lim)
 	return i;
 }
 
-int htoi(char s[], int len)
+double htoi(char s[], int len)
 {
 	/* will have to check the string for valid hex values */
 	int i; /* used to step through the string, checking for invalid values */
@@ -71,7 +71,7 @@ int htoi(char s[], int len)
 				hex[h] = s[i]; 
 				h++;
 			}
-		}
+		} len =- 2;
 	}
 	else
 	{
@@ -87,9 +87,8 @@ int htoi(char s[], int len)
 			}
 		}
 	/* after verifying it's good, convert to an integer value */
-	/* ....somehow... */
 	}
-	return 0;
+	return hexcon(hex,len);
 }
 
 /*
@@ -98,7 +97,7 @@ int htoi(char s[], int len)
  * With the current setup, the power limit's 99, this is likely going to be excessive.
  * I think I'll lower it to something more sensible like 20.
  */
-int hexcon(h[], int len)
+double hexcon(char h[], int len)
 {
 	/* here we convert things to an int */
 	/* This will simply hold the decimal values of the hex characters */
@@ -112,11 +111,13 @@ int hexcon(h[], int len)
 	 * 6 = 6    E = 14
 	 * 7 = 7    F = 15
    */
-  
-  int i; /* for running through the string */
+  	
+	double dec; /* the decimal value of the conversion process so far */
+  	int i; /* for running through the string */
 	int hexval[len-1], hexpow[len-1]; /* should be the right size arrays for the value and power of each character to convert */
   /* calculate the values independantly, then return the calculated int value */
-
+	
+	dec = 0;
 	for (i = 0; i < len; i++)
 	{
 		/* determine the value of each character in the string */
@@ -147,6 +148,14 @@ int hexcon(h[], int len)
 				hexpow[i] = len - (i + 1);
 		}
 	}
+	/* so now we need math.h */
+	for (i = 0; i < len; ++i)
+	{
+		dec =+  pow((double) hexval[i], (double) hexpow[i]);
+	}
+
+	return dec;
+
 }
 
 char upper(int c)
@@ -154,7 +163,7 @@ char upper(int c)
 	int upperdiff; /* value between upper and lower letters */
 	upperdiff = (97 - 65); /* difference between 'a' and 'A' */
 
-	if ((c <= 122) && (c >= 97) /* between lower 'z' and 'a' */
+	if ((c <= 122) && (c >= 97)) /* between lower 'z' and 'a' */
 		c = (c - upperdiff);
 	
 	return c;
