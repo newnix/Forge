@@ -1,4 +1,4 @@
-/* copy stdout to stdin */
+/* copy stdin to stdout */
 #include <stdio.h>
 
 /* rev1 */
