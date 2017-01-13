@@ -57,10 +57,11 @@ void wrapit(char s[], int len, int wlen, char w[])
 
 	for (wrap = wi = i = 0; i < len; ++i)
 	{
-		if (wrap >= WRAP)
+		if (wrap >= WRAP && s[i] == ' ') /* don't go slicing words */
 		{
 			w[wi] = '\n';
 			wi++;
+			i++; /* skip over the space character so we don't get strange indents */
 			w[wi] = s[i]; /* this will be a mostly 1-1 mapping */
 			wi++; /* ensure that wi is keeping up with i */
 			wrap = 0; /* reset the counter */
