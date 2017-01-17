@@ -41,19 +41,34 @@ void entabulate(char in[], int len, char out[])
 	/* add tabs! */
 	int i; /* step through the input string */
 	int t; /* step through the output string */
+	int spccount; /* count of spaces */
 
-	for (t = i = 0; i < len; ++i)
+	for (spccount = t = i = 0; i < len; ++i)
 	{
-		if (in[i] == 32 && in[i+1] == 32 && in[i+2] == 32 && in[i+3] == 32)
+		/* try evaluating the value of each spot as an int */
+		/* 9 is '\t' and 32 is ' ' */
+		if (spccount == 4)
 		{
+			spccount = 0;
+			t -= 4;
 			out[t] = 9;
-			i++; /* jump to the next non-space char (hopefully) */
 			t++;
+			i--;
+		}
+		else if (in[i] == 32)
+		{
+			out[t] = 32;
+			spccount++;
+			t++;
+		}
+		else if (in[i] == 0)
+		{
+			out[t] = 0;
+			break;
 		}
 		else
 		{
 			out[t] = in[i];
-			i++;
 			t++;
 		}
 	}
