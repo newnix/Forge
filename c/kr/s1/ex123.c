@@ -16,9 +16,10 @@ int main()
 {
 	int len; /* length of the input string given by the user */
 	char instr[MAX]; /* input string pulled from user */
-	char lines[MAX]; /* intended to hold up to MAX lines of input from instr */
+	char *lines[MAX]; /* intended to hold up to MAX lines of input from instr */
 	int linelen[MAX]; /* separate value to hold the length of each string stored */
 	int linenum; /* current line number we're on */
+	int step; /* iterator */
 
 	/* take lines from stdin and strip out comments matching the format used here */
 	len = linenum = 0;
@@ -26,9 +27,15 @@ int main()
 	{
 		/* grab all the strings and track them in the array lines[] */
 		lines[linenum] = instr; /* store the current line in lines[linenum] */
+		printf("instr: %slines[%d]: %s\n", instr, linenum, lines[linenum]);
 		linelen[linenum] = len; /* for the same position in linelen[] keep lines[] length */
 		linenum++;
 	}
 	/* so now we need to do things, like looping through the arrays and getting rid of comments */
+	/* first, let's prove that I stored the information correctly */
+	for (step = 0; step <= linenum; step++)
+	{
+		printf("lines[%d]: %s Is %d characters long.\n", step, lines[step], linelen[step]);
+	}
 	return 0;
 }
