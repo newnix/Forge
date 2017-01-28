@@ -8,9 +8,11 @@
 
 /* I don't have any experience reading/writing files, so I'll settle for stripping comments from stdin */
 #include <stdio.h>
-#include "../headers/getline.h"
-/* creating a custom version of the getline function to allow it to continue past a single newline */
-int getline(char s[], int max);
+#include "../headers/get_line.h"
+#include <stdlib.h>
+
+/* creating a custom version of the get_line function to allow it to continue past a single newline */
+int get_line(char s[], int max);
 
 int main()
 {
@@ -22,20 +24,20 @@ int main()
 	int step; /* iterator */
 
 	/* take lines from stdin and strip out comments matching the format used here */
-	len = linenum = 0;
-	while ((len = getline(instr, MAX)) > 0)
+	step = len = linenum = 0;
+	while ((len = get_line(instr, MAX)) > 0)
 	{
 		/* grab all the strings and track them in the array lines[] */
-		lines[linenum] = instr; /* store the current line in lines[linenum] */
-		printf("instr: %slines[%d]: %s\n", instr, linenum, lines[linenum]);
+		strcopy(lines[linenum],instr); /* store the current line in lines[linenum] */
 		linelen[linenum] = len; /* for the same position in linelen[] keep lines[] length */
 		linenum++;
+		printf("instr: %slines[%d]: %s\n", instr, (linenum - 1), lines[linenum - 1]);
 	}
 	/* so now we need to do things, like looping through the arrays and getting rid of comments */
 	/* first, let's prove that I stored the information correctly */
 	for (step = 0; step <= linenum; step++)
 	{
-		printf("lines[%d]: %s Is %d characters long.\n", step, lines[step], linelen[step]);
+		printf("lines[%d]: %s Length:%d\n",step,lines[step],linelen[step]);
 	}
 	return 0;
 }
