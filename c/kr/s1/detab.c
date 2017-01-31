@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #define SPACES 4 /* how many spaces should a tab be replaced with */
 #define MAX 4000 /* longest string allowed */
 
@@ -32,6 +33,8 @@ int main()
 		printf("%s\n",instr);
 		printf("%s\n",tabstr);
 	}
+	free (instr);
+	free (tabstr);
 	return 0;
 }
 

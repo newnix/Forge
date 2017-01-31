@@ -9,6 +9,7 @@
 /* I don't have any experience reading/writing files, so I'll settle for stripping comments from stdin */
 #include <stdio.h>
 #include "../headers/get_line.h"
+#include <stdlib.h>
 
 /* creating a custom version of the get_line function to allow it to continue past a single newline */
 int get_line(char s[], int max);
@@ -38,5 +39,8 @@ int main()
 	{
 		printf("lines[%d]: %s Length:%d\n",step,lines[step],linelen[step]);
 	}
+	free (instr);
+	free (lines);
+	free (linelen);
 	return 0;
 }

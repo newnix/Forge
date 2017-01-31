@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "../headers/get_line.h"
+#include <stdlib.h>
 
 #define MAX 10
 
@@ -30,5 +31,10 @@ int main()
 			printf("d[%d][%d] = %d\n",x,y,d[x][y]); /* according to valgrind, there's a leak here */
 		}
 	}
+	for (x = 0; x < MAX; x++)
+	{
+		free(d[x]);
+	}
+	free (d);
 	return 0;
 }
