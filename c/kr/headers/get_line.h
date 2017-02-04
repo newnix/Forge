@@ -1,7 +1,7 @@
 #ifndef GETLINE_H
 #define GETLINE_H
 
-int getline(char s[], int max)
+int get_line(char s[], int max)
 {
 	int c, i; /* used to step through a C string */
 
