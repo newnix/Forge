@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../headers/get_line.h"
-#include "../headers/copy.h"
+#include "../headers/grabc.h"
 
 #define MAX 100
 
@@ -32,17 +32,16 @@ int main()
 {
 	/* do things */
 	char instr[MAX]; /* input string */
-	char ostr[MAX]; /* output string */
 	int len; /* length of the string pulled from the user */
+	int del; /* character to delete */
 	
 	/* get the input from the user */
 	while ((len = get_line(instr, MAX)) > 0)
 	{
-		/* now that we have a line of input, we'll just transfer it to ostr for now */
-		squeeze(instr, 101); /* statically get rid of all 'e' chars */
-		copy(instr,ostr);
-		printf("*instr: %s\n",instr);
-		printf("*ostr: %s\n",ostr);
+		printf("Enter a char to delete: ");
+		del = grabc();
+		squeeze(instr, del); /* statically get rid of all 'e' chars */
+		printf("Compressed string:\n%s",instr);
 	}
 	return 0;
 }
