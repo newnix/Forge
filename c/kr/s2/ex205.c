@@ -8,3 +8,49 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "../headers/get_line.h"
+#include "../headers/grabc.h"
+#include "../headers/upper.h"
+
+#define MAX 100
+
+int any(char s1[], char s2[]);
+
+int main()
+{
+	char str1[MAX],str2[MAX];
+	int len1,len2;
+	int idex;
+	char again; /* does the user want to run the program again? */
+	/* grab two lines with indexes, then compare them */
+	/* perhaps nesting while loops? else would need to find a way to ensure both strings have been initialized and aren't NULL */
+	
+	again = 'N'; /* default to not running the loop again */
+
+	do
+	{
+		/* from here we compare the strings, and possibly reset them as well */
+		len1 = get_line(str1,MAX);
+		len2 = get_line(str2,MAX);
+		idex = any(str1, str2);
+		printf("Any() return: %d\n", idex);
+		printf("\nRun again? [y/n]\n");
+	}while (upper(again) != 'N');
+	return 0;
+}
+
+int any(char s1[], char s2[])
+{
+	/* compare the strings! */
+	int i; /* indices for both strings */
+
+	for (i = 0; s1[i] != 0 && s2[i] != 0; i++)
+	{
+		/* run through both strings comparing them */
+		if (s1[i] == s2[i])
+		{
+			return i; /* matching value, return index */
+		}
+	}
+	return -1; /* no matching index found */
+}

@@ -37,7 +37,7 @@ int main()
 	{
 		for (j = 0; j < size_y; j++)
 		{
-			printf("&a[%d][%d] = %p\n", i, j, &a[i][j]); /* shows the addresses of the array elements */
+			printf("&a[%d][%d] = %d\n", i, j, &a[i][j]); /* shows the addresses of the array elements */
 			a[i][j] = i * size_y + j; /* just an easy way to get a unique value for each address */
 		}
 		printf("\n");
