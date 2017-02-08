@@ -33,8 +33,9 @@ int main()
 		len1 = get_line(str1,MAX);
 		len2 = get_line(str2,MAX);
 		idex = any(str1, str2);
-		printf("Any() return: %d\n", idex);
+		printf("Any() returned: %d\n", idex);
 		printf("\nRun again? [y/n]\n");
+		again = grabc();
 	}while (upper(again) != 'N');
 	return 0;
 }
@@ -42,14 +43,17 @@ int main()
 int any(char s1[], char s2[])
 {
 	/* compare the strings! */
-	int i; /* indices for both strings */
+	int i, j; /* indices for both strings */
 
-	for (i = 0; s1[i] != 0 && s2[i] != 0; i++)
+	for (i = 0; s1[i] != 0; i++)
 	{
-		/* run through both strings comparing them */
-		if (s1[i] == s2[i])
+		for (j = 0; s2[j] != 0; j++)
 		{
-			return i; /* matching value, return index */
+			/* run through both strings comparing them */
+			if (s1[i] == s2[j])
+			{
+				return i; /* matching value, return index */
+			}
 		}
 	}
 	return -1; /* no matching index found */
