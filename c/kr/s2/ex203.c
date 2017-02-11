@@ -4,7 +4,7 @@
  * then convert it from hex to an integer
  */
 
-#define max 20 /* because wtf are you thinking if you give me more than than in hex?? */
+#define max 20 /* because wtf are you thinking if you give me more than that in hex?? */
 
 #include <stdio.h>
 #include <math.h>
