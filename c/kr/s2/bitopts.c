@@ -38,8 +38,9 @@ int main()
 	 * If I'm understanding it correctly something like: x = ~10
 	 * would be the same as: x = ~00001010
 	 * so x = 11110101, though I'm not sure why I'm getting something different in my output
+	 * ^ Turns out it was due to using a signed int, sign bits are a thing to be wary of
 	 */
-	printf("\nUnary NOT operator, this inverts the bits of the argument\nex: ~00001010 = 11110101\n");
+	printf("\nUnary NOT operator, this inverts the bits of the argument, with the value \'10\' this should be SHORT_MAX-10\nex: ~00001010 = 11110101\n");
 	printf("~x: integer: %hu | hex: %hx\n",(~x),(~x));
 	return 0;
 }
