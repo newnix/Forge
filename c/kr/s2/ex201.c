@@ -24,7 +24,7 @@ int main()
 	printf("Max size of a signed long:\t%ld\n",LONG_MAX);
 	printf("Min size of a signed long:\t%ld\n",LONG_MIN);
 	printf("Max size of an unsigned char:\t%u\n",UCHAR_MAX);
-	printf("Min size of an unsigned char:\t%u\n",UCHAR_MIN);
+	printf("Min size of an unsigned char:\t%u\n",CHAR_MlN);
 	printf("Max size of a signed char:\t%d\n",CHAR_MAX);
 	printf("Min size of a signed char:\t%d\n",CHAR_MIN);
 

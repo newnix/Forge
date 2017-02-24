@@ -14,7 +14,7 @@
 /*
  * There's a skeleton/example function of the same name listed like so:
  *
- * unsigned getbits(unsigned x, int p, int n)
+ * unsigned short getbits(unsigned short x, int p, int n)
  * {
  * 	return (x >> (p+1-n)) & ~(~0 << n);
  * }
@@ -25,19 +25,21 @@
  * so if x = p = n = 2
  * 2 >> 1 bits AND 1100 = 0001 & 0011 = 1;
  */
-unsigned int setbits(unsigned int x, unsigned int p, unsigned int n, unsigned int y);
+unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned short int n, unsigned short int y);
 
 int main()
 {
-	unsigned int x, p;
+	unsigned short int x, p, n, y;
 	x = 2;
 	p = 1;
+	y = 3;
+	n = 2;
 	/* do things */
-	printf("%d\n",setbits(x,x,x,x));
+	printf("%u\n",setbits(x,p,n,y));
 	return 0;
 }
 
-unsigned int setbits(unsigned int x, unsigned int p, unsigned int n, unsigned int y)
+unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned short int n, unsigned short int y)
 {
 	/* 
 	 * this should return x
@@ -47,6 +49,6 @@ unsigned int setbits(unsigned int x, unsigned int p, unsigned int n, unsigned in
 	 * if x = y = p = n = 2;
 	 * ....
 	 */
-	return (x >> (p + 1 - n) & ~(~0 << n));
+	return ((y & ~0 ) ^ (x >> (p + n - 1)));
 	/* I know this is wrong, but I want to have something here */
 }
