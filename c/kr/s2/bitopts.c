@@ -6,6 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * The bitwise operations have their own order of precedence:
+ * ~ -> >>/<< -> &/^/|
+ * So the NOT operation will always be evaluated first,
+ * then any shifting will be evaluated,
+ * then the AND, OR, and XOR operations will be evaluated.
+ */
+
 int main()
 {
 	static unsigned const short x = 10; /* our value to play with */

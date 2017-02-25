@@ -14,12 +14,16 @@ unsigned short int flipbits(unsigned short int x, unsigned short int p, unsigned
 
 int main()
 {
+	unsigned short int result;
 	unsigned short int x, p, n; /* our vars */
 	x = 10;
 	p = 2;
 	n = 3;
 
-	printf("Result is %hu\n",flipbits(x,p,n));
+	/* calculate the value once, for easy use later */
+	result = flipbits(x,p,n);
+	
+	printf("Result is %hu\t(%hX)\n",result,result);
 
 	return 0;
 }
@@ -43,21 +47,28 @@ unsigned short int flipbits(unsigned short int x, unsigned short int p, unsigned
 	 * -----------
 	 *  1010
 	 */
-	/* return (x ^ ((~0 >> (p + n)) << (p - 1))); */
+	/* return ~(x ^ ((~0 >> (p + n)) << (p - 1))); */
 	/* 
-	 * 1010 ^ ((~0 >> (5)) << (1))
-	 * 1010 ^ ((1111 1111 >> 5) << 1)
-	 * 1010 ^ (0000 0111 << 1)
-	 * 1010 ^ (0000 1110)
-	 * 1010 ^ 1110
-	 * 0100
+	 * (1010 ^ ((~0 >> (5)) << (2)))
+	 * (1010 ^ ((1111 1111 >> 5) << 2))
+	 * (1010 ^ ((0000 0111 << 2)))
+	 * (1010 ^ (0001 1100)
+	 * (0000 1010 ^ 0001 1100)
+	 * (0001 0100)
 	 */
-	return ~((~x >> (p+n)) << p);
+	return ((~x >> (p+n)) << p);
 	/*
-	 * ~((~1010 >> (5)) << 2)
+	 * ~((~0000 1010 >> (2 + 3)) << 2)
 	 * ~((1111 0101 >> 5) << 2)
 	 * ~(0000 0111 << 2)
 	 * ~(0001 1100)
-	 * 1110 0011?
+	 * 1110 0011
+	 * ---------
+	 * This must be wrong, because it's returning 3 (0000 0011)
+	 * --------
+	 * 3 = 0011 but ~3 = 65532/FFFC
+	 * so the short int should be 4 bytes
+	 * which explains why the values are so far off of my estimates
+	 * 11111111 111111111 11111111 11111111
 	 */
 }
