@@ -70,5 +70,15 @@ unsigned short int flipbits(unsigned short int x, unsigned short int p, unsigned
 	 * so the short int should be 4 bytes
 	 * which explains why the values are so far off of my estimates
 	 * 11111111 111111111 11111111 11111111
+	 * so the process would be more like the following:
+	 *
+	 * ((~(00000000 00000000 00000000 00001010) >> (5)) << 2)
+	 * (((11111111 11111111 11111111 11110101) >> 5) << 2)
+	 * ((00000111 11111111 11111111 11111111) << 2)
+	 * ( 00011111 11111111 11111111 11111100)
+	 * ... the inverse of this number is not 3... so my word size must be wrong still.
+	 * after some testing, the word size for short ints is 2 bytes, not 4.
+	 *
+	 * This makes my un-flipped result 11111111 11111100, which when flipped is 3.
 	 */
 }
