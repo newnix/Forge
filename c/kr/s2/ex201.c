@@ -31,25 +31,27 @@ int main()
 
 	/* here we'll get the "word size" or bit-length of some of these primitives as well. */
 	/* The following method was shamelessly stolen from https://en.wikipedia.org/wiki/sizeof */
+	short int *shortint = (short int *) malloc(10 * sizeof(short int));
+	printf("\nshort int word size: %hu, %zu\n", shortint, sizeof(short int));
+	free(shortint); /* no need to hold onto it anymore */
+	
 	int *intsize = (int *) malloc(10 * sizeof(int));
-	printf("\nint word size: %u, %zu\n", intsize, sizeof(int));
+	printf("int word size: %u, %zu\n", intsize, sizeof(int));
 	free(intsize); /* no need to hold onto it anymore */
 	
-	short int *shortint = (short int *) malloc(10 * sizeof(short int));
-	printf("short int word size: %zu, %zu\n", shortint, sizeof(short int));
-	free(shortint); /* no need to hold onto it anymore */
 	/* and let's keep going so there's easy reference material in source code and binary form! */
 	long int *lngsize = (long int *) malloc(10 * sizeof(long int));
 	printf("long int word size: %lu, %zu\n", lngsize, sizeof(long int));
 	free(lngsize);
 
+	float *fltsize = (float *) malloc(10 * sizeof(float));
+	printf("float word size: %zu, %zu\n", fltsize, sizeof(float));
+	free(fltsize);
+
 	double *dblsize = (double *) malloc(10 * sizeof(double));
-	printf("double word size: %zu, %zl\n", dblsize, sizeof(double));
+	printf("double word size: %zu, %zu\n", dblsize, sizeof(double));
 	free(dblsize);
 
-	float *fltsize = (float *) malloc(10 * sizeof(float));
-	printf("float word size: %zu, %zl\n", fltsize, sizeof(float));
-	free(fltsize);
 
 	return 0;
 }
