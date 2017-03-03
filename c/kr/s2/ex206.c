@@ -65,6 +65,6 @@ unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned 
 		return 500;
 	} 
 	/* currently, this should isolate the bits meant to be manipulated */
-	return (x << (max - (n + p))) >> (max - (2 + y + n));
+	return (x << (max - (n + p))) >> (max - (1 + y + n));
 	/* I know this is wrong, but I want to have something here */
 }
