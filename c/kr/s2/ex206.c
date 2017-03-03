@@ -29,13 +29,14 @@ unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned 
 
 int main()
 {
-	unsigned short int x, p, n, y;
-	x = 2;
-	p = 1;
+	unsigned short int x, p, n, y, res;
+	x = 11;
+	p = 2;
 	y = 3;
 	n = 2;
+	res = setbits(x,y,n,p);
 	/* do things */
-	printf("%u\n",setbits(x,p,n,y));
+	printf("%hu\t(%hX)\n",res,res);
 	return 0;
 }
 
@@ -46,9 +47,24 @@ unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned 
 	 * with the n bits from p 
 	 * set to the rightmost n bits of y
 	 *
-	 * if x = y = p = n = 2;
-	 * ....
+	 * x = 11, p = 2, y = 3, n = 2
+	 * x = 00000000 00001011
+	 * return 00000000 00001010
 	 */
-	return ((y & ~0 ) ^ (x >> (p + n - 1)));
+	unsigned short int max;
+
+	/* 
+	 * sanity check here, helps ensure that if this program becomes interactive,
+	 * I'll actually be able to handle input for 'n' correctly. 
+	 * should be doing the same for any values accepted from the user, else I'll have to truncate
+	 */
+	max = ((8 * sizeof(x)) - 1);
+	printf("n:%hu\tmax:%hu\n",n,max);
+	if (n > max)
+	{
+		return 500;
+	} 
+	/* currently, this should isolate the bits meant to be manipulated */
+	return (x << (max - (n + p))) >> (max - (2 + y + n));
 	/* I know this is wrong, but I want to have something here */
 }
