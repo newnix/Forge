@@ -34,7 +34,7 @@ int main()
 	p = 2;
 	y = 3;
 	n = 2;
-	res = setbits(x,y,n,p);
+	res = setbits(x,y,n,p); /* save some cycles, compute result once */
 	/* do things */
 	printf("%hu\t(%hX)\n",res,res);
 	return 0;
@@ -65,6 +65,8 @@ unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned 
 		return 500;
 	} 
 	/* currently, this should isolate the bits meant to be manipulated */
-	return (x << (max - (n + p))) >> (max - (1 + y + n));
-	/* I know this is wrong, but I want to have something here */
+	return ((x << (max - (n + p)) >> (max - (y + n - 2))) ^ ((x << (max - (n + p))) >> (max - (1 + y + n))));
+	/*
+	 * I really don't want to draw this one out, but I think I've finally got a decent grasp on these bitwise operations
+	 */
 }
