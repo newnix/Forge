@@ -27,7 +27,9 @@ int main()
  * this is due to binary comprising of only 1's and 0's so if x = 1111, x-1 = 1110
  * so x & (x - 1) = 1110, and so on, until all bits are 0.
  * This means we don't need to shift every bit over and evaluate if it's 1 or 0, so for instances where 
- * x != ~0, this method should be faster to calculate the 1-bits than shifting and evaluating the result.
+ * x != ~0, this method should be faster to calculate the 1-bits than shifting and evaluating the result,
+ * as we only need to iterate for as long as there's a 1 in the binary representation, rather than testing 
+ * every single bit in the number.
  */
 int countbits(unsigned int x)
 {
