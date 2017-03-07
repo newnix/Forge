@@ -18,7 +18,12 @@ int main()
   x = 10;
   n = 100;
 
-  printf("binsearch(x, v[], n) = %d\n");
+	for (n = 0; n < 101; n++)
+	{
+		v[n] = n;
+	}
+
+  printf("binsearch(x, v[], n) = %d\n",binsearch(x,v,n));
   return 0;
 }
 
