@@ -33,6 +33,13 @@ int main()
 		len1 = get_line(str1,MAX);
 		len2 = get_line(str2,MAX);
 		idex = any(str1, str2);
+
+		/* if we get a number <= 0, we have a problem, bail out */
+		if (idex <= 0)
+		{
+			return 500;
+		}
+
 		printf("Any() returned: %d\n", idex);
 		printf("\nRun again? [y/n]\n");
 		again = grabc();

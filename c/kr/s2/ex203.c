@@ -8,13 +8,13 @@
 
 #include <stdio.h>
 #include <math.h>
-
+#include "../headers/charconv.h" /* to use the new char conversions */
 /* htoi() -> hex to int */
 /* This should return an int from a given string */
 double htoi(char s[], int len);
 int get_line(char s[], int lim);
 double hexcon(char h[], int len); /* essentially a switch statement with hex values */
-char upper(int c); /* convert lower char to upper */
+char upperc(char c); /* convert lower char to upper */
 
 int main()
 {
@@ -60,14 +60,14 @@ double htoi(char s[], int len)
 	
 	h = 0;
 	/* switch for the possibility of a preceeding '0x' */
-	if ((s[0] == '0') && (upper(s[1]) == 'X'))
+	if ((s[0] == '0') && (upperc(s[1]) == 'X'))
 	{
 		hlen = len - 2;
 		/* start i at 2 */
 		for (i = 2; i < max - 1; i++)
 		{
 			/* test for the int values for various valid characters */
-			if ((upper(s[i]) >= 'A' && upper(s[i]) <= 'F') || (s[i] >= 48 && s[i] <= 57))
+			if ((upperc(s[i]) >= 'A' && upperc(s[i]) <= 'F') || (s[i] >= 48 && s[i] <= 57))
 			{
 				/* collect the values so we can turn them into an int later */
 				hex[h] = s[i]; 
@@ -82,7 +82,7 @@ double htoi(char s[], int len)
 		for (i = 0; i < max - 1; i++)
 		{
 			/* test for the int values for various valid characters */
-			if ((upper(s[i]) >= 'A' && upper(s[i]) <= 'F') || (s[i] >= 48 && s[i] <= 57))
+			if ((upperc(s[i]) >= 'A' && upperc(s[i]) <= 'F') || (s[i] >= 48 && s[i] <= 57))
 			{
 				/* collect the values so we can turn them into an int later */
 				hex[h] = s[i];
@@ -123,10 +123,10 @@ double hexcon(char h[], int len)
 	dec = 0;
 	for (i = 0; i < len - 1; i++)
 	{
-/*		printf("h[%d] = %c, %c\n",i, h[i], upper(h[i])); */
+/*		printf("h[%d] = %c, %c\n",i, h[i], upperc(h[i])); */
 		/* determine the value of each character in the string */
 		/* should be a switch/case block, since we're basically getting chars to look at */
-		switch(upper(h[i]))
+		switch(upperc(h[i]))
 		{
 			case 'A' :
 			/* put the value of the position into an array, along with the exponent to use for it */
@@ -208,15 +208,4 @@ double hexcon(char h[], int len)
 
 	return dec;
 
-}
-
-char upper(int c)
-{
-	int upperdiff; /* value between upper and lower letters */
-	upperdiff = 97 - 65; /* difference between 'a' and 'A' */
-
-	if ((c <= 122) && (c >= 97)) /* between lower 'z' and 'a' */
-		c = (c - upperdiff);
-	
-	return c;
 }
