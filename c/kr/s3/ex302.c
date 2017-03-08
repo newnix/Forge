@@ -9,16 +9,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../headers/get_line.h"
-
+/* this is the maximum input string I'm wiling to take from the user */
+#define MAX 100
+/* tabs -> spaces conversion */
+#define TABSTOP 4
 /* create a function prototype */
 void escape(char s[], char t[]);
 
 int main()
 {
-	/* do things */
+  /* create a couple of ints */
+  int len, tmax;
+  tmax = MAX * TABSTOP; /* just in case it's all tabs */
+  /* create a couple of strings */
+  char instr[MAX]; /* input string from the user */
+  char trstr[tmax]; /* should be 4x the size of instr, jic it's all tabs */
+
+  len = get_line(instr,MAX); /* capture a line of input, though it looks like this could be replaced with scanf() */
+  printf("Captured:\n%s\n",intstr);
+  escape(trstr,instr); /*essentially transpose the string into the other */
+  printf("Transposed:\n%s\n",trstr); /* if this doesn't work properly, it'll likely just be printing garbage */
+
+  return 0;
 }
 
 void escape(char s[], char t[])
 {
-	/* do more things */
+  /* 
+   * should be a for loop ending at the null terminator,
+   * case statement should escape after modifying the string and updating the index
+   * afterwards, the string should be appended a null terminator so it can be printed properly
+   */
 }
