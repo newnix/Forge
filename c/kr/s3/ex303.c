@@ -34,5 +34,31 @@ int main()
 
 void expand(char input[], char expand[])
 {
-	/* do magic */
+  int i, j; /* set up our indexes */
+  int t; /* transient value for range stepping */
+  i = j = t = 0;
+
+  for (i = 0; input[i] != 0; i++)
+  {
+    /* search for a range such as 'a-z' */
+    /* once found, print all values from lvalue -> rvalue */
+    /* at each new char placed into *expand, increment j */
+    /* upon reaching the outermost loop again, increment j */
+    switch (input[i], input[i+1], input[i+2])
+    {
+      /* search for an alpanumeric character, dash, alnum */
+      case (alphanumeric range):
+        for (t = lvalue; t <= rvalue; t++)
+        {
+          expand[j] = input[t];
+          j++;
+        }
+        break;
+      default:
+        expand[j] = input[i];
+        break;
+    }
+    j++;
+  }
+  expand[j+1] = 0; /* ensure we have a NULL byte terminator */
 }
