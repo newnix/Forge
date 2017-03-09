@@ -26,7 +26,7 @@ int main()
   char trstr[tmax]; /* should be 4x the size of instr, jic it's all tabs */
 
   len = get_line(instr,MAX); /* capture a line of input, though it looks like this could be replaced with scanf() */
-  printf("Captured:\n%s\n",intstr);
+  printf("Captured:\n%s\n",instr);
   escape(trstr,instr); /*essentially transpose the string into the other */
   printf("Transposed:\n%s\n",trstr); /* if this doesn't work properly, it'll likely just be printing garbage */
 
@@ -40,4 +40,34 @@ void escape(char s[], char t[])
    * case statement should escape after modifying the string and updating the index
    * afterwards, the string should be appended a null terminator so it can be printed properly
    */
+
+	int i, j; /* indexes for each string */
+
+	i = j = 0;
+
+	/* now we step through the strings */
+	for (i = 0; t[i] != 0; i++) /* '\0' is the same as 0 */
+	{
+		switch (t[i]) /* make decisions based off the value of t[i] */
+		{
+			case '\t':
+				/* found a tab, replace with literal \t */
+				s[j] = '\\';
+				j++;
+				s[j] = 't';
+				break;
+			case '\n':
+				/* found a newline, replace with literal \n */
+				s[j] = '\\';
+				j++; 
+				s[j] = 'n';
+				break;
+			default:
+				/* nothing special, just assign the value directly to the new string */
+				s[j] = t[i]; /* can't use i as the index for both, as they may not be the same value at this point */
+				break;
+		}
+		j++; /* increment every time we move to a new index in t[] */
+	}
+	s[j + 1] = 0; /* make sure we have a NULL terminator */
 }
