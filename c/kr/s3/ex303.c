@@ -15,7 +15,7 @@
 /* set the input string limit */
 #define MAX 100
 /* set the output string to be 26x the input size */
-#define OMAX (MAX * 26)
+#define OMAX 2600
 
 /* create expand() prototype */
 void expand(char input[], char expand[]);
@@ -31,8 +31,9 @@ int main()
 	int len;
 
 	len = get_line(instr,MAX);
+	printf("caputured: %s\n",instr);
 	expand(instr,ostr); /* expand the string */
-	printf("%s\n",ostr); /* should be fine... or do nothing special */
+	printf("Expanded:\n%s\n",ostr); /* should be fine... or do nothing special */
 	return 0;
 }
 
@@ -41,8 +42,7 @@ void expand(char input[], char expand[])
   int i, j; /* set up our indexes */
   int t; /* transient value for range stepping */
   i = j = t = 0;
-
-  for (i = 0; input[i] != 0; i++)
+  for (i = 0; (input[i] != 0 && input[i] != '\n'); i++)
   {
     /* search for a range such as 'a-z' */
     /* once found, print all values from lvalue -> rvalue */
@@ -50,15 +50,16 @@ void expand(char input[], char expand[])
     /* upon reaching the outermost loop again, increment j */
     switch (isexpansion(input[i], input[i+1], input[i+2]))
     {
-      /* search for an alpanumeric character, dash, alnum */
-      case (1):
+      case 1:
 				if (input[i] > input[i+2])
 				{
-					for (t = input[i]; i >= input[i+2]; t--)
+					for (t = input[i]; t >= input[i+2]; t--)
 					{
 						expand[j] = t;
 						j++;
 					}
+					/* This puts us at the value of input[i+2], add 2 to i here to avoid reprinting expansion chars */
+					i += 2;
 				}
 				else if (input[i] < input[i+2])
 				{
@@ -67,11 +68,15 @@ void expand(char input[], char expand[])
 						expand[j] = t;
 						j++;
 					}
+					/* This puts us at the value of input[i+2], add 2 to i here to avoid reprinting expansion chars */
+					i += 2;
 				}
 				else
 				{
 					/* this should mean that input[i] == input[i+2] */
 					expand[j] = input[i];
+					/* to avoid simply reprinting the expansion chars, skip 2 on the input stream */
+					i += 2;
 					break;
 				}
         break;
@@ -87,7 +92,7 @@ void expand(char input[], char expand[])
 int isexpansion(char x, char y, char z)
 {
 	/* check to see if there's an expandable expression */
-	if (y == '-')
+	if (y == '-' && z != '\n' && z != 0)
 	{
 		/* decide how to proceed based on the value of x */
 		switch (class(x,z))
@@ -105,7 +110,7 @@ int isexpansion(char x, char y, char z)
 	}
 	else 
 	{	/* not an expandable expression */
-		return 1;
+		return 9;
 	}
 }
 
