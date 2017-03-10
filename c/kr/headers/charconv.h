@@ -1,5 +1,16 @@
 #ifndef CHARCONV_H
 #define CHARCONV_H
+/*
+ * I guess this is essentially becoming a prototype library.
+ * which is why the name changed from upper.h to charconv.h,
+ * Any time I learn a new way to manipulate characters in a string
+ * I'll add a function to this file, so it can be reused and tweaked as needed
+ */
+
+/* if tabstop hasn't been defined, make it 4 */
+#ifndef TABSTOP
+#define TABSTOP 4
+#endif
 
 /* convert characters to uppercase */
 /* this version only works on one char at a time */
@@ -47,5 +58,48 @@ char lowerc(char c)
 
 	c = ((c <= 'Z') && (c >= 'A')) ? (c + upperdiff) : c;
 	return c;
+}
+
+/* 
+ * Yanked from ex302.c
+ * may not actually be useful in the real world
+ */
+void escape(char to[], char from[])
+{
+  /* 
+   * should be a for loop ending at the null terminator,
+   * case statement should escape after modifying the string and updating the index
+   * afterwards, the string should be appended a null terminator so it can be printed properly
+   */
+
+	int i, j; /* indexes for each string */
+
+	i = j = 0;
+
+	/* now we step through the strings */
+	for (i = 0; from[i] != 0; i++) /* '\0' is the same as 0 */
+	{
+		switch (from[i]) /* make decisions based off the value of t[i] */
+		{
+			case '\t':
+				/* found a tab, replace with literal \t */
+				to[j] = '\\';
+				j++;
+				to[j] = 't';
+				break;
+			case '\n':
+				/* found a newline, replace with literal \n */
+				to[j] = '\\';
+				j++; 
+				to[j] = 'n';
+				break;
+			default:
+				/* nothing special, just assign the value directly to the new string */
+				to[j] = from[i]; /* can't use i as the index for both, as they may not be the same value at this point */
+				break;
+		}
+		j++; /* increment every time we move to a new index in t[] */
+	}
+	to[j + 1] = 0; /* make sure we have a NULL terminator */
 }
 #endif

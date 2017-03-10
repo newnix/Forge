@@ -19,6 +19,10 @@
 
 /* create expand() prototype */
 void expand(char input[], char expand[]);
+/* check the block of input to see if we have an expansion */
+int isexpansion(char x, char y, char z);
+/* define a character class based off the arguments given */
+int class(char x, char y);
 
 int main()
 {
@@ -44,15 +48,32 @@ void expand(char input[], char expand[])
     /* once found, print all values from lvalue -> rvalue */
     /* at each new char placed into *expand, increment j */
     /* upon reaching the outermost loop again, increment j */
-    switch (input[i], input[i+1], input[i+2])
+    switch (isexpansion(input[i], input[i+1], input[i+2]))
     {
       /* search for an alpanumeric character, dash, alnum */
-      case (alphanumeric range):
-        for (t = lvalue; t <= rvalue; t++)
-        {
-          expand[j] = input[t];
-          j++;
-        }
+      case (1):
+				if (input[i] > input[i+2])
+				{
+					for (t = input[i]; i >= input[i+2]; t--)
+					{
+						expand[j] = t;
+						j++;
+					}
+				}
+				else if (input[i] < input[i+2])
+				{
+					for (t = input[i]; t <= input[i+2]; t++)
+					{
+						expand[j] = t;
+						j++;
+					}
+				}
+				else
+				{
+					/* this should mean that input[i] == input[i+2] */
+					expand[j] = input[i];
+					break;
+				}
         break;
       default:
         expand[j] = input[i];
@@ -61,4 +82,50 @@ void expand(char input[], char expand[])
     j++;
   }
   expand[j+1] = 0; /* ensure we have a NULL byte terminator */
+}
+
+int isexpansion(char x, char y, char z)
+{
+	/* check to see if there's an expandable expression */
+	if (y == '-')
+	{
+		/* decide how to proceed based on the value of x */
+		switch (class(x,z))
+		{
+			/* search for upper, lower, or numeric value */
+			case 1: /* numbers found */
+				return 1;
+			case 2: /* uppercase found */
+				return 1;
+			case 3: /* lowercaes found */
+				return 1;
+			default: /* doesn't match any defined character classes */
+				return 5;
+		}
+	}
+	else 
+	{	/* not an expandable expression */
+		return 1;
+	}
+}
+
+int class(char x, char y)
+{
+	/* determine which class of characters a given range belongs to */
+	if (x <= 57 && x >= 48)
+	{
+		if (y <= 57 && y >= 48)
+			return 1; /* numbers */
+	}
+	else if (x <= 90 && x >= 65)
+	{
+		if (y <= 90 && y >= 65)
+			return 2; /* uppercase */
+	}
+	else if (x <= 122 && x >= 97)
+	{
+		if (y <= 122 && x >= 97)
+			return 3; /* lowercase */
+	}
+	return 18; /* no matching class */
 }
