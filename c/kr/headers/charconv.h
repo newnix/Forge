@@ -102,4 +102,19 @@ void escape(char to[], char from[])
 	}
 	to[j + 1] = 0; /* make sure we have a NULL terminator */
 }
+
+/*
+ * reversal function, reverses a string in place
+ */
+void reverse(char s[])
+{
+	int c, i, j;
+
+	for (i = 0, j = strlen(s) - 1; i < j; i++, j--)
+	{
+		c = s[i];
+		s[i] = s[j];
+		s[j] = c;
+	}
+}
 #endif
