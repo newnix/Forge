@@ -42,12 +42,15 @@ void expand(char input[], char expand[])
   int i, j; /* set up our indexes */
   int t; /* transient value for range stepping */
   i = j = t = 0;
-  for (i = 0; (input[i] != 0 && input[i] != '\n'); i++)
+  for (i = 0; (input[i] != 0 && input[i+1] != 0); i++)
   {
     /* search for a range such as 'a-z' */
     /* once found, print all values from lvalue -> rvalue */
     /* at each new char placed into *expand, increment j */
     /* upon reaching the outermost loop again, increment j */
+
+		/* this appears to be missing trailing expressions such as a-z- */
+		/* adding a switch to see if there even is an input[i+2] or input[i+1] should fix this */
     switch (isexpansion(input[i], input[i+1], input[i+2]))
     {
       case 1:
