@@ -32,7 +32,7 @@ int main()
 	/* here we'll get the "word size" or bit-length of some of these primitives as well. */
 	/* The following method was shamelessly stolen from https://en.wikipedia.org/wiki/sizeof */
 	short int *shortint = (short int *) malloc(10 * sizeof(short int));
-	printf("\nshort int word size: %hu, %zu\n", shortint, sizeof(short int));
+	printf("\nshort int word size: %#hu, %zd\n", shortint, sizeof(short int));
 	free(shortint); /* no need to hold onto it anymore */
 	
 	int *intsize = (int *) malloc(10 * sizeof(int));

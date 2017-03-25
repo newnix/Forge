@@ -3,11 +3,12 @@
  * converts integers into characters (except for some edge cases
  */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 100 
+#define MAX 0
 
 /* prototype for atoi */
 void itoa(int n, char s[]);
@@ -17,13 +18,14 @@ void reverse(char s[]);
 int main()
 {
 	/* create an array to print out */
-	char astring[MAX];
+	char astring[32];
 	/* integer to have been converted */
 	int input;
 
-	input = ~MAX;
+	input = -(pow(2,sizeof(int) - 1));
 	itoa(input, astring);
-	printf("%d converted to a string is:\n%s\n",input,astring);
+	printf("~MAX = %d\n",input);
+	printf("%d converted to a string is:\t%s\n",input,astring);
 	return 0;
 }
 
@@ -41,8 +43,20 @@ void itoa(int n, char s[])
 	{
 		/* generate the digits in reverse order */
 		s[i++] = n % 10 + '0'; /* get the next digit */
+		/*
+		 * while not stated in the book, this basically takes the value of s[i++]
+		 * integer divides by 10, and adds the value of ASCII '0' to the result,
+		 * this basically jumps around the ASCII "table" of characters by their integer
+		 * value. This vastly simplifies the process of converting the characters into integers and back
+		 */
 	} while ((n /= 10) > 0); /* delete it */
-	if (sign > 0)
+	/* 
+	 * The "delete it" comment was taken from the book,
+	 * it works by performing integer division on the value 'n' 
+	 * and assigns the result back to 'n'. So long as 'n' is greater than 10, 
+	 * the loop reiterates.
+	 */
+	if (sign < 0)
 		s[i++] = '-';
 	s[i] = '\0';
 	reverse(s);

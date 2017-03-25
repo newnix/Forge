@@ -6,7 +6,7 @@
  * Any time I learn a new way to manipulate characters in a string
  * I'll add a function to this file, so it can be reused and tweaked as needed
  */
-
+#include <string.h>
 /* if tabstop hasn't been defined, make it 4 */
 #ifndef TABSTOP
 #define TABSTOP 4
