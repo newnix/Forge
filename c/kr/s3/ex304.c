@@ -12,7 +12,12 @@
 #include <string.h>
 
 /* prototype for itoa() */
-void itoa(int n, char s[]);
+void itoa(long int n, char s[]);
+/* 
+ * This is not the best solution, but until I can think of something better than a 
+ * trap (n = INT_MIN ? s[] = "8463847412-"; break; : n = -n;)
+ * though I may be able to cast it to an unsigned int and try reversing it that way
+ */
 /* prototype for reverse() */
 void reverse(char s[]);
 
@@ -28,7 +33,7 @@ int main(void){
 	printf("Enter an integer: ");
 	scanf("%d",input); /* hopefully this is being used correctly */
 	printf("Captured: %d\n",*input);
-	itoa(*input,ostr); /* convert the int to a string */
+	itoa((long int) *input,ostr); /* convert the int to a string */
 	printf("\nTranslated to a string: %s\n",ostr);
 	/* ideally this will prevent memory leaks */
 	free (input);
@@ -47,13 +52,14 @@ void reverse(char s[]){
 }
 
 /* revised version of itoa() */
-void itoa(int n, char s[]){
+void itoa(long int n, char s[]){
 	/* now the magic happens */
 	int i, sign;
 	/* record if this is a negative number */
 	if ((sign = n) < 0)
-		n ^= (~n >> 1) << 1;
-	printf("\nCurrent value of 'n': %d\n",n);
+		n = -n;
+		/* n ^= (~n >> 1) << 1; */
+	printf("\nCurrent value of 'n': %ld\n",n);
 		/*
 		 * Through some searching, in a a two's complement system, as used with binary representation of numbers
 		 * in these programs, the most significant bit (leftmost on little-endian systems), determines the sign
