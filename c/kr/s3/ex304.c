@@ -12,7 +12,7 @@
 #include <string.h>
 
 /* prototype for itoa() */
-void itoa(long int n, char s[]);
+void itoa(int n, char s[]);
 /* 
  * This is not the best solution, but until I can think of something better than a 
  * trap (n = INT_MIN ? s[] = "8463847412-"; break; : n = -n;)
@@ -33,7 +33,7 @@ int main(void){
 	printf("Enter an integer: ");
 	scanf("%d",input); /* hopefully this is being used correctly */
 	printf("Captured: %d\n",*input);
-	itoa((long int) *input,ostr); /* convert the int to a string */
+	itoa(*input,ostr); /* convert the int to a string */
 	printf("\nTranslated to a string: %s\n",ostr);
 	/* ideally this will prevent memory leaks */
 	free (input);
@@ -52,14 +52,21 @@ void reverse(char s[]){
 }
 
 /* revised version of itoa() */
-void itoa(long int n, char s[]){
+void itoa(int n, char s[]){
 	/* now the magic happens */
 	int i, sign;
 	/* record if this is a negative number */
+	i = 0; /* initialize the counter */
 	if ((sign = n) < 0)
-		n = -n;
+		if (n == INT_MIN){
+      n = -(n + 1);
+      i = -1;
+    }
+    else{
+      n = -n;
+    }
 		/* n ^= (~n >> 1) << 1; */
-	printf("\nCurrent value of 'n': %ld\n",n);
+	printf("\nCurrent value of 'n': %d\n",n);
 		/*
 		 * Through some searching, in a a two's complement system, as used with binary representation of numbers
 		 * in these programs, the most significant bit (leftmost on little-endian systems), determines the sign
@@ -68,9 +75,14 @@ void itoa(long int n, char s[]){
 		 * which should flip the sign bits and subtract 1 from the positive result
 		 */
 	
-	i = 0; /* initialize the counter */
 	do {
-		s[i++] = (n % 10) + '0'; /* if s[i++] = 0 (0); 0 % 10 = 0; 0 + '0' (48) = 48; */
+    if (i == -1){
+      s[i+2] = (n % 10) - 1 + '0'; /* this should allow the number value to be calculated correctly */
+      i += 2; /* this should put us at the correct point in the string for the next pass */
+    }
+    else {
+		  s[i++] = (n % 10) + '0'; /* if s[i++] = 0 (0); 0 % 10 = 0; 0 + '0' (48) = 48; */
+    }
 	} while ((n /= 10) > 0); /* keep going as long as 'n' is greater than 10 */
 
 	if (sign < 0)
