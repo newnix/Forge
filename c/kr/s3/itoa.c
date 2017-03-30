@@ -59,6 +59,9 @@ void itoa(int n, char s[])
 	if (sign < 0)
 		s[i++] = '-';
 	s[i] = '\0';
+	/*for (i = 0; s[i] != 0; i++){
+		printf("s[%d] = %c\n",i,s[i]);
+	}*/
 	reverse(s);
 }
 

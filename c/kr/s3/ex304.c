@@ -26,7 +26,7 @@ int main(void){
 	char *ostr; /* going to try the pointer method this time around */
 	int *input; /* grab an int from the user */
 	input = (int *) malloc (sizeof(int)); /* allocate enough space for two ints to be safe */
-	ostr = (char *) malloc (4 * sizeof(int)); /* this should be more than sufficient for the resulting string */
+	ostr = (char *) malloc (16 * sizeof(int)); /* this should be more than sufficient for the resulting string */
 
 	/*prompt the user for a number */
 	printf("INT_MIN: %d\n",INT_MIN);
@@ -57,7 +57,7 @@ void itoa(int n, char s[]){
 	int i, sign;
 	/* record if this is a negative number */
 	i = 0; /* initialize the counter */
-	if ((sign = n) < 0)
+	if ((sign = n) < 0){
 		if (n == INT_MIN){
       n = -(n + 1);
       i = -1;
@@ -66,6 +66,7 @@ void itoa(int n, char s[]){
       n = -n;
     }
 		/* n ^= (~n >> 1) << 1; */
+	}
 	printf("\nCurrent value of 'n': %d\n",n);
 		/*
 		 * Through some searching, in a a two's complement system, as used with binary representation of numbers
@@ -77,16 +78,25 @@ void itoa(int n, char s[]){
 	
 	do {
     if (i == -1){
-      s[i+2] = (n % 10) - 1 + '0'; /* this should allow the number value to be calculated correctly */
-      i += 2; /* this should put us at the correct point in the string for the next pass */
+      s[i+1] = (n % 10) + 1 + '0'; /* this should allow the number value to be calculated correctly */
+			/* printf("s[%d] = %c\n", (i+1), s[i+1]); */
+      i ++; /* this should put us at the correct point in the string for the next pass */
     }
     else {
-		  s[i++] = (n % 10) + '0'; /* if s[i++] = 0 (0); 0 % 10 = 0; 0 + '0' (48) = 48; */
+		  s[i] = (n % 10) + '0'; /* if s[i++] = 0 (0); 0 % 10 = 0; 0 + '0' (48) = 48; */
+			/* printf("s[%d] = %c\n", i, s[i]); */
     }
+		i++;
 	} while ((n /= 10) > 0); /* keep going as long as 'n' is greater than 10 */
 
-	if (sign < 0)
-		s[i++] = '-'; /* or ASCII 45 if you prefer */
-	s[i] = 0; /* because ASCII NULL is 0 */
+	if (sign < 0){
+		s[i] = '-'; /* or ASCII 45 if you prefer */
+		/* printf("s[%d] = %c\n",i, s[i]); */
+		s[i+1] = 0;
+	}
+	else {
+		s[i+1] = 0; /* because ASCII NULL is 0 */
+		/* printf("s[%d] = %c\n",i, s[i]); */
+	}
 	reverse(s); /* because the number was written backwards initially */
 }

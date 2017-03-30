@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../headers/charconv.h"
 /* prototype for itob */
 void itob(int n, char * s, int b); 
 /* 
@@ -18,10 +19,10 @@ void itob(int n, char * s, int b);
 
 int main(void){
 	/* do magic */
-	int input; /* the number from the user to convert */
-	int base; /* the base to convert input into */
+	int * input; /* the number from the user to convert */
+	int * base; /* the base to convert input into */
 	char * output; /* the output string */
-	char again; /* loop again? */
+	char * again; /* loop again? */
 
 	/* allocate some space for the characters */
 	/* currently assumes there's enough space in RAM */
@@ -30,20 +31,22 @@ int main(void){
 	/* and now the numeric inputs */
 	input = (int *) malloc (sizeof(int));
 	base = (int *) malloc (sizeof(int));
-
+	
 	/* set up a loop to keep going until the user exits */
 	for (;;){
-		if (upper(again) != 'Y')
-			break;
 		/* now we print out the fun stuff */
-		printf("This will convert a number into another base.\n"
+		printf("This will convert a number into another base.\n");
 		printf("Please enter an integer:\t");
 		scanf("%d",input); /* captured input */
-		printf("Please enter a base to convert to:\t",base); /* capture new base */
+		printf("Please enter a base to convert to:\t"); 
+		scanf("%d",base); /* captured new base */
 		itob(*input, output, *base); /* convert the things */
-		printf("%d converted to base %d is: %s\n", input, base, output);
+		printf("%d converted to base %d is: %s\n", *input, *base, output);
 		printf("\nWould you like to convert another integer? [Y/N]\n");
-		scanf("%c",again);
+		/* scanf("%1c",again); */
+		if (upperc(scanf("%1c",again)) != 'Y') {
+			break;
+		}
 	}
 	/* free the memory to avoid leaks */
 	free(input);
@@ -56,9 +59,19 @@ int main(void){
 
 void itob(int n, char * s, int b){
 	/* number conversion magic */
+	int i,x; 
 	/* 
 	 * there doesn't appear to be a way to convert by using log(), 
 	 * so I'll most likely need to do some sort of recursive division
 	 * to get the result I'm looking for
 	 */
+	x = i = 0;
+	/* create a loop similar like that in itoa/ex304 */
+	do {
+	/* it's not recursive, but it should work */
+		s[i] = ((x = (n % b)) >= 10) ? (x + 55) : (x + 48);
+		i++;
+	}	while ((n /= b) > 0);
+	/* flip it back around */
+	reverse (s);
 }
