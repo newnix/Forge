@@ -27,27 +27,33 @@ int main(void){
 	/* allocate some space for the characters */
 	/* currently assumes there's enough space in RAM */
 	output = (char *) malloc (128 * sizeof(char)); /* should be more than enough for any int */
-	again = (char *) malloc (sizeof(char));
+	again = (char *) malloc (2 * sizeof(char));
 	/* and now the numeric inputs */
 	input = (int *) malloc (sizeof(int));
 	base = (int *) malloc (sizeof(int));
 	
 	/* set up a loop to keep going until the user exits */
-	for (;;){
+	do{
+	/* removing the \t escape sequence for a single space for readability reasons */
 		/* now we print out the fun stuff */
 		printf("This will convert a number into another base.\n");
-		printf("Please enter an integer:\t");
+		printf("Please enter an integer: ");
 		scanf("%d",input); /* captured input */
-		printf("Please enter a base to convert to:\t"); 
+		printf("Please enter a base to convert to: "); 
 		scanf("%d",base); /* captured new base */
 		itob(*input, output, *base); /* convert the things */
 		printf("%d converted to base %d is: %s\n", *input, *base, output);
-		printf("\nWould you like to convert another integer? [Y/N]\n");
-		/* scanf("%1c",again); */
-		if (upperc(scanf("%1c",again)) != 'Y') {
-			break;
-		}
-	}
+		/* according to malloc(3)'s man page, we may need to bzero() the string */
+		bzero(output,sizeof(output));
+		printf("\nWould you like to convert another integer? [Y/N]");
+		/* 
+		 * Since scanf() returns an int with the number of 
+		 * input items assigned, we can't use it as the test value for 
+		 * whether or not the loop should run again. 
+		 */
+		scanf("%1c",again);
+		printf("*again = %s\n", again);
+	} while (*again != 'Y');
 	/* free the memory to avoid leaks */
 	free(input);
 	free(base);
