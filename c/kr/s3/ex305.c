@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+/* to use some of the custom character conversion functions written */
 #include "../headers/charconv.h"
 /* prototype for itob */
 void itob(int n, char * s, int b); 
@@ -33,10 +33,10 @@ int main(void){
 	base = (int *) malloc (sizeof(int));
 	
 	/* set up a loop to keep going until the user exits */
+	printf("This will convert a number into another base.\n");
 	do{
 	/* removing the \t escape sequence for a single space for readability reasons */
 		/* now we print out the fun stuff */
-		printf("This will convert a number into another base.\n");
 		printf("Please enter an integer: ");
 		scanf("%d",input); /* captured input */
 		printf("Please enter a base to convert to: "); 
@@ -45,15 +45,15 @@ int main(void){
 		printf("%d converted to base %d is: %s\n", *input, *base, output);
 		/* according to malloc(3)'s man page, we may need to bzero() the string */
 		bzero(output,sizeof(output));
-		printf("\nWould you like to convert another integer? [Y/N]");
+		printf("\nWould you like to convert another integer? [Y/N] ");
 		/* 
 		 * Since scanf() returns an int with the number of 
 		 * input items assigned, we can't use it as the test value for 
 		 * whether or not the loop should run again. 
 		 */
-		scanf("%1c",again);
+		scanf(" %1c",again);
 		printf("*again = %s\n", again);
-	} while (*again != 'Y');
+	} while (upperc(*again) == 'Y');
 	/* free the memory to avoid leaks */
 	free(input);
 	free(base);
