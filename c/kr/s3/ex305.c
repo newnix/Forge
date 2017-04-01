@@ -20,7 +20,7 @@ void itob(int n, char * s, int b);
 int main(void){
 	/* do magic */
 	int * input; /* the number from the user to convert */
-	int * base; /* the base to convert input into */
+	unsigned int * base; /* the base to convert input into */
 	char * output; /* the output string */
 	char * again; /* loop again? */
 
@@ -40,7 +40,17 @@ int main(void){
 		printf("Please enter an integer: ");
 		scanf("%d",input); /* captured input */
 		printf("Please enter a base to convert to: "); 
-		scanf("%d",base); /* captured new base */
+		scanf("%u",base); /* captured new base */
+		/* test to see if the user gave us a stupid base, like 1 or 0 */
+		if (*base == 1 || *base == 0) {
+			printf("Base %d is stupid, aborting.\n",*base);
+			/* after scolding the user, free the memory */
+			free(input);
+			free(base);
+			free(again);
+			free(output);
+			return 404;
+		}
 		itob(*input, output, *base); /* convert the things */
 		printf("%d converted to base %d is: %s\n", *input, *base, output);
 		/* according to malloc(3)'s man page, we may need to bzero() the string */
