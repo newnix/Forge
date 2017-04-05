@@ -19,7 +19,7 @@ int main()
 
     // Use the prefix ++ operator
     cout << "Demonstrating prefix ++ operator. \n";
-    for (count = 0; count < 12; count++)
+    for (count = 0; count < 12; ++count)
     {
         first = ++second;
         cout << "First: " << first.getF() << " feet, ";
