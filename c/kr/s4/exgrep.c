@@ -8,7 +8,7 @@
 #define MAXLEN 1000 /* maximum input line length */
 
 /* prototypes */
-int getline(char line[], int max); 
+int get_line(char line[], int max); 
 int strindex(char source[], char searchfor[]);
 
 char pattern[] = "ould"; /* pattern to search for */
@@ -18,7 +18,7 @@ int main(void) {
 	char line[MAXLEN]; /* max length string */
 	int found = 0;
 
-	while (getline(line, MAXLINE) > 0)
+	while (get_line(line, MAXLEN) > 0)
 		if (strindex(line, pattern) >= 0) {
 			printf("%s", line);
 			found++;
@@ -27,7 +27,7 @@ int main(void) {
 }
 
 /* getline: get line into s, return length */
-int getline(char s[], int lim) {
+int get_line(char s[], int lim) {
 	int c, i;
 
 	i = 0;
