@@ -56,6 +56,10 @@ int main(void) {
 		printf("\nWould you like to run again? [y/N] ");
 		scanf(" %c",again);
 		if (upperc(*again) != 'Y') {
+			/* First thing's first, free the malloc()'d memory */
+			free(sstr);
+			free(again);
+			free(input);
 			return found;
 		}
 		else {
