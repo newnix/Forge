@@ -73,6 +73,10 @@ void charclass(char *s) {
 					opstr[j] = s[i];
 					j++;
 					break;
+				case (46): /* this is a '.' */
+					opstr[j] = s[i];
+					j++;
+					break;
 				default:
 					break;
 			}
