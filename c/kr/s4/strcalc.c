@@ -17,13 +17,22 @@ void  charclass(char * s);
 double compute(char *s);
 /* this function verifies the mathematical string is valid */
 void verify(char *s);
+/* make sure that the order of operations is correct, just to be safe */
+void pemdas(char *s);
+/* and ensure we don't let something stupid happen like dividing by 0 */
+void div0(char *s);
 
 int main(void) {
+	char input[MAX];
+
+	printf("Please enter a string to evaluate mathematically: ");
+	scanf("%[^\n]", input);
+	charclass(input);
 	/* do some magic things */
-	return bored;
+	return 0;
 }
 
-void charclass(char *s, int slen) {
+void charclass(char *s) {
 /* 
  * get the values of each character type in the given string
  * then sort them into different types: alpha, num, op, other
@@ -44,23 +53,23 @@ void charclass(char *s, int slen) {
 		}
 		else if (s[i] >= 32 && s[i] <= 47) { 
 			switch (s[i]) {
-				case (42):
+				case (42): /* this is a '*' */
 					opstr[j] = s[i];
 					j++;
 					break;
-				case (43):
+				case (43): /* this is a '+' */
 					opstr[j] = s[i];
 					j++;
 					break;
-				case (47):
+				case (47): /* this is a '/' */
 					opstr[j] = s[i];
 					j++;
 					break;
-				case (45):
+				case (45): /* this is a '-' */
 					opstr[j] = s[i];
 					j++;
 					break;
-				case (32): 
+				case (32): /* this is a space */
 					opstr[j] = s[i];
 					j++;
 					break;
@@ -70,4 +79,18 @@ void charclass(char *s, int slen) {
 		}
 	}
 	verify(opstr);
+}
+
+void verify(char * s) {
+	/* verify that the string entered can be evaluated mathematically */
+	printf("%s\n",s); /* this is just to help visualize the current state of the string */
+	for (i = 0; s[i] != 0; i++) {
+		/* remove consecutive runs of spaces */
+		if (s[i] = 32) { 
+			/* found a space! */
+		}
+		else {
+			/* found a mathematical character we can use */
+		}
+	}
 }
