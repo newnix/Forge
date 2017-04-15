@@ -8,17 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* create a static array to list malloc()'d pointers */
-extern char ptrs[1024][1024]; /* I can't imagine having to track more than that at this time */
+/* maximum size of input */
+#define MAX 1024
 
 /* create a function to determine what class characters are */
 void  charclass(char * s);
 /* and a function for the math, similar to atof() */
 double compute(char *s);
-/* and one to actually isolate the arithmetic expressions, no accounting for parens/braces/brackets */
-void isolateMath(char *s);
-/* create a function to create and allocate pointers, while tracking them in an array */
-ptrlist(char * type);
+/* this function verifies the mathematical string is valid */
+void verify(char *s);
 
 int main(void) {
 	/* do some magic things */
@@ -33,34 +31,43 @@ void charclass(char *s, int slen) {
  * then, build new strings to pass off to other functions
  */
 	
-	/* create int arrays for the assignment of character indexes */
-	int * alpha;
-	int * num;
-	int * op;
-	int * other;
+	/* the only thing we care about are the characters that can be used for basic math */
+	char opstr[MAX]; /* drop the numbers and operators into this string */
+	int i,j; /* string iterators */
 
-	if ((alpha = malloc(sizeof(int))) != NULL) {
-		prtlist(alpha);
+	for (i = j = 0; s[i] != 0; i++) { 
+		/* test each char in the string */
+		if (s[i] >= 48 && s[i] <= 57) {
+			/* The character is a number */
+			opstr[j] = s[i];
+			j++;
+		}
+		else if (s[i] >= 32 && s[i] <= 47) { 
+			switch (s[i]) {
+				case (42):
+					opstr[j] = s[i];
+					j++;
+					break;
+				case (43):
+					opstr[j] = s[i];
+					j++;
+					break;
+				case (47):
+					opstr[j] = s[i];
+					j++;
+					break;
+				case (45):
+					opstr[j] = s[i];
+					j++;
+					break;
+				case (32): 
+					opstr[j] = s[i];
+					j++;
+					break;
+				default:
+					break;
+			}
+		}
 	}
-	else {
-		printf("ERROR: CAN'T ALLOCATE MEMORY FOR *alpha\n");
-	}
-
-	if ((num = malloc(sizeof(int))) != NULL) {
-		ptrlist(num);
-	}
-	else {
-		printf("ERROR: CAN'T ALLOCATE MEMORY FOR *num\n");
-	}
-
-	if ((op = malloc(sizeof(int))) != NULL) {
-		ptrlist(op);
-	}
-	else {
-		printf("ERROR: CAN'T ALLOCATE MEMORY FOR *op\n");
-	}
-
-	if ((other = malloc(sizeof(int))) != NULL) {
-		ptrlist("ERROR: CAN'T ALLOCATE MEMORY FOR *other\n");
-	}
+	verify(opstr);
 }
