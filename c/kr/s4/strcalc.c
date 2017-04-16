@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* maximum size of input */
 #define MAX 1024
@@ -86,15 +87,31 @@ void charclass(char *s) {
 }
 
 void verify(char * s) {
-	/* verify that the string entered can be evaluated mathematically */
+/* verify that the string entered can be evaluated mathematically */
+	/* set up some integer indices */
+	int i, j, len;
+	
 	printf("%s\n",s); /* this is just to help visualize the current state of the string */
-	for (i = 0; s[i] != 0; i++) {
+
+	len = strnlen(s, len);
+
+	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
-		if (s[i] = 32) { 
-			/* found a space! */
-		}
-		else {
-			/* found a mathematical character we can use */
+		if (s[i] = 32 && s[i+1] = 32) { 
+			/* found at least two spaces */
+			/* scan for next non-whitespace character */
+			condense(s, i, j, len);
+			/* this likely wouldn't be the a terribly efficient solution, but it should give the right results */
 		}
 	}
 }
+
+void condense(char * string, int start, int stop, int length) {
+/* shrink the string and recalculate the length */
+	int i; /* string iterator */
+	char c; /* placeholder */
+
+	for (i = 0; i < len; i++) {
+		/* do some things */
+	}
+}	
