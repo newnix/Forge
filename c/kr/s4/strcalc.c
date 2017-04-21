@@ -22,6 +22,10 @@ void verify(char *s);
 void pemdas(char *s);
 /* and ensure we don't let something stupid happen like dividing by 0 */
 void div0(char *s);
+/* test for whitespace characters */
+int isws(char c);
+/* compress runs of whitespace */
+void condense(char * string, int length);
 
 int main(void) {
 	char input[MAX];
@@ -97,21 +101,55 @@ void verify(char * s) {
 
 	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
-		if (s[i] = 32 && s[i+1] = 32) { 
+		if (s[i] == 32 && s[i+1] == 32) { 
 			/* found at least two spaces */
 			/* scan for next non-whitespace character */
-			condense(s, i, j, len);
+			condense(s, len);
 			/* this likely wouldn't be the a terribly efficient solution, but it should give the right results */
 		}
 	}
 }
 
-void condense(char * string, int start, int stop, int length) {
+void condense(char * string, int length) {
 /* shrink the string and recalculate the length */
 	int i; /* string iterator */
-	char c; /* placeholder */
+	int c; /* placeholder */
 
-	for (i = 0; i < len; i++) {
+	for (i = 0; i < length; i++) {
 		/* do some things */
+		if (isws(string[i]) && isws(string[i+1])) { /* got two consecutive whitespace characters */
+			/* record the indices, scan for next non-whitespace character, then compress the string */
+			c = i+1;
+			for (c; (isws(string[c]) != 0) && (c < length); c++) {
+			/* not sure anything needs to be done here */
+			/* since this should basically just set up c as the next non-whitespace character */
+			}
+			i++; /* put the index in place to write over the string */
+			for (i; i <= length; i++) {
+				/* overwrite the string, hopefully including the null byte */
+				string[i] = c; 
+				c++; /* bump c to get to the next index */
+			}
+		}
 	}
+	printf("%s\n",string); /* show me what the string's become */
 }	
+
+int isws(char c) {
+	/* test to see if the given character is a whitespace character */
+	/* returns 0 if it is whitespace, 1 otherwise */
+	switch (c) {
+		case 9: /* this is a horizontal tab, or '\t' */
+			return 0;
+		case 11: /* this is a vertical tab, I'm not sure at all what these are used for */
+			return 0;
+		case 13: /* carriage return, '\r' */
+			return 0;
+		case 10: /* linefeed, creates a new line */
+			return 0;
+		case 32: /* space character */
+			return 0;
+		default: /* not one of the above? not whitespace */
+			return 1;
+	}
+}
