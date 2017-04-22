@@ -25,7 +25,7 @@ void div0(char *s);
 /* test for whitespace characters */
 int isws(char c);
 /* compress runs of whitespace */
-void condense(char * string, int length);
+void condense(char * string, int start, int stop, int length);
 
 int main(void) {
 	char input[MAX];
@@ -97,41 +97,24 @@ void verify(char * s) {
 	
 	printf("%s\n",s); /* this is just to help visualize the current state of the string */
 
-	len = strnlen(s, len);
+	len = strlen(s);
 
 	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
 		if (s[i] == 32 && s[i+1] == 32) { 
+			for (j = i+1; (isws(s[j]) != 0) && (s[j] != 0); j++) {
+				/* keep incrementing j until we get to the next non-whitespace char */
 			/* found at least two spaces */
 			/* scan for next non-whitespace character */
-			condense(s, len);
+			condense(s, i, j, len);
 			/* this likely wouldn't be the a terribly efficient solution, but it should give the right results */
+			}
 		}
 	}
 }
 
-void condense(char * string, int length) {
+void condense(char * string, int start, int stop, int length) {
 /* shrink the string and recalculate the length */
-	int i; /* string iterator */
-	int c; /* placeholder */
-
-	for (i = 0; i < length; i++) {
-		/* do some things */
-		if (isws(string[i]) && isws(string[i+1])) { /* got two consecutive whitespace characters */
-			/* record the indices, scan for next non-whitespace character, then compress the string */
-			c = i+1;
-			for (c; (isws(string[c]) != 0) && (c < length); c++) {
-			/* not sure anything needs to be done here */
-			/* since this should basically just set up c as the next non-whitespace character */
-			}
-			i++; /* put the index in place to write over the string */
-			for (i; i <= length; i++) {
-				/* overwrite the string, hopefully including the null byte */
-				string[i] = c; 
-				c++; /* bump c to get to the next index */
-			}
-		}
-	}
 	printf("%s\n",string); /* show me what the string's become */
 }	
 
