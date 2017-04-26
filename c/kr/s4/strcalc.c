@@ -101,7 +101,7 @@ void verify(char * s) {
 
 	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
-		if (s[i] == 32 && s[i+1] == 32) { 
+		if (isws(s[i]) && isws(s[i+1])) { 
 			for (j = i+1; (isws(s[j]) != 0) && (s[j] != 0); j++) {
 				/* keep incrementing j until we get to the next non-whitespace char */
 			/* found at least two spaces */
@@ -114,7 +114,19 @@ void verify(char * s) {
 }
 
 void condense(char * string, int start, int stop, int length) {
-/* shrink the string and recalculate the length */
+	/* shrink the string and recalculate the length */
+	char * substr;
+	if ((substr = (char *) malloc(len - stop + 1)) == NULL) {
+		printf("ERR: COULDN'T ALLOCATE MEMORY FOR *substr\n");
+		return 3;
+	}
+	for (;;) { 
+		/* copy contents of *string into *substr */
+	}
+	for (;;) { 
+		/* copy it back, null out the remainder */
+		/* then set len to i where s[i] = 0 */
+	}
 	printf("%s\n",string); /* show me what the string's become */
 }	
 
