@@ -30,13 +30,21 @@ int condense(char * string, int start, int stop, int length);
 /* make the visual condensation of the string easier to grasp, convert all whitespace to ASCII 32 */
 void spcws(char *s); 
 
+/* 
+ * for ease of use, create an external int
+ * this way the calculated length of the string can be 
+ * adjusted on the fly through any function
+ */
+int len;
+
 int main(void) {
 	char input[MAX];
 
 	printf("Please enter a string to evaluate mathematically: ");
 	scanf("%[^\n]", input);
 	charclass(input);
-	/* do some magic things */
+	/* at this point, we should be able to print out the result (will be a double when finished) */
+	printf("%s\n", input);
 	return 0;
 }
 
@@ -96,19 +104,19 @@ void charclass(char *s) {
 void verify(char * s) {
 /* verify that the string entered can be evaluated mathematically */
 	/* set up some integer indices */
-	int i, j, len;
+	int i, j;
 	
 	printf("%s\n",s); /* this is just to help visualize the current state of the string */
 	/* next swap all whitespace with spaces */
 	spcws(s); 
-	printf("%n\n",s); /* show me what it looks like now */
-
+	printf("%s\n",s); /* show me what it looks like now */
+	/* initialize 'len' */
 	len = strlen(s);
 
 	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
 		if (isws(s[i]) && isws(s[i+1])) { 
-			for (j = i+1; (isws(s[j]) != 0) && (s[j] != 0); j++) {
+			for (j = i+1; (isws(s[j]) == 0) && (s[j] != 0); j++) {
 				/* keep incrementing j until we get to the next non-whitespace char */
 				;
 			}
@@ -137,6 +145,8 @@ int condense(char * string, int start, int stop, int length) {
 	for (i = start,j = 0; substr[j] != 0; i++,j++) { 
 		string[i] = substr[j];
 	}
+	/* change the tracked string length after writing *substr to *string */
+	len -= start + stop;
 	printf("%s\n",string); /* show me what the string's become */
 	/* don't forget to release that memory! */
 	free(substr);
