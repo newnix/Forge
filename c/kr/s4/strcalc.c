@@ -25,7 +25,10 @@ void div0(char *s);
 /* test for whitespace characters */
 int isws(char c);
 /* compress runs of whitespace */
-void condense(char * string, int start, int stop, int length);
+/* changed to int to help catch OOM situations */
+int condense(char * string, int start, int stop, int length);
+/* make the visual condensation of the string easier to grasp, convert all whitespace to ASCII 32 */
+void spcws(char *s); 
 
 int main(void) {
 	char input[MAX];
@@ -96,6 +99,9 @@ void verify(char * s) {
 	int i, j, len;
 	
 	printf("%s\n",s); /* this is just to help visualize the current state of the string */
+	/* next swap all whitespace with spaces */
+	spcws(s); 
+	printf("%n\n",s); /* show me what it looks like now */
 
 	len = strlen(s);
 
@@ -104,30 +110,37 @@ void verify(char * s) {
 		if (isws(s[i]) && isws(s[i+1])) { 
 			for (j = i+1; (isws(s[j]) != 0) && (s[j] != 0); j++) {
 				/* keep incrementing j until we get to the next non-whitespace char */
+				;
+			}
 			/* found at least two spaces */
 			/* scan for next non-whitespace character */
-			condense(s, i, j, len);
+			condense(s, (i+1), j, len);
 			/* this likely wouldn't be the a terribly efficient solution, but it should give the right results */
-			}
 		}
 	}
 }
 
-void condense(char * string, int start, int stop, int length) {
+int condense(char * string, int start, int stop, int length) {
 	/* shrink the string and recalculate the length */
 	char * substr;
-	if ((substr = (char *) malloc(len - stop + 1)) == NULL) {
+	int i, j; /* string iterators */
+	if ((substr = (char *) calloc(1,(length - stop + 1) * sizeof(char))) == NULL) {
 		printf("ERR: COULDN'T ALLOCATE MEMORY FOR *substr\n");
 		return 3;
 	}
-	for (;;) { 
+
+	for (i = stop,j = 0; string[i] != 0; i++,j++) { 
 		/* copy contents of *string into *substr */
+		substr[j] = string[i]; 
 	}
-	for (;;) { 
-		/* copy it back, null out the remainder */
-		/* then set len to i where s[i] = 0 */
+	/* now let's copy the contents of *substr back into the original string */
+	for (i = start,j = 0; substr[j] != 0; i++,j++) { 
+		string[i] = substr[j];
 	}
 	printf("%s\n",string); /* show me what the string's become */
+	/* don't forget to release that memory! */
+	free(substr);
+	return 0;
 }	
 
 int isws(char c) {
@@ -146,5 +159,28 @@ int isws(char c) {
 			return 0;
 		default: /* not one of the above? not whitespace */
 			return 1;
+	}
+}
+
+void spcws(char * s) {
+	int i; /* run over the string */
+	
+	for (i = 0; s[i] != 0; i++) { 
+		switch (s[i]) { 
+			case 9: /* '\t' */
+				s[i] = 32; /* turned it into a space */
+				break;
+			case 11: /* vertical tab */
+				s[i] = 32;
+				break;
+			case 13: /* carriage return */
+				s[i] = 32;
+				break;
+			case 10: /* line feed */
+				s[i] = 32;
+				break;
+			default: /* if it's whitespace, it's a space (probably) */
+				break;
+		}
 	}
 }
