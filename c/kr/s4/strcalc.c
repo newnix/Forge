@@ -48,6 +48,12 @@ int main(void) {
 	return 0;
 }
 
+double compute(char *s) { 
+	/* here we actually compute the value of the string given to us */
+	double result; /* running total */
+	return result;
+}
+
 void charclass(char *s) {
 /* 
  * get the values of each character type in the given string
@@ -115,7 +121,7 @@ void verify(char * s) {
 
 	for (i = 0; i < len; i++) {
 		/* remove consecutive runs of spaces */
-		if (isws(s[i]) && isws(s[i+1])) { 
+		if ((isws(s[i]) == 0) && (isws(s[i+1]) == 0)) { 
 			for (j = i+1; (isws(s[j]) == 0) && (s[j] != 0); j++) {
 				/* keep incrementing j until we get to the next non-whitespace char */
 				;
