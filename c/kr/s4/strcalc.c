@@ -55,6 +55,34 @@ int main(void) {
 
 double compute(char *s) { 
 	/* here we actually compute the value of the string given to us */
+	/* first we get an idea of the size of these numbers */
+	int i,j; /* string iterator */
+	int len, decimal;
+	char * substr; /* string to hold the numbers being used */
+
+	len = strlen(s);
+
+	for (i = 0; i < len; i++) { 
+		if ((s[i] >= 48 && s[i] <= 57) || (s[i] = 46)) { 
+			/* found a digit or a decimal point */
+			/* allocate space for the digit string */
+			if (s[i] == 46) {
+				/* found a decimal point, only one is valid */
+				decimal = 1;
+			}
+			if ((substr = (char *) calloc(1,len * sizeof(char))) == NULL) {
+				printf("ERR: COULDN'T ALLOCATE SPACE FOR DIGIT STRING\n");
+				return 3;
+			}
+			for (j = i; (s[j] <= 57 && s[j] >= 48); j++) { 
+				if (s[j] == 46 && decimal == 1) { 
+					/* found an invalid second decimal point e.g. (10.0.0) */
+					printf("Found invalid numerical string, bailing out\n");
+					free(substr);
+					return 9;
+				}
+		}
+	}
 	return result;
 }
 
