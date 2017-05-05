@@ -36,6 +36,11 @@ void spcws(char *s);
  * adjusted on the fly through any function
  */
 int len;
+/* 
+ * For simplicity of tracking, use an external double as the running total 
+ * of the string as evaluated as a double
+ */
+double result; 
 
 int main(void) {
 	char input[MAX];
@@ -50,7 +55,6 @@ int main(void) {
 
 double compute(char *s) { 
 	/* here we actually compute the value of the string given to us */
-	double result; /* running total */
 	return result;
 }
 

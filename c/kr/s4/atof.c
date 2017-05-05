@@ -32,7 +32,7 @@ int main(void) {
 		free(input);
 	}
 	else {
-		printf("%s converted to a string is %2.f\n",input,output);
+		printf("%s converted to a double is %2.f\n",input,output);
 		free(input);
 	}
 
