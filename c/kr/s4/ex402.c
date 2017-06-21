@@ -56,4 +56,6 @@ int go_again(char c) {
 }
 
 /* return the value of the given string as a floating point number */
-
+double sci_atof(char *s) {
+	/* magic things */
+}
