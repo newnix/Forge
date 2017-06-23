@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include "../headers/charconv.h"
 
 #define MAXSTR 1024
 
@@ -58,4 +60,18 @@ int go_again(char c) {
 /* return the value of the given string as a floating point number */
 double sci_atof(char *s) {
 	/* magic things */
+	int idex; /* intex of the char array */
+
+	/* run through the string to find a usable expression */
+	for (idex = 0; s[idex] != 0; idex++) {
+		/* more magic, maybe a switch statement? filter out the non-usable characters */
+		if (isnum(s[idex])) {
+			base = buildbase(s[idex]);
+		}
+		else if (upperc(s[idex]) == 'E') {
+		/* found the power exp; break this loop to calculate the second part */
+			powr = setpow(s[idex+1]);
+			break;
+		}
+		return (pow(base,pow));
 }
