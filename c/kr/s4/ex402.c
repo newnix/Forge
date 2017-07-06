@@ -70,7 +70,7 @@ double sci_atof(char *s) {
 		}
 		else if (upperc(s[idex]) == 'E') {
 		/* found the power exp; break this loop to calculate the second part */
-			powr = setpow(s,s[idex+1]);
+			powr = setpow(s,s[idex]);
 			break;
 		}
 		return (pow(base,powr));
@@ -79,11 +79,13 @@ double sci_atof(char *s) {
 /* get the power that the previous expression's being raised to */
 double 
 setpow(char *s, int i) {
+	int j; /* create a counter so we can verify the correct size of the power value */
+	j = 1; /* set to 1 instead of 0 to account for the offset in the string being passed */
 	/* this should be a number, usually an integer, so we'll not process a '.' or the following numbers */
-	for (i; (s[i] != 0 && s[i] != '.'); i++) {
+	for (j; (s[i+j] != 0 && s[i+j] != '.'); j++) {
 		/* get the integer representation of whatever value is being passed */
 		/* but ensure we don't try doing anything supid like trying to parse a non-digit char */
-		curpow += isdigit(s[i]) ? s[i] - 48 : 0;
+		curpow += isdigit(s[i]) ? s[i] - 48 : 0; /* if we have a digit, add it to the power value */
 	}
 	return curpow;
 }
