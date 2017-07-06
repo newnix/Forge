@@ -65,13 +65,25 @@ double sci_atof(char *s) {
 	/* run through the string to find a usable expression */
 	for (idex = 0; s[idex] != 0; idex++) {
 		/* more magic, maybe a switch statement? filter out the non-usable characters */
-		if (isnum(s[idex])) {
+	  if (isnum(s[idex])) {
 			base = buildbase(s[idex]);
 		}
 		else if (upperc(s[idex]) == 'E') {
 		/* found the power exp; break this loop to calculate the second part */
-			powr = setpow(s[idex+1]);
+			powr = setpow(s,s[idex+1]);
 			break;
 		}
-		return (pow(base,pow));
+		return (pow(base,powr));
+}
+
+/* get the power that the previous expression's being raised to */
+double 
+setpow(char *s, int i) {
+	/* this should be a number, usually an integer, so we'll not process a '.' or the following numbers */
+	for (i; (s[i] != 0 && s[i] != '.'); i++) {
+		/* get the integer representation of whatever value is being passed */
+		/* but ensure we don't try doing anything supid like trying to parse a non-digit char */
+		curpow += isdigit(s[i]) ? s[i] - 48 : 0;
+	}
+	return curpow;
 }
