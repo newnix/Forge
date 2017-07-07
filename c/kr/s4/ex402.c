@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 #include "../headers/charconv.h"
 
 #define MAXSTR 1024
@@ -17,6 +18,8 @@
 double sci_atof(char *s);
 /* prototype to determine if we run the program again */
 int go_again(char c);
+/* prototype for determining the value of the power */
+double setpow(char *s, int i, int powsize);
 
 int main(void) {
 
@@ -44,7 +47,7 @@ int main(void) {
 
 /* returns 1 if wanting to go again, 0 otherwise */
 int go_again(char c) {
-	switch upperc(c) {
+	switch (upperc(c)) {
 		case 'Y':
 			return 1;
 			break;
@@ -60,7 +63,8 @@ int go_again(char c) {
 /* return the value of the given string as a floating point number */
 double sci_atof(char *s) {
 	/* magic things */
-	int idex; /* intex of the char array */
+	int idex, powsize; /* intex of the char array */
+	double base, powr;
 
 	/* run through the string to find a usable expression */
 	for (idex = 0; s[idex] != 0; idex++) {
@@ -70,22 +74,27 @@ double sci_atof(char *s) {
 		}
 		else if (upperc(s[idex]) == 'E') {
 		/* found the power exp; break this loop to calculate the second part */
-			powr = setpow(s,s[idex]);
+			powsize = strlen(s) - idex;
+			powr = setpow(s,idex,powsize);
 			break;
 		}
-		return (pow(base,powr));
+	}
+	return (pow(base,powr));
 }
 
 /* get the power that the previous expression's being raised to */
 double 
-setpow(char *s, int i) {
+setpow(char *s, int i, int powsize) {
 	int j; /* create a counter so we can verify the correct size of the power value */
-	j = 1; /* set to 1 instead of 0 to account for the offset in the string being passed */
+	int rpow; 
+	double curpow;
+	j = 0; /* ensure that the expression gets raised to the right power */
 	/* this should be a number, usually an integer, so we'll not process a '.' or the following numbers */
 	for (j; (s[i+j] != 0 && s[i+j] != '.'); j++) {
 		/* get the integer representation of whatever value is being passed */
 		/* but ensure we don't try doing anything supid like trying to parse a non-digit char */
-		curpow += isdigit(s[i]) ? s[i] - 48 : 0; /* if we have a digit, add it to the power value */
+		rpow=pow(10,powsize-j);
+		curpow += isdigit(s[i]) ? ((s[i] - 48) * rpow) : 0; /* if we have a digit, add it to the power value */
 	}
 	return curpow;
 }

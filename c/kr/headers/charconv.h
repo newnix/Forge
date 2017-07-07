@@ -10,6 +10,8 @@
 /* if tabstop hasn't been defined, make it 4 */
 #ifndef TABSTOP
 #define TABSTOP 4
+/* this is necessary per #ifndef preprocessor directive */
+#endif
 
 /* convert characters to uppercase */
 /* this version only works on one char at a time */
