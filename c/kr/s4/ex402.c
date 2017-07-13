@@ -20,6 +20,10 @@ double sci_atof(char *s);
 int go_again(char c);
 /* prototype for determining the value of the power */
 double setpow(char *s, int i, int powsize);
+/* build the base expression */
+void buildbase(char c);
+/* calculate the value of the base expression */
+double convbase(char *base); 
 
 int main(void) {
 
@@ -30,6 +34,7 @@ int main(void) {
 	/* create a placeholder for the resulting value */
 	double sciflt;
 	/* let the user know what's going on */
+	again = '\0';
 	do {
 		/* first, ensure we have an empty buffer */
 		memset(sci,0,1024);
@@ -65,12 +70,13 @@ double sci_atof(char *s) {
 	/* magic things */
 	int idex, powsize; /* intex of the char array */
 	double base, powr;
+	base = powr = 0;
 
 	/* run through the string to find a usable expression */
 	for (idex = 0; s[idex] != 0; idex++) {
 		/* more magic, maybe a switch statement? filter out the non-usable characters */
 	  if (isnum(s[idex])) {
-			base = buildbase(s[idex]);
+			base += buildbase(s[idex]);
 		}
 		else if (upperc(s[idex]) == 'E') {
 		/* found the power exp; break this loop to calculate the second part */
@@ -89,6 +95,7 @@ setpow(char *s, int i, int powsize) {
 	int rpow; 
 	double curpow;
 	j = 0; /* ensure that the expression gets raised to the right power */
+	curpow = 0;
 	/* this should be a number, usually an integer, so we'll not process a '.' or the following numbers */
 	for (j; (s[i+j] != 0 && s[i+j] != '.'); j++) {
 		/* get the integer representation of whatever value is being passed */
