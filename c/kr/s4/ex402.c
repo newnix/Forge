@@ -21,7 +21,7 @@ int go_again(char c);
 /* prototype for determining the value of the power */
 double setpow(char *s, int i, int powsize);
 /* build the base expression */
-void buildbase(char c);
+double buildbase(char c);
 /* calculate the value of the base expression */
 double convbase(char *base); 
 
@@ -51,7 +51,8 @@ int main(void) {
 }
 
 /* returns 1 if wanting to go again, 0 otherwise */
-int go_again(char c) {
+int
+go_again(char c) {
 	switch (upperc(c)) {
 		case 'Y':
 			return 1;
@@ -66,7 +67,8 @@ int go_again(char c) {
 }
 
 /* return the value of the given string as a floating point number */
-double sci_atof(char *s) {
+double
+sci_atof(char *s) {
 	/* magic things */
 	int idex, powsize; /* intex of the char array */
 	double base, powr;
@@ -74,9 +76,7 @@ double sci_atof(char *s) {
 
 	/* run through the string to find a usable expression */
 	for (idex = 0; s[idex] != 0; idex++) {
-		/* more magic, maybe a switch statement? filter out the non-usable characters */
 	  if (isnum(s[idex])) {
-			base += buildbase(s[idex]);
 		}
 		else if (upperc(s[idex]) == 'E') {
 		/* found the power exp; break this loop to calculate the second part */
@@ -90,18 +90,27 @@ double sci_atof(char *s) {
 
 /* get the power that the previous expression's being raised to */
 double 
-setpow(char *s, int i, int powsize) {
+setpow(char *power, int index, int powsize) {
 	int j; /* create a counter so we can verify the correct size of the power value */
 	int rpow; 
 	double curpow;
 	j = 0; /* ensure that the expression gets raised to the right power */
 	curpow = 0;
 	/* this should be a number, usually an integer, so we'll not process a '.' or the following numbers */
-	for (j; (s[i+j] != 0 && s[i+j] != '.'); j++) {
+	for (j; (power[index+j] != 0 && power[index+j] != '.'); j++) {
 		/* get the integer representation of whatever value is being passed */
 		/* but ensure we don't try doing anything supid like trying to parse a non-digit char */
 		rpow=pow(10,powsize-j);
-		curpow += isdigit(s[i]) ? ((s[i] - 48) * rpow) : 0; /* if we have a digit, add it to the power value */
+		curpow += isdigit(power[i]) ? ((power[i] - 48) * rpow) : 0; /* if we have a digit, add it to the power value */
 	}
 	return curpow;
+}
+
+/* build the base value of the expression (everything before the exponent) */
+double
+buildbase(char baseval, int power, int powerval) {
+	double baseconv; /* conversion of char to double */
+	baseconv = isdigit(baseval) ? (baseval - 48) : 0; /* assuming it's a digit, we take the numeric value of it */
+	/* at this point, the value should be computed */
+	return baseconv;
 }
