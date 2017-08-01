@@ -12,12 +12,13 @@ extern char *__progname;
 /* dump self to file */
 int dump_source(void);
 /* dump self to stdout instead */
-int print_self(void);
+int print_source(void);
 
 int
 main(int argc, char *argv[]) { 
 	
 	int ch;
+	unsigned short int dflag, hflag;
 
 	while ((ch = getopt(argc, argv, "dh")) != -1 )
 		switch (ch) { 
@@ -26,6 +27,7 @@ main(int argc, char *argv[]) {
 				break;
 			case 'h':
 				hflag = 1;
+				(void)fprint(stderr, "usage: %s [-dh]\n",__progname);
 				break;
 			default:
 				(void)fprint(stderr, "usage: %s [-dh]\n",__progname);
@@ -45,10 +47,19 @@ main(int argc, char *argv[]) {
 
 int
 dump_source(void) {
-	FILE *sources, source2;
-	filename = "fopen.c";
+	FILE *sources, *source2;
+	char *filename = "fopen.c";
+	char *filedump = "fopen.dup";
 	
 	sources = fopen(filename, "r");
-	source2 = fopen("fopen.dup", "a");
+	source2 = fopen(filedump, "a");
 
+	while read(sources,line) {
+		fprint(filedup,"%s\n",line);
+	}
+	if (fclose(sources) && fclose(source2)) { 
+		return 0;
+	}
+	else
+		return -1;
 }
