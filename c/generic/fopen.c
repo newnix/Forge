@@ -73,7 +73,7 @@ dump_source(void) {
 int
 print_sources(void) { 
 	FILE *sources;
-	char *filename = "/home/mvoight/forge/c/generic/fopen.c";
+	char *filename = "fopen.c";
 	char *filechunk;
 
 	sources = fopen(filename, "r");
