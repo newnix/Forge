@@ -12,13 +12,15 @@ extern char *__progname;
 /* dump self to file */
 int dump_source(void);
 /* dump self to stdout instead */
-int print_source(void);
+int print_sources(void);
 
 int
 main(int argc, char *argv[]) { 
 	
 	int ch;
 	unsigned short int dflag, hflag;
+
+	dflag = hflag = 0;
 
 	while ((ch = getopt(argc, argv, "dh")) != -1 )
 		switch (ch) { 
@@ -32,19 +34,13 @@ main(int argc, char *argv[]) {
 			default:
 				(void)fprintf(stderr, "usage: %s [-dh]\n",__progname);
 				return 0;
-			}
-		argv += optind;
+	}
+	argv += optind;
 
-		if (dflag)
-			dump_source;
-		else
-			print_source;
-
-		if (fclose(stdout))
-			err(1, "stdout");
-		return -2;
-
-		return 0;
+	if (dflag == 1)
+		return (int)dump_source();
+	else
+		return (int)print_sources();
 }
 
 int
@@ -58,8 +54,11 @@ dump_source(void) {
 	source2 = fopen(filedump, "a");
 
 	if ( sources != NULL && source2 != NULL ) { 
-		while (fread(filechunk, sizeof(char), 32, sources)) {
-			fwrite(filechunk, sizeof(char), 1, source2);
+		if ((filechunk = malloc(sizeof(char) * 32)) != NULL) {
+			while (fread(filechunk, sizeof(char), 32, sources)) {
+				fwrite(filechunk, sizeof(char), 32, source2);
+				bzero(filechunk,32);
+			}
 		}
 		if (fclose(sources) && fclose(source2)) { 
 			return 0;
@@ -74,14 +73,17 @@ dump_source(void) {
 int
 print_sources(void) { 
 	FILE *sources;
-	char *filename = "fopen.c";
+	char *filename = "/home/mvoight/forge/c/generic/fopen.c";
 	char *filechunk;
 
-	sources = (filename, "r");
+	sources = fopen(filename, "r");
 
 	if ( sources != NULL ) { 
-		while (fread(filechunk, sizeof(char), 32, sources)) { 
-			(void)fprintf(stdout, "%s", filechunk);
+		if ((filechunk = malloc(sizeof(char) * 32)) != NULL) {
+			while (fread(filechunk, sizeof(char), 32, sources)) { 
+				(void)fprintf(stdout, "%s", filechunk);
+					bzero(filechunk,32);
+			}
 		}
 		fclose(sources);
 	}
