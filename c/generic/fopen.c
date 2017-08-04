@@ -60,6 +60,8 @@ dump_source(void) {
 				bzero(filechunk,32);
 			}
 		}
+		free (filechunk); /* return the memory we took */
+
 		if (fclose(sources) && fclose(source2)) { 
 			return 0;
 		}
@@ -85,6 +87,7 @@ print_sources(void) {
 					bzero(filechunk,32);
 			}
 		}
+		free(filechunk);
 		fclose(sources);
 	}
 	else
