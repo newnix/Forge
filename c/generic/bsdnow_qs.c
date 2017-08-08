@@ -33,10 +33,11 @@ void ask_questions(char *name);
 void cook_args(char *argv[]);
 void cook_buf(FILE *);
 /* dump the questions to a file instead */
-void dump_questions(void, const char *dumpname); 
+void dump_questions(const char *dumpname); 
+void print_help(void);
 void raw_args(char *argv[]);
 int restart(char *again);
-void upper(char *s);
+char * upper(char *s);
 
 int
 main(int argc, char *argv[]) { 
@@ -45,36 +46,48 @@ main(int argc, char *argv[]) {
 	short int totop,ch;
 	unsigned short int dflag, fflag, hflag, aflag, bflag;
 
+	/* actually need space to hold the name of a host */
+	if ((name = malloc(sizeof(char) * 64)) == NULL) { 
+		(void)fprintf(stderr,"Could not allocate space for input buffer\n");
+	}
+
 	dflag = fflag = hflag = aflag = bflag = 0;
 	while ((ch = getopt(argc, argv, "abdhf:")) != -1 ) {
-		switch ch {
+		switch (ch){
 			case 'a':
+				aflag = 1;
 				break;
 			case 'b':
+				bflag = 1;
 				break;
-			case 'c':
+			case 'd':
+				dflag = 1;
 				break;
 			case 'f':
+				fflag = 1;
 				break;
 			case 'h':
+				print_help();
 				return 0;
 			default:
-				return 0;
+			/* if no flag is specified, run interactively */
+				break;
 		}
 	}
 
 	do {
 		/* here's where the questions go */
 		printf("Please enter the host's name [ Allan/Benedict ]: ");
-		scanf("%[^\n]",*name);
-		upper(name);
-		ask_questions(name);
+		scanf("%[^\n]",name);
+		ask_questions(upper(name));
 
 		/* ask if we want to exit */
 		printf("Would you like to run through the interview again? [ y/N ]: ");
-		scanf("%[^\n]",*again);
+		scanf("%[^\n]",again);
 		totop = restart(again);
+		bzero(name,64);
 	} while (totop != 0);
+	free(name);
 	return 0;
 }
 
@@ -104,7 +117,7 @@ ask_questions(char *name) {
 }
 
 void
-dump_questions(void, const char *dumpname) { 
+dump_questions(const char *dumpname) { 
 	int q;
 	FILE *filename;
 	
@@ -126,6 +139,16 @@ dump_questions(void, const char *dumpname) {
 	fclose(filename);
 }
 
+void
+print_help(void) { 
+	(void)fprintf(stdout,"Usage: %s [-abdhf]\n",__progname);
+	(void)fprintf(stdout,"\t-a\tRun through Allan's questions\n");
+	(void)fprintf(stdout,"\t-b\tRun through Benedict's questions\n");
+	(void)fprintf(stdout,"\t-d\tDump questions to a file, defaults to \"questions.txt\"\n");
+	(void)fprintf(stdout,"\t-f\tIn conjunction with \'-d\', specifies a new filename\n");
+	(void)fprintf(stdout,"\t-h\tPrint this message\n");
+}
+
 int
 restart(char *again) {
 	/* simply determine if the user wants to go through another iteration */
@@ -140,7 +163,7 @@ restart(char *again) {
 	}
 }
 
-void
+char *
 upper(char *s) {
 	int index;
 	int diff;
@@ -150,4 +173,5 @@ upper(char *s) {
 	for (index = 0; s[index] != 0; index++) { 
 		s[index] = (s[index] <= 'z' && s[index] >= 'a') ? (s[index] - diff) : s[index];
 	}
+	return s;
 }
