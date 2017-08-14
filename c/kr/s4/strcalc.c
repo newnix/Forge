@@ -42,7 +42,8 @@ int len;
  */
 double result; 
 
-int main(void) {
+int 
+main(void) {
 	char input[MAX];
 
 	printf("Please enter a string to evaluate mathematically: ");
@@ -53,7 +54,8 @@ int main(void) {
 	return 0;
 }
 
-double compute(char *s) { 
+double 
+compute(char *s) { 
 	/* here we actually compute the value of the string given to us */
 	/* first we get an idea of the size of these numbers */
 	int i,j; /* string iterator */
@@ -86,7 +88,8 @@ double compute(char *s) {
 	return result;
 }
 
-void charclass(char *s) {
+void 
+charclass(char *s) {
 /* 
  * get the values of each character type in the given string
  * then sort them into different types: alpha, num, op, other
@@ -139,7 +142,8 @@ void charclass(char *s) {
 	verify(opstr);
 }
 
-void verify(char * s) {
+void 
+verify(char * s) {
 /* verify that the string entered can be evaluated mathematically */
 	/* set up some integer indices */
 	int i, j;
@@ -166,7 +170,8 @@ void verify(char * s) {
 	}
 }
 
-int condense(char * string, int start, int stop, int length) {
+int 
+condense(char * string, int start, int stop, int length) {
 	/* shrink the string and recalculate the length */
 	char * substr;
 	int i, j; /* string iterators */
@@ -191,7 +196,8 @@ int condense(char * string, int start, int stop, int length) {
 	return 0;
 }	
 
-int isws(char c) {
+int 
+isws(char c) {
 	/* test to see if the given character is a whitespace character */
 	/* returns 0 if it is whitespace, 1 otherwise */
 	switch (c) {
@@ -210,24 +216,27 @@ int isws(char c) {
 	}
 }
 
-void spcws(char * s) {
+/* swap all whitespace characters with a space, ASCII 32 */
+void 
+spcws(char * s) {
 	int i; /* run over the string */
 	
+	/* swap whitespace chars with spaces */
 	for (i = 0; s[i] != 0; i++) { 
-		switch (s[i]) { 
-			case 9: /* '\t' */
-				s[i] = 32; /* turned it into a space */
-				break;
-			case 11: /* vertical tab */
+		switch (s[i]) {
+			case 9 :
 				s[i] = 32;
 				break;
-			case 13: /* carriage return */
+			case 10 :
 				s[i] = 32;
 				break;
-			case 10: /* line feed */
+			case 11 :
 				s[i] = 32;
 				break;
-			default: /* if it's whitespace, it's a space (probably) */
+			case 13 :
+				s[i] = 32;
+				break;
+			default :
 				break;
 		}
 	}
