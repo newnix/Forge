@@ -35,12 +35,12 @@ void spcws(char *s);
  * this way the calculated length of the string can be 
  * adjusted on the fly through any function
  */
-int len;
+extern int len;
 /* 
  * For simplicity of tracking, use an external double as the running total 
  * of the string as evaluated as a double
  */
-double result; 
+extern double result; 
 
 int 
 main(void) {
@@ -60,6 +60,7 @@ compute(char *s) {
 	/* first we get an idea of the size of these numbers */
 	int i,j; /* string iterator */
 	int len, decimal;
+	double result;
 	char * substr; /* string to hold the numbers being used */
 
 	len = strlen(s);
@@ -83,6 +84,7 @@ compute(char *s) {
 					free(substr);
 					return 9;
 				}
+			}
 		}
 	}
 	return result;
@@ -146,7 +148,7 @@ void
 verify(char * s) {
 /* verify that the string entered can be evaluated mathematically */
 	/* set up some integer indices */
-	int i, j;
+	int i, j, len;
 	
 	printf("%s\n",s); /* this is just to help visualize the current state of the string */
 	/* next swap all whitespace with spaces */
@@ -175,6 +177,10 @@ condense(char * string, int start, int stop, int length) {
 	/* shrink the string and recalculate the length */
 	char * substr;
 	int i, j; /* string iterators */
+	int len; 
+
+	len = length;
+
 	if ((substr = (char *) calloc(1,(length - stop + 1) * sizeof(char))) == NULL) {
 		printf("ERR: COULDN'T ALLOCATE MEMORY FOR *substr\n");
 		return 3;
