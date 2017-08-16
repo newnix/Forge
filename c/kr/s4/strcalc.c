@@ -50,7 +50,7 @@ main(void) {
 	scanf("%[^\n]", input);
 	charclass(input);
 	/* at this point, we should be able to print out the result (will be a double when finished) */
-	printf("%s\n", input);
+	printf("%d\n", input);
 	return 0;
 }
 
