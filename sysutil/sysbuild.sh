@@ -12,9 +12,10 @@ else
 	buildjobs=1
 fi
 logfile="sysbuild.log"
+all=1
 upload=0
 
-run(){
+build_all(){
 	## actually do everything
 	test_logfile
 	echo -e "System build starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
@@ -47,6 +48,52 @@ run(){
 	exit 0
 }
 
+build_kernel(){
+	## Only build the kernel 
+	echo -e "Buildkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
+	make -j ${buildjobs} buildkernel -C /usr/src
+	echo -e "Buildkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
+
+	if [ $upload -ne 0 ]
+	then 
+		upload
+	fi
+	exit 0
+}
+
+build_world(){
+	## Only build world
+	echo -e "Buildworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
+	make -j ${buildjobs} buildworld -C /usr/src
+	echo -e "Buildworld completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
+
+	if [ $upload -ne 0 ]
+	then
+		upload
+	fi
+	exit 0
+}
+
+run(){
+	## Do the things
+	if [ -z $world ]
+	then 
+		if [ -z $kernel ]
+		then
+			if [ -z $all ]
+			then
+				## This should never be reached
+				echo -e "Something went wrong, verify your flags and re-run with \'sh -vxc sysbuild.sh\'"
+			else
+				build_all
+			fi
+		else
+			build_kernel
+		fi
+	else
+		build_world
+	fi
+}
 
 test_logfile(){
 	## verify that we can actually write to the given directory 
@@ -58,19 +105,22 @@ test_logfile(){
 	else 
 		:>${logfile}
 		cat /etc/make.conf >> ${logfile}
-		echo -e "\t\t==================================================\t\t" >> ${logfile}
-		echo -e "\t\t\tUSING\t\"-j${buildjobs}\" TO BUILD"
-		echo -e "\t\t==================================================\t\t" >> ${logfile}
+		echo -e "\t\t===========================================================================\t\t" >> ${logfile}
+		echo -e "\t\t\t\tUSING\t\"-j${buildjobs}\" TO BUILD" >> ${logfile}
+		echo -e "\t\t===========================================================================\t\t" >> ${logfile}
 	fi
 }
 
 usage(){
 	## Help information
 	echo -e "sysbuild.sh: record times for system builds"
+	echo -e "\t-a\tBuild world, kernel, and install them (default)" 
 	echo -e "\t-h\tThis message"
 	echo -e "\t-j\tBuild jobs passed to make, defaults to the number of cpus (current setting: ${buildjobs})"
+	echo -e "\t-k\tOnly build the kernel (useful for testing a new KERNCONF)"
 	echo -e "\t-f\tSet custom logfile, defaults to ${logfile}"
 	echo -e "\t-u\tUpload resulting file to ix.io (requires curl)"
+	echo -e "\t-w\tBuild world only"
 	exit 0
 }
 
@@ -79,20 +129,34 @@ upload(){
 	cat ${logfile} | curl -F 'f:1=<-' ix.io
 }
 
-while getopts ":h?j:f:u:" opt;
+while getopts ":h?j:f:uakw" opt;
 do 
 	case $opt in
+		a)
+			all=1
+		;;
+		f)
+			logfile="$OPTARG"
+		;;
 		h)
 			usage;
 		;;
 		j)
 			buildjobs="$OPTARG"
 		;;
-		f)
-			logfile="$OPTARG"
+		k)
+			kernel=1
+			all=0
 		;;
 		u)
 			upload=1;
+		;;
+		w)
+			world=1
+			all=0
+		;;
+		'?')
+			usage;
 		;;
 		\?)
 			usage;
