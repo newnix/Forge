@@ -28,8 +28,7 @@ int
 main(void){
 	/* This is where the magic happens */
 	print_battery();
-	(void)fprintf(stdout,"running example code from `man 3 sysctl` \n");
-	man3_example();
+	/* (void)fprintf(stdout,"running example code from `man 3 sysctl` \n"); */
 	return 0;
 }
 
@@ -50,12 +49,13 @@ print_battery(void){
 
 	/* this should get the mib we want to make the sumsequent calls even faster */
 	len = 4;
-	sysctlnametomib("hw.acpi.battery.life", mib2, &len);
+	if ( sysctlnametomib("hw.acpi.battery.life", mib2, &len) == -1 ) 
+		perror("sysctl");
 	(void)fprintf(stdout,"sysctlnametomib(\"hw.acpi.battery.life\", mib, &len) returned the following data\n&len = %lu\n",len);
 	/*for (i = 0; i < 4; i++) {
 		(void)fprintf(stdout,"mib[%d] = %lu\n",i,mib[i]);
 	}*/
-	if (sysctl(mib2, &len, &value, &len, NULL, 0) == -1) {
+	if (sysctl(mib2, &len, NULL, &len, NULL, 0) == -1) {
 		perror("sysctl");
 		(void)fprintf(stderr,"ERROR: could not retrieve data for OID \"hw.acpi.battery_life\"\n");
 	}
