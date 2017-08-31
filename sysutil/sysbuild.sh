@@ -21,15 +21,35 @@ build_all(){
 	echo -e "System build starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Buildworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	make -j ${buildjobs} buildworld -C /usr/src
+	if [ $? -ne 0 ]
+	then 
+		echo -e "Build target failed, see backlog for more information."
+		exit 3
+	fi
 	echo -e "Buildworld completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Buildkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	make -j ${buildjobs} buildkernel -C /usr/src
+	if [ $? -ne 0 ]
+	then 
+		echo -e "Build target failed, see backlog for more information."
+		exit 3
+	fi
 	echo -e "Buildkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Installkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	make installkernel -C /usr/src
+	if [ $? -ne 0 ]
+	then 
+		echo -e "Build target failed, see backlog for more information."
+		exit 3
+	fi
 	echo -e "Installkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Installworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	make installworld -C /usr/src
+	if [ $? -ne 0 ]
+	then 
+		echo -e "Build target failed, see backlog for more information."
+		exit 3
+	fi
 	echo -e "Installworld completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 
 	## Special step on DragonFly to help prevent system breakage
