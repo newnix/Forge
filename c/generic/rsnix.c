@@ -62,16 +62,50 @@ main(int argc, char *argv[]) {
 	char *directory; /* -d flag */
 	char *label; /* -l flag */
 	char *url; /* -U flag */
-	char flags; /* 0000 0000 */
+	unsigned short int flags; /* 0000 0000 */
+	int i;
+
+	if ((directory = calloc(1024, sizeof(char))) == NULL) {
+		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
+	}
+
+	if ((directory = calloc(1024, sizeof(char))) == NULL) {
+		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
+	}
+
+	if ((directory = calloc(1024, sizeof(char))) == NULL) {
+		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
+	}
 
 	while ((ch = getopt(argc, argv, "hd:l:uU:ar")) != -1) {
 		switch (ch){
 			case 'h':
 				return(print_help());
 			case 'a':
-				flags &= 0x01;
+				flags ^= 0x01;
 				break;
 			case 'd'
+				flags ^= 0x02
 				strncpy(directory, optarg, 1024);
 				break;
+			case 'l':
+				flags ^= 0x04;
+				strncpy(label, optarg, 1024);
+				break;
+			case 'u':
+				flags ^= 0x08;
+				break;
+			case 'U':
+				flags ^= 0x10;
+				strncpy(url, optarg, 1024);
+				break;
+			case 'r':
+				flags ^= 0x20;
+				break;
+			default:
+				break;
+		}
+	}
+
+	cook_args();
 }
