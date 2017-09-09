@@ -30,6 +30,7 @@
  *  DAMAGE.
  */ 
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sqlite3.h>
@@ -79,18 +80,18 @@ main(int argc, char *argv[]) {
 				flags ^= 0x04
 			case 'D': /* specify a download derictory */
 				flags ^= 0x08
-				strncpy(directory, optarg, 1024);
+				assert(strlcpy(directory, optarg, 1024) < 1025);
 				break;
 			case 'L': /* set a label for the entry */
 				flags ^= 0x10;
-				strncpy(label, optarg, 1024);
+				assert(strlcpy(label, optarg, 1024) < 1025);
 				break;
 			case 'u': /* update feeds */
 				flags ^= 0x20;
 				break;
 			case 'U': /* the url of the feed */
 				flags ^= 0x30;
-				strncpy(url, optarg, 1024);
+				assert(strlcpy(url, optarg, 1024) < 1025);
 				break;
 			case 'r': /* remove a feed */
 				flags ^= 0x40;
@@ -133,12 +134,28 @@ int update_subs(){
 
 int add_sub(){
 	/* this should get some inforamation from the user in an interactive fashion to populate the subscription table */
+	/*
+	 * Essentially:
+	 * insert into subscriptions (title, label, url, directory) values ();
+	 */
 }
 
 int rm_sub(){
 	/* interactively remove a sub from the table */
+	/*
+	 * Essentially:
+	 * drop ${target} from subscriptions;
+	 */
 }
 
 int display_subs(){
 	/* show the user what feeds they've subscribed to */
+	/* 
+	 * Essentially: 
+	 * select title, label, episodes, new from subscriptions;
+	 */
 }
+
+int change_sub(){
+	/* Interactively allow the user to change the data in the database */
+	/* once values are taken, essentially run an update on the database */
