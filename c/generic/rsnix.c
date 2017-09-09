@@ -47,15 +47,29 @@ extern char *__progname;
  * This project is using the port www/rssroll as reference on how to work with this sort of data.
  */
 
+/* 
+ * Set of macros that create more easily remembered than their hex values
+ */
+
+#define ADD 0x01
+#define DOWNLOAD 0x02
+#define LIST 0x04
+#define SETDIR 0x08
+#define SETLABEL 0x10
+#define UPDATE 0x20
+#define SETURL 0x30
+#define REMOVE 0x40
+
 int display_subs(void);
 void fetch_subs(void);
 void cook_args(void);
-int update_subs(int feed_ids[]);
+int update_subs();
 int add_sub(char *sub_name, char *sub_url);
 int rm_sub(int feed_id);
 int change_sub(int feed_id, char *old_name, char *new_name);
 int build_dlq(int feed_ids[]);
 int save_files(FILE *filename, char *dl_link);
+int print_help(void);
 
 int 
 main(int argc, char *argv[]) {
@@ -63,6 +77,7 @@ main(int argc, char *argv[]) {
 	char directory[1024]; /* -d flag */
 	char label[1024]; /* -l flag */
 	char url[1024]; /* -U flag */
+	char ch; /* flag options */
 	unsigned short int flags; /* 0000 0000 */
 	int i;
 
@@ -77,9 +92,9 @@ main(int argc, char *argv[]) {
 				flags ^= 0x02;
 				break;
 			case 'l': /* list currently tracked rss feeds */
-				flags ^= 0x04
+				flags ^= 0x04;
 			case 'D': /* specify a download derictory */
-				flags ^= 0x08
+				flags ^= 0x08;
 				assert(strlcpy(directory, optarg, 1024) < 1025);
 				break;
 			case 'L': /* set a label for the entry */
@@ -102,13 +117,18 @@ main(int argc, char *argv[]) {
 	}
 
 	cook_args();
+	return 0;
 }
 
-void cook_args(){
+void
+cook_args(){
+	unsigned short int comp; /* simple way of tracking values for bitmap comparisons */
 	/* use the info with flags to determine what needs to be done */
+	
 }
 
-int print_help(){
+int
+print_help(){
 	/* print the helpful message for the users */
 	(void)fprintf(stdout,"%s:\t Track and download RSS feeds.\n",__progname);
 	(void)fprintf(stdout,"\t-a\tAdd a new RSS entry\n");
@@ -119,20 +139,23 @@ int print_help(){
 	(void)fprintf(stdout,"\t-D\tDownload new entries to the given directory\n");
 	(void)fprintf(stdout,"\t-L\tGive an entry a short label, for ease of use\n");
 	(void)fprintf(stdout,"\t-U\tSet the RSS entry's URL\n");
-	(void)fprintf(stdout,"\s");
+	(void)fprintf(stdout,"\n");
 	return 0;
 }
 
-void fetch_subs(){ 
+void
+fetch_subs(){ 
 	/* some libcurl stuff goes here to run through the tracked feeds and download episodes */
 	/* each subscription should be able to go in its own directory for the sake of users organization preferences */
 }
 
-int update_subs(){
+int
+update_subs(){
 	/* this should be handed off to libcurl to download new manifests of rss feeds */
 }
 
-int add_sub(){
+int
+add_sub(char *sub_name, char *sub_url){
 	/* this should get some inforamation from the user in an interactive fashion to populate the subscription table */
 	/*
 	 * Essentially:
@@ -140,7 +163,8 @@ int add_sub(){
 	 */
 }
 
-int rm_sub(){
+int
+rm_sub(int feed_id){
 	/* interactively remove a sub from the table */
 	/*
 	 * Essentially:
@@ -148,7 +172,8 @@ int rm_sub(){
 	 */
 }
 
-int display_subs(){
+int
+display_subs(){
 	/* show the user what feeds they've subscribed to */
 	/* 
 	 * Essentially: 
@@ -156,6 +181,29 @@ int display_subs(){
 	 */
 }
 
-int change_sub(){
+int
+change_sub(int feed_id, char *old_name, char *new_name){
 	/* Interactively allow the user to change the data in the database */
 	/* once values are taken, essentially run an update on the database */
+}
+
+int
+build_dlq(int *feed_ids){
+	/* this will compile a list of downloads for the given list of feds to work with */
+	/* should return the number of downloads completed */
+}
+
+int
+save_files(FILE *filename, char *dl_link){
+	/* this is meant to be called by build_dlq(), ideally in multiple threads or processes to maximize bandwidth utilization */
+}
+
+void
+interactive_mode(){
+	/* 
+	 * This should basically act as a looped main(), 
+	 * allowing the user to go through different operations without exiting
+	 * This is only meant to run if there were no flags specified on the command-line.
+	 * This may eventually be modified to use ncurses instead of raw text 
+	 */
+}
