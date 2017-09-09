@@ -59,48 +59,41 @@ int save_files(FILE *filename, char *dl_link);
 int 
 main(int argc, char *argv[]) {
 	/* Get things started */
-	char *directory; /* -d flag */
-	char *label; /* -l flag */
-	char *url; /* -U flag */
+	char directory[1024]; /* -d flag */
+	char label[1024]; /* -l flag */
+	char url[1024]; /* -U flag */
 	unsigned short int flags; /* 0000 0000 */
 	int i;
 
-	if ((directory = calloc(1024, sizeof(char))) == NULL) {
-		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
-	}
-
-	if ((directory = calloc(1024, sizeof(char))) == NULL) {
-		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
-	}
-
-	if ((directory = calloc(1024, sizeof(char))) == NULL) {
-		fprintf(stderr,"ERR: TROUBLE ASSIGNING MEMORY");
-	}
-
-	while ((ch = getopt(argc, argv, "hd:l:uU:ar")) != -1) {
+	while ((ch = getopt(argc, argv, "hdD:lL:uU:ar")) != -1) {
 		switch (ch){
-			case 'h':
+			case 'h': /* ask for help */
 				return(print_help());
-			case 'a':
+			case 'a': /* add an entry */
 				flags ^= 0x01;
 				break;
-			case 'd'
-				flags ^= 0x02
+			case 'd': /* download new entries */
+				flags ^= 0x02;
+				break;
+			case 'l': /* list currently tracked rss feeds */
+				flags ^= 0x04
+			case 'D': /* specify a download derictory */
+				flags ^= 0x08
 				strncpy(directory, optarg, 1024);
 				break;
-			case 'l':
-				flags ^= 0x04;
+			case 'L': /* set a label for the entry */
+				flags ^= 0x10;
 				strncpy(label, optarg, 1024);
 				break;
-			case 'u':
-				flags ^= 0x08;
+			case 'u': /* update feeds */
+				flags ^= 0x20;
 				break;
-			case 'U':
-				flags ^= 0x10;
+			case 'U': /* the url of the feed */
+				flags ^= 0x30;
 				strncpy(url, optarg, 1024);
 				break;
-			case 'r':
-				flags ^= 0x20;
+			case 'r': /* remove a feed */
+				flags ^= 0x40;
 				break;
 			default:
 				break;
@@ -108,4 +101,44 @@ main(int argc, char *argv[]) {
 	}
 
 	cook_args();
+}
+
+void cook_args(){
+	/* use the info with flags to determine what needs to be done */
+}
+
+int print_help(){
+	/* print the helpful message for the users */
+	(void)fprintf(stdout,"%s:\t Track and download RSS feeds.\n",__progname);
+	(void)fprintf(stdout,"\t-a\tAdd a new RSS entry\n");
+	(void)fprintf(stdout,"\t-d\tDownload RSS updates\n");
+	(void)fprintf(stdout,"\t-l\tList currently tracked RSS feeds\n");
+	(void)fprintf(stdout,"\t-u\tUpdate tracked RSS feeds\n");
+	(void)fprintf(stdout,"\t-r\tRemove a tracked RSS feed\n");
+	(void)fprintf(stdout,"\t-D\tDownload new entries to the given directory\n");
+	(void)fprintf(stdout,"\t-L\tGive an entry a short label, for ease of use\n");
+	(void)fprintf(stdout,"\t-U\tSet the RSS entry's URL\n");
+	(void)fprintf(stdout,"\s");
+	return 0;
+}
+
+void fetch_subs(){ 
+	/* some libcurl stuff goes here to run through the tracked feeds and download episodes */
+	/* each subscription should be able to go in its own directory for the sake of users organization preferences */
+}
+
+int update_subs(){
+	/* this should be handed off to libcurl to download new manifests of rss feeds */
+}
+
+int add_sub(){
+	/* this should get some inforamation from the user in an interactive fashion to populate the subscription table */
+}
+
+int rm_sub(){
+	/* interactively remove a sub from the table */
+}
+
+int display_subs(){
+	/* show the user what feeds they've subscribed to */
 }
