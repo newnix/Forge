@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sqlite3.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <curl/curl.h>
@@ -59,10 +60,11 @@ extern char *__progname;
 #define UPDATE 0x20
 #define SETURL 0x30
 #define REMOVE 0x40
+#define CHANGE 0x50
 
 int display_subs(void);
 void fetch_subs(void);
-void cook_args(void);
+void cook_args(unsigned short int flags, char *directory, char *label, char *url);
 int update_subs();
 int add_sub(char *sub_name, char *sub_url);
 int rm_sub(int feed_id);
@@ -78,52 +80,70 @@ main(int argc, char *argv[]) {
 	char label[1024]; /* -l flag */
 	char url[1024]; /* -U flag */
 	char ch; /* flag options */
-	unsigned short int flags; /* 0000 0000 */
+	unsigned int flags; /* 0000 0000 */
 	int i;
 
-	while ((ch = getopt(argc, argv, "hdD:lL:uU:ar")) != -1) {
+  flags = 0;
+	while ((ch = getopt(argc, argv, "hdD:lL:uU:acr")) != -1) {
 		switch (ch){
 			case 'h': /* ask for help */
 				return(print_help());
 			case 'a': /* add an entry */
-				flags ^= 0x01;
+				flags ^= 1;
 				break;
+      case 'c': /* modify an existing entry in the table */
+        flags ^= CHANGE;
+        printf("Current value of flags: %G, %u\n",flags,flags);
+        break;
 			case 'd': /* download new entries */
-				flags ^= 0x02;
+				flags ^= 2;
 				break;
 			case 'l': /* list currently tracked rss feeds */
-				flags ^= 0x04;
+				flags ^= 4;
 			case 'D': /* specify a download derictory */
-				flags ^= 0x08;
+				flags ^= 8;
 				assert(strlcpy(directory, optarg, 1024) < 1025);
 				break;
 			case 'L': /* set a label for the entry */
-				flags ^= 0x10;
+				flags ^= 16;
 				assert(strlcpy(label, optarg, 1024) < 1025);
 				break;
 			case 'u': /* update feeds */
-				flags ^= 0x20;
+				flags ^= 32;
 				break;
 			case 'U': /* the url of the feed */
-				flags ^= 0x30;
+				flags ^= 64;
 				assert(strlcpy(url, optarg, 1024) < 1025);
 				break;
 			case 'r': /* remove a feed */
-				flags ^= 0x40;
+				flags ^= 128;
 				break;
 			default:
 				break;
 		}
 	}
 
-	cook_args();
+	cook_args(flags, directory, label, url);
 	return 0;
 }
 
 void
-cook_args(){
+cook_args(unsigned short int flags, char *directory, char *label, char *url){
 	unsigned short int comp; /* simple way of tracking values for bitmap comparisons */
 	/* use the info with flags to determine what needs to be done */
+  /* the only incompatible flags are -r && -a, as well as the modification command -C */
+  if ((flags & ADD ) && (flags & REMOVE)){
+    (void)fprintf(stderr,"%s: -a, -r, and -c are mutually exclusive flags\n",__progname);
+    exit(1);
+  }
+  if ((flags & ADD) && (flags & CHANGE)){
+    (void)fprintf(stderr,"%s: -a, -r, and -c are mutually exclusive flags\n",__progname);
+    exit(1);
+  }
+  if ((flags & REMOVE) && (flags & CHANGE)){
+    (void)fprintf(stderr,"%s: -a, -r, and -c are mutually exclusive flags\n",__progname);
+    exit(1);
+  }
 	
 }
 

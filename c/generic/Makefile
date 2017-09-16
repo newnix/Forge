@@ -1,9 +1,14 @@
-NAME = interview
-SRC = bsdnow_qs.c
+NAME = rsnix
+SRC = rsnix.c
 
-CFLAGS = -fPIC -Os 
+CFLAGS = -fPIC -Oz -fstack-protector-all -fstack-protector-strong -fpic -fpie -fPIE -pie
 LDFLAGS = -static -z relro -z now -z combreloc
-CC = cc
+CC = clang-devel
+INCLUDE = -I/usr/include -I/usr/local/include
+LIBS = -L/usr/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib -gssapi_krb5 -lk5crypto -lcom_err -lz -lkrb5 -lc -lxml
+
+DESTDIR = /home/architect/
+PREFIX = bin/c/
 
 all: options ${NAME}
 
@@ -12,10 +17,12 @@ ${NAME}:
 	@${CC} ${SRC} -o $@ ${LDFLAGS}
 
 options:
-	@echo ${SRC} build options:
-	@echo "CFLAGS  = ${CFLAGS}"
-	@echo	"LDFLAGS = ${LDFLAGS}"
-	@echo	"CC      = ${CC}"
+	@echo "${SRC} build options:"
+	@echo "CFLAGS   = ${CFLAGS}"
+	@echo	"LDFLAGS  = ${LDFLAGS}"
+	@echo	"CC       = ${CC}"
+	@echo "INCLUDES = ${INCLUDE}"
+	@echo "LIBS     = ${LIBS}"
 
 clean:
 	@echo Cleaning...
