@@ -52,15 +52,15 @@ extern char *__progname;
  * Set of macros that create more easily remembered than their hex values
  */
 
-#define ADD 0x01
-#define DOWNLOAD 0x02
-#define LIST 0x04
-#define SETDIR 0x08
-#define SETLABEL 0x10
-#define UPDATE 0x20
-#define SETURL 0x30
-#define REMOVE 0x40
-#define CHANGE 0x50
+#define ADD 1
+#define DOWNLOAD 2
+#define LIST 4
+#define SETDIR 8
+#define SETLABEL 16
+#define UPDATE 32
+#define SETURL 64
+#define REMOVE 128
+#define CHANGE 256
 
 int display_subs(void);
 void fetch_subs(void);
@@ -89,34 +89,34 @@ main(int argc, char *argv[]) {
 			case 'h': /* ask for help */
 				return(print_help());
 			case 'a': /* add an entry */
-				flags ^= 1;
+				flags ^= ADD;
 				break;
       case 'c': /* modify an existing entry in the table */
         flags ^= CHANGE;
         printf("Current value of flags: %G, %u\n",flags,flags);
         break;
 			case 'd': /* download new entries */
-				flags ^= 2;
+				flags ^= DOWNLOAD;
 				break;
 			case 'l': /* list currently tracked rss feeds */
-				flags ^= 4;
+				flags ^= LIST;
 			case 'D': /* specify a download derictory */
-				flags ^= 8;
+				flags ^= SETDIR;
 				assert(strlcpy(directory, optarg, 1024) < 1025);
 				break;
 			case 'L': /* set a label for the entry */
-				flags ^= 16;
+				flags ^= SETLABEL;
 				assert(strlcpy(label, optarg, 1024) < 1025);
 				break;
 			case 'u': /* update feeds */
-				flags ^= 32;
+				flags ^= UPDATE;
 				break;
 			case 'U': /* the url of the feed */
-				flags ^= 64;
+				flags ^= SETURL;
 				assert(strlcpy(url, optarg, 1024) < 1025);
 				break;
 			case 'r': /* remove a feed */
-				flags ^= 128;
+				flags ^= REMOVE;
 				break;
 			default:
 				break;
