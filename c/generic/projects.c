@@ -175,6 +175,7 @@ db_init(const char *dbname) {
 			(void)fprintf(stderr,"Failed to open a connection to %s, ret:%d\n",dbname,ret);
 			break;
 		}
+		sqlite3_close(taskdb);
 	} while (1 < 0);
 	return 0;
 }

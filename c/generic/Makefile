@@ -2,12 +2,12 @@ NAME = rsnix
 SRC = rsnix.c
 
 CFLAGS = -fPIC -Oz -fstack-protector-all -fstack-protector-strong -fpic -fpie -fPIE -pie
-LDFLAGS = -static -z relro -z now -z combreloc
+LDFLAGS = -z relro -z now -z combreloc
 CC = clang-devel
 INCLUDE = -I/usr/include -I/usr/local/include
-LIBS = -L/usr/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib -gssapi_krb5 -lk5crypto -lcom_err -lz -lkrb5 -lc -lxml
+LIBS = -L/usr/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib -gssapi_krb5 -lk5crypto -lcom_err -lz -lkrb5 -lc -lxml2 -lsqlite3
 
-DESTDIR = /home/architect/
+DESTDIR = /home/mvoight/
 PREFIX = bin/c/
 
 all: options ${NAME}
@@ -26,6 +26,7 @@ options:
 
 clean:
 	@echo Cleaning...
+	@unlink ${NAME}
 	@echo "No temp files to clean"
 
 install:
@@ -37,6 +38,6 @@ install:
 
 uninstall:
 	@echo Removing executable from system
-	@rm -f ${DESTDIR}${PREFIX}${NAME}
+	@unlink ${DESTDIR}${PREFIX}${NAME}
 
 .PHONY: all options clean install uninstall
