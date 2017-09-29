@@ -46,14 +46,25 @@
  */
 
 extern char *__progname;
+/* task database */
+static sqlite3* taskdb;
+/* debug help */
+int debug = 0;
 
 void run_help(void);
-
+int db_reinit(void);
+int db_init(const char *dbname);
+int db_destroy(const char *dbname);
+int task_add(char *name, char *desc, char *due, char *priority);
+/* This can probably be done better with structs, but I'm not sure how to set that up yet */
+int task_upd(int task, char *old_desc, char *old_due, char *old_priority, char *new_desc, char *new_due, char *new_priority);
+int task_del(int task);
+int task_list(int limit); /* default action */
 
 int
-main(char argc, char *argv[]) {
+main(int argc, char *argv[]) {
 	/* create a couple of flags */
-	unsigned short int aflag, eflag, kflag, nflag, pflag, rflag, uflag;
+	unsigned short int aflag, eflag, kflag, lflag, nflag, pflag, rflag, uflag;
 	char entry_name[32];
 	char entry_desc[1024];
 	char entry_priority[32];
@@ -61,9 +72,10 @@ main(char argc, char *argv[]) {
 	char ch;
 	
 	/* initialize to 0 */
-	aflag = eflag = kflag = nflag = pflag = rflag = uflag = entry_indx = 0;
+	aflag = eflag = kflag = lflag = nflag = pflag = rflag = uflag = entry_indx = 0;
+	taskdb = NULL;
 
-	while ((ch = getopt(argc, argv, "aep:r:u:nkh")) != -1) {
+	while ((ch = getopt(argc, argv, "aep:r:u:nklh")) != -1) {
 		switch (ch) {
 			case 'a':
 				aflag = 1;
@@ -77,11 +89,11 @@ main(char argc, char *argv[]) {
 				break;
 			case 'r':
 				rflag = 1;
-				entry_indx = optarg;
+				entry_indx = (int)optarg;
 				break;
 			case 'u':
 				uflag = 1;
-				entry_indx = optarg;
+				entry_indx = (int)optarg;
 				break;
 			case 'n':
 				nflag = 1;
@@ -100,12 +112,25 @@ main(char argc, char *argv[]) {
 	/* Check for some incompatible flags */
 	if ((aflag == 1) && (rflag == 1)) {
 		(void)fprintf(stderr,"ERR: a and r are mutually exclusive\n");
-		exit(-1);
+		return(2);
 	}
 	if ((rflag == 1) && (uflag == 1)) {
 		(void)fprintf(stderr,"ERR: u and r are mutually exclusive\n");
-		exit(-1);
+		return(2);
 	}
+	if ((uflag == 1) && (aflag == 1)) {
+		(void)fprintf(stderr,"ERR: a and u are mutually exclusive\n");
+		return(2);
+	}
+	if ((kflag == 1) && (nflag == 1)) {
+		(void)fprintf(stdout,"WARN: re-initializing task database, you will lose any existing tasks\n");
+		db_reinit();
+	}
+	if (kflag == 1) 
+		db_destroy("test");
+	
+	if (nflag == 1)
+		db_init("test");
 
 	return 0;
 }
@@ -124,4 +149,44 @@ run_help(void){
  (void)fprintf(stdout,"\t\t-u\tUpdate a given entry\n");
  (void)fprintf(stdout,"\t\t-h\tThis text\n");
  (void)fprintf(stdout,"\tExample:\n\t\t%s -a -e\n",__progname);
+}
+
+int
+db_reinit(void) {
+	/* kill and rebuild the task database */
+	db_destroy("test");
+	db_init("test");
+	return 0;
+}
+
+int
+db_init(const char *dbname) {
+	/* create the task database */
+	int ret; /* check for return codes */
+	(void)fprintf(stdout,"This is where we initialise %s\n",dbname);
+	do {
+		/* start the engine */
+		if (ret = sqlite3_initialize()) {
+			(void)fprintf(stderr,"Failed to initialize sqlite3 lib, ret:%d\n",ret);
+			break;
+		}
+		/* open a db connection */
+		if (ret = sqlite3_open(dbname, &taskdb)) {
+			(void)fprintf(stderr,"Failed to open a connection to %s, ret:%d\n",dbname,ret);
+			break;
+		}
+	} while (1 < 0);
+	return 0;
+}
+
+int
+db_destroy(const char *dbname) {
+	/* destroy the database */
+	/* this should ALWAYS be interactive */
+	if (unlink(dbname) == 0) {
+		return 0;
+	} else {
+		(void)fprintf(stderr,"ERR: Could not delete %s!\n",dbname);
+		return 2;
+	}
 }
