@@ -204,11 +204,12 @@ db_destroy(const char *dbname) {
 	/* destroy the database */
 	/* this should ALWAYS be interactive */
 	char *directory;
+	const char dirsep = '/';
 
 	/* get the directory name, to use an absolute path */
 	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
 		strncpy(directory, dirname(dbname), 1024);
-		strncat(directory, '/', 1);
+		strncat(directory, &dirsep, 1);
 		strncat(directory, dbname, sizeof(dbname));
 	}
 		(void)fprintf(stdout,"new string: %s\n",directory);
