@@ -32,11 +32,14 @@
  */
 
 #include <ctype.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sqlite3.h>
 #include <unistd.h>
+
+#include "../kr/headers/charconv.h"
 
 /*
  * This program will maintain and modify a "TODO" database, 
@@ -52,9 +55,10 @@ static sqlite3* taskdb;
 int debug = 0;
 
 void run_help(void);
-int db_reinit(void);
+int db_reinit(const char *dbname);
 int db_init(const char *dbname);
 int db_destroy(const char *dbname);
+int task_add_interactive(const char *dbname);
 int task_add(char *name, char *desc, char *due, char *priority);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
 int task_upd(int task, char *old_desc, char *old_due, char *old_priority, char *new_desc, char *new_due, char *new_priority);
@@ -68,12 +72,14 @@ main(int argc, char *argv[]) {
 	char entry_name[32];
 	char entry_desc[1024];
 	char entry_priority[32];
+	const char *dbname;
 	int entry_indx;
 	char ch;
 	
 	/* initialize to 0 */
 	aflag = eflag = kflag = lflag = nflag = pflag = rflag = uflag = entry_indx = 0;
 	taskdb = NULL;
+	dbname = "test";
 
 	while ((ch = getopt(argc, argv, "aep:r:u:nklh")) != -1) {
 		switch (ch) {
@@ -124,13 +130,21 @@ main(int argc, char *argv[]) {
 	}
 	if ((kflag == 1) && (nflag == 1)) {
 		(void)fprintf(stdout,"WARN: re-initializing task database, you will lose any existing tasks\n");
-		db_reinit();
+		db_reinit(dbname);
 	}
+
+	/*
+	 * These need to be moved into a more 
+	 * comprehensive argument parser.
+	 */
 	if (kflag == 1) 
-		db_destroy("test");
+		db_destroy(dbname);
 	
 	if (nflag == 1)
-		db_init("test");
+		db_init(dbname);
+
+	if (aflag == 1)
+		task_add_interactive(dbname);	
 
 	return 0;
 }
@@ -140,7 +154,7 @@ run_help(void){
  (void)fprintf(stdout,"%s:\n",__progname);
  (void)fprintf(stdout,"\t%s [-aenkh] | [-r id] | [-u id]  [-p priority]\n\n",__progname);
  (void)fprintf(stdout,"\tSimple command-line task list manager.\n");
- (void)fprintf(stdout,"\t\t-a\tCreate a new entry\n");
+ (void)fprintf(stdout,"\t\t-a\tCreate a new entry (or more)\n");
  (void)fprintf(stdout,"\t\t-e\tMark a created or updated entry as \"URGENT\"\n");
  (void)fprintf(stdout,"\t\t-k\tDestroy the currently existing database\n");
  (void)fprintf(stdout,"\t\t-n\tCreate a new database (existing database will be destroyed)\n");
@@ -152,10 +166,10 @@ run_help(void){
 }
 
 int
-db_reinit(void) {
+db_reinit(const char *dbname) {
 	/* kill and rebuild the task database */
-	db_destroy("test");
-	db_init("test");
+	db_destroy(dbname);
+	db_init(dbname);
 	return 0;
 }
 
@@ -163,15 +177,20 @@ int
 db_init(const char *dbname) {
 	/* create the task database */
 	int ret; /* check for return codes */
-	(void)fprintf(stdout,"This is where we initialise %s\n",dbname);
+	char *directory; /* I don't anticipate the directories being longer than this */
+	(void)fprintf(stdout,"This is where we initialise task database:%s\n",dbname);
 	do {
 		/* start the engine */
-		if (ret = sqlite3_initialize()) {
+		if ((ret = sqlite3_initialize()) != 0) {
 			(void)fprintf(stderr,"Failed to initialize sqlite3 lib, ret:%d\n",ret);
 			break;
 		}
+		if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
+			strncpy(directory, dirname(dbname), 1024);
+			(void)fprintf(stdout,"Task database at %s/%s has been sucessfully created.\n", directory,  dbname);
+		}
 		/* open a db connection */
-		if (ret = sqlite3_open(dbname, &taskdb)) {
+		if ((ret = sqlite3_open(dbname, &taskdb)) != 0) {
 			(void)fprintf(stderr,"Failed to open a connection to %s, ret:%d\n",dbname,ret);
 			break;
 		}
@@ -184,10 +203,51 @@ int
 db_destroy(const char *dbname) {
 	/* destroy the database */
 	/* this should ALWAYS be interactive */
-	if (unlink(dbname) == 0) {
+	char *directory;
+
+	/* get the directory name, to use an absolute path */
+	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
+		strncpy(directory, dirname(dbname), 1024);
+		strncat(directory, '/', 1);
+		strncat(directory, dbname, sizeof(dbname));
+	}
+		(void)fprintf(stdout,"new string: %s\n",directory);
+	if (unlink(directory) == 0) {
 		return 0;
 	} else {
-		(void)fprintf(stderr,"ERR: Could not delete %s!\n",dbname);
+		(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
 		return 2;
 	}
+}
+
+int
+task_add_interactive(const char *dbname) {
+	/*
+	 * This function should provide an interactive propmt 
+	 * to add new entries to the task database. This function 
+	 * should recturn the number of tasks added. 
+	 */
+	char retry;
+	sqlite3_open(dbname, &taskdb);
+	
+	/* verify that we didn't get a NULL value */
+	do {
+		/* ensure that 'retry' is initialized */
+		retry = 0;
+		sqlite3_open(dbname, &taskdb);
+		if (taskdb == NULL) {
+			fprintf(stdout,"Could not connect to database \"%s\", retry connection? [Y/n]\n",dbname);
+			scanf("%c",&retry);
+			/* try to ensure the input stream is clean */
+			fpurge(stdin);
+		}
+	} while ((taskdb == NULL) || (upperc(retry) != 'N'));
+
+	/* 
+	 * Close the database connection if it exists 
+	 */
+	if (taskdb != NULL) {
+		sqlite3_close(taskdb);
+	}
+	return 0;
 }
