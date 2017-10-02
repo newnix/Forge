@@ -79,7 +79,7 @@ main(int argc, char *argv[]) {
 	/* initialize to 0 */
 	aflag = eflag = kflag = lflag = nflag = pflag = rflag = uflag = entry_indx = 0;
 	taskdb = NULL;
-	dbname = "test";
+	dbname = "test.db";
 
 	while ((ch = getopt(argc, argv, "aep:r:u:nklh")) != -1) {
 		switch (ch) {
@@ -212,8 +212,8 @@ db_destroy(const char *dbname) {
 		strncat(directory, &dirsep, 1);
 		strncat(directory, dbname, sizeof(dbname));
 	}
-		(void)fprintf(stdout,"new string: %s\n",directory);
 	if (unlink(directory) == 0) {
+		fprintf(stdout,"Successfully deleted database %s\n",directory);
 		return 0;
 	} else {
 		(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
@@ -242,7 +242,7 @@ task_add_interactive(const char *dbname) {
 			/* try to ensure the input stream is clean */
 			fpurge(stdin);
 		}
-	} while ((taskdb == NULL) || (upperc(retry) != 'N'));
+	} while ((taskdb == NULL) && (upperc(retry) != 'N'));
 
 	/* 
 	 * Close the database connection if it exists 
