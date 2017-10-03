@@ -55,9 +55,10 @@ static sqlite3* taskdb;
 int debug = 0;
 
 void run_help(void);
-int db_reinit(const char *dbname);
-int db_init(const char *dbname);
+int db_create_tables(const char *dbname);
 int db_destroy(const char *dbname);
+int db_init(const char *dbname);
+int db_reinit(const char *dbname);
 int task_add_interactive(const char *dbname);
 int task_add(char *name, char *desc, char *due, char *priority);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
@@ -131,17 +132,16 @@ main(int argc, char *argv[]) {
 	if ((kflag == 1) && (nflag == 1)) {
 		(void)fprintf(stdout,"WARN: re-initializing task database, you will lose any existing tasks\n");
 		db_reinit(dbname);
+	} else if (kflag == 1) {
+		db_destroy(dbname);
+	} else if (nflag == 1) {
+		db_init(dbname);
 	}
 
 	/*
 	 * These need to be moved into a more 
 	 * comprehensive argument parser.
 	 */
-	if (kflag == 1) 
-		db_destroy(dbname);
-	
-	if (nflag == 1)
-		db_init(dbname);
 
 	if (aflag == 1)
 		task_add_interactive(dbname);	
@@ -170,6 +170,7 @@ db_reinit(const char *dbname) {
 	/* kill and rebuild the task database */
 	db_destroy(dbname);
 	db_init(dbname);
+	db_create_tables(dbname);
 	return 0;
 }
 
@@ -200,24 +201,60 @@ db_init(const char *dbname) {
 }
 
 int
+db_create_tables(const char *dbname) {
+	/*
+	 * Extra sqlite variables needed
+	 */
+	sqlite3_stmt* table_code = NULL;
+	const char table_tail = '\0';
+	const char *table_statement = "create table tasks(title text, description text, priority integer, urgent integer, expires text, expired integer";
+	if ((sqlite3_open(dbname, &taskdb)) != 0) {
+		fprintf(stderr,"ERR: Could not connect to database \"%s\"\n",dbname);
+		return 1;
+	}
+	
+	sqlite3_prepare_v2(taskdb, table_statement, 1024, &table_code, table_tail);
+	if (sqlite3_step(table_code) != 0) {
+		fprintf(stderr,"There was an error initialising the task table!\n");
+		sqlite3_close(taskdb);
+		return 2;
+	}
+	sqlite3_close(taskdb);
+	return 0;
+}
+
+int
 db_destroy(const char *dbname) {
 	/* destroy the database */
 	/* this should ALWAYS be interactive */
 	char *directory;
 	const char dirsep = '/';
+	char confirm;
 
+	confirm = '\0'; /* NULL initialization */
 	/* get the directory name, to use an absolute path */
 	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
 		strncpy(directory, dirname(dbname), 1024);
 		strncat(directory, &dirsep, 1);
 		strncat(directory, dbname, sizeof(dbname));
 	}
-	if (unlink(directory) == 0) {
-		fprintf(stdout,"Successfully deleted database %s\n",directory);
-		return 0;
+
+	/* verify that we want to actually delete the database */
+	fprintf(stdout,"WARNING: This WILL delete all data in %s!\nAre you sure you want to continue? [Y/n] ",directory);
+	scanf("%c",&confirm);
+	fpurge(stdin);
+	
+	if (upperc(confirm) != 'N') {
+		if (unlink(directory) == 0) {
+			fprintf(stdout,"Successfully deleted database %s\n",directory);
+			return 0;
+		} else {
+			(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
+			return 2;
+		}
 	} else {
-		(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
-		return 2;
+		fprintf(stdout,"Leaving %s alone...\n",directory);
+		return 0;
 	}
 }
 
@@ -250,5 +287,17 @@ task_add_interactive(const char *dbname) {
 	if (taskdb != NULL) {
 		sqlite3_close(taskdb);
 	}
+	return 0;
+}
+
+int
+db_check_expirations(const char *dbname) {
+	/*
+	 * Return the number of expired tasks
+	 *
+	 * This is essentially running through the 
+	 * database, and checking the expirations against
+	 * date('now');
+	 */
 	return 0;
 }
