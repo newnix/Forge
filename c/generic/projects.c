@@ -206,18 +206,23 @@ db_create_tables(const char *dbname) {
 	 * Extra sqlite variables needed
 	 */
 	sqlite3_stmt* table_code = NULL;
-	const char table_tail = '\0';
-	const char *table_statement = "create table tasks(title text, description text, priority integer, urgent integer, expires text, expired integer";
+	int ret; /* track the sqlite3 return values */ 
+	const char *table_tail = '\0';
+	const char *table_statement = "create table tasks(title text, description text, priority integer, urgent integer, expires text, expired integer)";
+
 	if ((sqlite3_open(dbname, &taskdb)) != 0) {
 		fprintf(stderr,"ERR: Could not connect to database \"%s\"\n",dbname);
 		return 1;
-	}
-	
-	sqlite3_prepare_v2(taskdb, table_statement, 1024, &table_code, table_tail);
-	if (sqlite3_step(table_code) != 0) {
-		fprintf(stderr,"There was an error initialising the task table!\n");
-		sqlite3_close(taskdb);
-		return 2;
+	} else {
+		ret = sqlite3_prepare_v2(taskdb, table_statement, 1024, &table_code, &table_tail);
+		if (ret != 0) { /* return  code is not "ok" or "done" */
+			fprintf(stderr,"ERROR: %d\n",ret);
+		} else {
+			ret = sqlite3_step(table_code);
+			if ((ret != 0) || (ret != 101)) {
+				fprintf(stderr,"ERROR: %d\n",ret);
+			}
+		}
 	}
 	sqlite3_close(taskdb);
 	return 0;
@@ -266,20 +271,53 @@ task_add_interactive(const char *dbname) {
 	 * should recturn the number of tasks added. 
 	 */
 	char retry;
-	sqlite3_open(dbname, &taskdb);
+	int ret;
+	sqlite3_stmt* table_code;
+	const char *table_tail = NULL;
+	char table_statement[2048];
+
+	ret = sqlite3_open(dbname, &taskdb);
 	
-	/* verify that we didn't get a NULL value */
+	if (ret != 0) {
+		/* verify that we didn't get a NULL value */
+		do {
+			/* ensure that 'retry' is initialized */
+			retry = 0;
+			sqlite3_open(dbname, &taskdb);
+			if (taskdb == NULL) {
+				fprintf(stdout,"Could not connect to database \"%s\", retry connection? [Y/n]\n",dbname);
+				scanf("%c",&retry);
+				/* try to ensure the input stream is clean */
+				fpurge(stdin);
+			}
+		} while ((taskdb == NULL) && (upperc(retry) != 'N'));
+	}
+
+	/* 
+	 * Add tasks to the database as dictated by the user
+	 */
 	do {
-		/* ensure that 'retry' is initialized */
-		retry = 0;
-		sqlite3_open(dbname, &taskdb);
-		if (taskdb == NULL) {
-			fprintf(stdout,"Could not connect to database \"%s\", retry connection? [Y/n]\n",dbname);
-			scanf("%c",&retry);
-			/* try to ensure the input stream is clean */
-			fpurge(stdin);
-		}
-	} while ((taskdb == NULL) && (upperc(retry) != 'N'));
+		fprintf(stdout,"Enter the task name: ");
+		fscanf(stdin,"%32c",taskname);
+		fpurge(stdin);
+		fprintf(stdout,"Enter the task description:\n");
+		fscanf(stdin,"%1024c",taskdesc);
+		fpurge(stdin);
+		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): ");
+		fscanf(stdin,"%10c",taskexpire);
+		fprintf(stdout,"Is this task urgent? [Y/n] ");
+		fscanf(stdin,"%c",urgent);
+		fpurge(stdin);
+		fprintf(stdout,"What is the priority of this task? (1-10): ");
+		fscanf(stdin,"%hu",priority);
+		fpurge(stdin);
+
+		vsnprintf(table_statement,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %hu, %hu, %s, %hu);",
+		idx, task_name, task_desc, priority, urgent, expires, expired);
+		/* we should now have enough values to add data to the database */
+		ret = sqlite3_prepare(taskdb, table_statement, 2048, &table_code, &table_tail);
+
+	} while (upperc(retry) != 'Y')
 
 	/* 
 	 * Close the database connection if it exists 
