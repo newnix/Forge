@@ -219,7 +219,7 @@ db_create_tables(const char *dbname) {
 			fprintf(stderr,"ERROR: %d\n",ret);
 		} else {
 			ret = sqlite3_step(table_code);
-			if ((ret != 0) || (ret != 101)) {
+			if ((ret != 0) && (ret != 101)) {
 				fprintf(stderr,"ERROR: %d\n",ret);
 			}
 		}
@@ -271,10 +271,11 @@ task_add_interactive(const char *dbname) {
 	 * should recturn the number of tasks added. 
 	 */
 	char retry;
-	int ret;
+	int ret, priority, idx, expired;
 	sqlite3_stmt* table_code;
 	const char *table_tail = NULL;
 	char table_statement[2048];
+	char taskname[32], taskdesc[1024], urgent, taskexpire[10];
 
 	ret = sqlite3_open(dbname, &taskdb);
 	
@@ -298,26 +299,41 @@ task_add_interactive(const char *dbname) {
 	 */
 	do {
 		fprintf(stdout,"Enter the task name: ");
-		fscanf(stdin,"%32c",taskname);
+		fscanf(stdin,"%s",taskname);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the task description:\n");
-		fscanf(stdin,"%1024c",taskdesc);
+		fscanf(stdin,"%s",taskdesc);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): ");
-		fscanf(stdin,"%10c",taskexpire);
+		fscanf(stdin,"%11c",taskexpire);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
-		fscanf(stdin,"%c",urgent);
+		fscanf(stdin,"% c",urgent);
 		fpurge(stdin);
 		fprintf(stdout,"What is the priority of this task? (1-10): ");
 		fscanf(stdin,"%hu",priority);
 		fpurge(stdin);
 
-		vsnprintf(table_statement,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %hu, %hu, %s, %hu);",
-		idx, task_name, task_desc, priority, urgent, expires, expired);
+		snprintf(table_statement,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %hu, %hu, %s, %hu);",
+		idx, taskname, taskdesc, priority, urgent, taskexpire, expired);
 		/* we should now have enough values to add data to the database */
 		ret = sqlite3_prepare(taskdb, table_statement, 2048, &table_code, &table_tail);
 
-	} while (upperc(retry) != 'Y')
+		if (ret == 0) {
+			ret = sqlite3_step(table_code);
+			if ((ret == 0) && (ret == 101)) {
+				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
+				fscanf(stdin,"%c",retry);
+				fpurge(stdin);
+			} else {
+				fprintf(stdout,"There was a problem adding that task: %d\nTry adding again? [Y/n] ",ret);
+				fscanf(stdin,"%c",retry);
+				fpurge(stdin);
+			}
+		} else {
+			fprintf(stdout,"There was a problem: %d\n",ret);
+		}
+
+	} while (upperc(retry) != 'Y');
 
 	/* 
 	 * Close the database connection if it exists 
