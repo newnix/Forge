@@ -299,15 +299,16 @@ task_add_interactive(const char *dbname) {
 	 */
 	do {
 		fprintf(stdout,"Enter the task name: ");
-		fscanf(stdin,"%s",taskname);
+		getline(taskname, (size_t)32, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the task description:\n");
-		fscanf(stdin,"%s",taskdesc);
+		getline(taskdesc, (size_t)1024, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): ");
-		fscanf(stdin,"%11c",taskexpire);
+		getline(taskexpire, (size_t)10, stdin);
+		fpurge(stdin);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
-		fscanf(stdin,"% c",urgent);
+		urgent = fgetc(stdin);
 		fpurge(stdin);
 		fprintf(stdout,"What is the priority of this task? (1-10): ");
 		fscanf(stdin,"%hu",priority);
@@ -315,6 +316,7 @@ task_add_interactive(const char *dbname) {
 
 		snprintf(table_statement,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %hu, %hu, %s, %hu);",
 		idx, taskname, taskdesc, priority, urgent, taskexpire, expired);
+		fprintf(stdout,"%s\n",table_statement);
 		/* we should now have enough values to add data to the database */
 		ret = sqlite3_prepare(taskdb, table_statement, 2048, &table_code, &table_tail);
 
