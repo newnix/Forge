@@ -271,13 +271,21 @@ task_add_interactive(const char *dbname) {
 	 * should recturn the number of tasks added. 
 	 */
 	char retry;
-	int ret, priority, idx, expired;
+	int ret, idx, expired;
+	int *priority;
 	sqlite3_stmt* table_code;
 	const char *table_tail = NULL;
 	char table_statement[2048];
 	char taskname[32], taskdesc[1024], urgent, taskexpire[10];
+	size_t maxlen;
 
 	ret = sqlite3_open(dbname, &taskdb);
+	retry = 'n';
+	expired = idx = 0;
+	maxlen = 1;
+	if (priority = calloc(maxlen, sizeof(int)) == NULL) {
+		fprintf(stderr,"ERR: Can't allocate enough space for priority\n");
+	}
 	
 	if (ret != 0) {
 		/* verify that we didn't get a NULL value */
@@ -298,20 +306,27 @@ task_add_interactive(const char *dbname) {
 	 * Add tasks to the database as dictated by the user
 	 */
 	do {
+		maxlen = 32;
 		fprintf(stdout,"Enter the task name: ");
-		getline(taskname, (size_t)32, stdin);
+		getline(&taskname, &maxlen, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the task description:\n");
-		getline(taskdesc, (size_t)1024, stdin);
+		maxlen = 1024;
+		getline(&taskdesc, &maxlen, stdin);
 		fpurge(stdin);
-		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): ");
-		getline(taskexpire, (size_t)10, stdin);
+		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): \n");
+		maxlen = 12;
+		/* getting assert fails and bus errors here,
+		 * changing to fscanf() fixes it for some reason
+		 */
+		/* getline(&taskexpire, &maxlen, stdin); */
+		fscanf(stdin,"%10c",&taskexpire);
 		fpurge(stdin);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
 		urgent = fgetc(stdin);
 		fpurge(stdin);
 		fprintf(stdout,"What is the priority of this task? (1-10): ");
-		fscanf(stdin,"%hu",priority);
+		fscanf(stdin,"%d",priority);
 		fpurge(stdin);
 
 		snprintf(table_statement,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %hu, %hu, %s, %hu);",
