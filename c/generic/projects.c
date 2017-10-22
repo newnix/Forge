@@ -358,6 +358,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
 				fscanf(stdin,"%c",&retry);
 				fpurge(stdin);
+				idx++; 
 			} else {
 				fprintf(stdout,"There was a problem adding that task: %d\nTry adding again? [Y/n] ",ret);
 				fscanf(stdin,"%c",&retry);
