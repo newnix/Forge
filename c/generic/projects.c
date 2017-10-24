@@ -74,7 +74,7 @@ main(int argc, char *argv[]) {
 	char entry_desc[1024];
 	char entry_priority[32];
 	const char *dbname, *table_name;
-	int entry_indx;
+	int entry_indx, list_cap;
 	char ch;
 	
 	/* initialize to 0 */
@@ -112,6 +112,14 @@ main(int argc, char *argv[]) {
 				break;
 			case 'k':
 				kflag = 1;
+				break;
+			case 'l':
+				lflag = 1;
+				if (optarg != NULL) {
+					list_cap = (int)optarg; /* how many entries to show */
+				} else {
+					list_cap = 10; /* default entry limit */
+				}
 				break;
 			case 'h':
 				run_help();
@@ -389,4 +397,13 @@ db_check_expirations(const char *dbname) {
 	 * date('now');
 	 */
 	return 0;
+}
+
+int task_list(int limit) {
+	/*
+	 * Simply list the top limit items in the db
+	 */
+	do {
+		/* connect to the database */
+	} while (dbname == NULL);
 }
