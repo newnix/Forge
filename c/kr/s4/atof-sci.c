@@ -10,9 +10,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define MAXLEN 1024
-
-double s_atof(char input[MAXLEN]);
+double s_atof(char *input);
 
 extern char *__progname;
 
@@ -20,24 +18,32 @@ int
 main(void) {
   /* grab the input and pass to s_atof() */
   /* set our input string */
-  char input[1024];
+  char *input;
   /* define an output var to set for easier error detection */
   double output;
 	int captured;
+	size_t maxlen;
+
+	maxlen = 1024;
+
+	if ((input = calloc(1, maxlen)) == NULL) {
+		fprintf(stderr, "Error allocating memory\n");
+		return 1;
+	}
 
   output = 0.0; /* in case of error */
 
   for (;;) {
-  /* check to see if we exceeded our max */
-  captured = ( MAXLEN >fscanf(stdin,"%[^\n]",input)) ? fscanf(stdin,"%[^\n]",input)  : -1;
+	/* grab some input from the user */
+  captured = getline(&input, &maxlen, stdin);
 		if (captured != -1) {
+			fprintf(stdout,"INFO: captured: %d\n", captured);
 			output = s_atof(input);
 			break;
 		} else {
 			return -1;
 			break;
 		}
-
 	}
   (void)fprintf(stdout,"%0.3f\n",output);
 	
@@ -45,11 +51,7 @@ main(void) {
 }
 
 double
-s_atof(char input[MAXLEN]){
+s_atof(char *input){
 	/* verify the size of *input */
-	if (sizeof(input) > MAXLEN) {
-		(void)fprintf(stderr,"%s:\tInput too long\n",__progname);
-		return -1;
-	}
 	return 0;
 }

@@ -7,7 +7,7 @@ CC = clang-devel
 INCLUDE = -I/usr/include -I/usr/local/include
 LIBS = -L/usr/lib -L/usr/local/lib -Wl,-rpath,/usr/local/lib -gssapi_krb5 -lk5crypto -lcom_err -lz -lkrb5 -lc -lxml2 -lsqlite3
 
-DESTDIR = /home/mvoight/
+DESTDIR = ${HOME}
 PREFIX = bin/c/
 
 all: options ${NAME}

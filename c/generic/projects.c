@@ -63,8 +63,8 @@ int task_add_interactive(const char *dbname, const char *table_name);
 int task_add(char *name, char *desc, char *due, char *priority);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
 int task_upd(int task, char *old_desc, char *old_due, char *old_priority, char *new_desc, char *new_due, char *new_priority);
-int task_del(int task);
-int task_list(int limit); /* default action */
+int task_del(int task, const char *dbname);
+int task_list(int limit, const char *dbname); /* default action */
 
 int
 main(int argc, char *argv[]) {
@@ -74,7 +74,7 @@ main(int argc, char *argv[]) {
 	char entry_desc[1024];
 	char entry_priority[32];
 	const char *dbname, *table_name;
-	int entry_indx, list_cap;
+	int entry_indx;
 	char ch;
 	
 	/* initialize to 0 */
@@ -112,14 +112,6 @@ main(int argc, char *argv[]) {
 				break;
 			case 'k':
 				kflag = 1;
-				break;
-			case 'l':
-				lflag = 1;
-				if (optarg != NULL) {
-					list_cap = (int)optarg; /* how many entries to show */
-				} else {
-					list_cap = 10; /* default entry limit */
-				}
 				break;
 			case 'h':
 				run_help();
@@ -170,6 +162,7 @@ run_help(void){
  (void)fprintf(stdout,"\t\t-a\tCreate a new entry (or more)\n");
  (void)fprintf(stdout,"\t\t-e\tMark a created or updated entry as \"URGENT\"\n");
  (void)fprintf(stdout,"\t\t-k\tDestroy the currently existing database\n");
+ (void)fprintf(stdout,"\t\t-l\tList items from the database (default 10)\n");
  (void)fprintf(stdout,"\t\t-n\tCreate a new database (existing database will be destroyed)\n");
  (void)fprintf(stdout,"\t\t-p\tSpecify a priority for a new or updated entry\n");
  (void)fprintf(stdout,"\t\t-r\tRemove an entry from the database\n");
@@ -223,7 +216,7 @@ db_create_tables(const char *dbname) {
 	int ret; /* track the sqlite3 return values */ 
 	const char *table_tail = '\0';
 	/* TODO: this needs to be changed to work with any arbitrary table name */
-	const char *table_statement = "create table tasklist(id integer, title text, description text, priority integer, urgent integer, expires text, expired integer)";
+	const char *table_statement = "create table tasklist(title text, description text, priority integer, urgent integer, expires text, expired integer)";
 
 	if ((sqlite3_open(dbname, &taskdb)) != 0) {
 		fprintf(stderr,"ERR: Could not connect to database \"%s\"\n",dbname);
@@ -286,19 +279,17 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	 * should recturn the number of tasks added. 
 	 */
 	char retry;
-	int ret, idx, expired, priority, add_count;
+	int ret, idx, expired, priority;
 	sqlite3_stmt* table_code;
 	const char *table_tail = NULL;
 	char table_statement[2048];
-	char *taskname, *taskdesc, urgent, *taskexpire;
+	char taskname[32], taskdesc[1024], urgent, taskexpire[10];
 	size_t maxlen;
-	ssize_t captured;
 
 	ret = sqlite3_open(dbname, &taskdb);
 	retry = 'n';
-	expired = idx = priority = add_count = 0;
+	expired = idx = priority = 0;
 	maxlen = 1;
-	captured = 0;
 	
 	if (ret != 0) {
 		/* verify that we didn't get a NULL value */
@@ -315,31 +306,17 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		} while ((taskdb == NULL) && (upperc(retry) != 'N'));
 	}
 
-	/*
-	 * Allocate space for the strings we need
-	 */
-	if ((taskname = calloc(64, sizeof(char))) == NULL) {
-		err("Error allocating memory in task_add_interactive()\n");
-	}
-	if ((taskdesc = calloc(1024, sizeof(char))) == NULL) {
-		err("Error allocating memory in task_add_interactive()\n");
-	}
-	if ((taskexpire = calloc(10, sizeof(char))) == NULL) {
-		err("Couldn't allocate space for taskname\n");
-	}
 	/* 
 	 * Add tasks to the database as dictated by the user
 	 */
 	do {
 		maxlen = 32;
 		fprintf(stdout,"Enter the task name: ");
-		captured = getline(&taskname, &maxlen, stdin);
-		taskname[captured - 1] = 0; /* this kills the trailing newline */
+		getline(&taskname, &maxlen, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the task description:\n");
 		maxlen = 1024;
-		captured = getline(&taskdesc, &maxlen, stdin);
-		taskdesc[captured - 1] = 0;
+		getline(&taskdesc, &maxlen, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): \n");
 		maxlen = 12;
@@ -349,12 +326,12 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		urgent = fgetc(stdin);
 		fpurge(stdin);
 		fprintf(stdout,"What is the priority of this task? (1-10): ");
-		fscanf(stdin,"%d",&priority);
+		fscanf(stdin,"%d",priority);
 		fpurge(stdin);
 
-		maxlen = 2048;
+		maxlen = 2047;
 		expired = 0;
-		snprintf(table_statement,maxlen,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, \'%s\', \'%s\', %d, \'%c\', \'%s\', %d);",
+		snprintf(table_statement,maxlen,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %d, %c, %s, %d);",
 		table_name, idx, taskname, taskdesc, priority, urgent, taskexpire, expired);
 		fprintf(stdout,"%s\n",table_statement);
 		/* we should now have enough values to add data to the database */
@@ -362,11 +339,10 @@ task_add_interactive(const char *dbname, const char *table_name) {
 
 		if (ret == 0) {
 			ret = sqlite3_step(table_code);
-			if ((ret == 0) || (ret == 101)) {
+			if ((ret == 0) && (ret == 101)) {
 				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
 				fscanf(stdin,"%c",&retry);
 				fpurge(stdin);
-				idx++; 
 			} else {
 				fprintf(stdout,"There was a problem adding that task: %d\nTry adding again? [Y/n] ",ret);
 				fscanf(stdin,"%c",&retry);
@@ -399,11 +375,17 @@ db_check_expirations(const char *dbname) {
 	return 0;
 }
 
-int task_list(int limit) {
+int
+task_list(int limit, const char *dbname) {
 	/*
-	 * Simply list the top limit items in the db
+	 * List a set number of entries
 	 */
-	do {
-		/* connect to the database */
-	} while (dbname == NULL);
+	return 0;
+}
+
+void
+pretty_print(char *sqlite_return) {
+	/*
+	 * format the returned entries to look nicer
+	 */
 }
