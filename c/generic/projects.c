@@ -193,7 +193,7 @@ db_init(const char *dbname) {
 			(void)fprintf(stderr,"Failed to initialize sqlite3 lib, ret:%d\n",ret);
 			break;
 		}
-		if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
+		if ((directory = calloc((size_t)1024, (size_t)1)) != NULL) {
 			strncpy(directory, dirname(dbname), 1024);
 			(void)fprintf(stdout,"Task database at %s/%s has been sucessfully created.\n", directory,  dbname);
 		}
@@ -351,7 +351,17 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		} else {
 			fprintf(stdout,"There was a problem: %d\n",ret);
 		}
-
+		
+		/*
+		 * Zero out the variables for the next loop, 
+		 * ensuring we don't end up with some garbage data
+		 * being stored in the database.
+		 */
+		memset(&taskname, 0, (size_t)32);
+		memset(&taskdesc, 0, (size_t)1024);
+		memset(&taskexpire, 0, (size_t)10);
+		ugent ^= urgent; 
+		priority ^= priority;
 	} while (upperc(retry) == 'Y');
 
 	/* 
@@ -372,6 +382,9 @@ db_check_expirations(const char *dbname) {
 	 * database, and checking the expirations against
 	 * date('now');
 	 */
+	sqlite3_stmt* expire_statement;
+
+	expire_statement = NULL;
 	return 0;
 }
 
@@ -379,7 +392,12 @@ int
 task_list(int limit, const char *dbname) {
 	/*
 	 * List a set number of entries
+	 * This function should be called directly from the command-line, 
+	 * so we need to create a database handler.
 	 */
+	sqlite3_stmnt* list_statement;
+
+	list_statement = NULL;
 	return 0;
 }
 
@@ -388,4 +406,37 @@ pretty_print(char *sqlite_return) {
 	/*
 	 * format the returned entries to look nicer
 	 */
+}
+
+long int
+db_get_top(const char *dbname) {
+	/*
+	 * Get the current highest task number
+	 * This function should run before any function 
+	 * that actually modifies the database.
+	 */
+	sqlite3* taskdb;
+	if ((taskdb = sqlite3_open(dbname)) == NULL) {
+		/* No database handler, bail out */
+		err("sqlite3");
+	}
+
+	return 0;
+}
+
+int 
+db_reorder(const char *dbname) {
+	/* 
+	 * This function needs to adjust the values of any entries impacted by a deletion
+	 * essentially the same idea as when you delete a line from the middle of the file
+	 * shift all following lines down by one in the index per entry that's been deleted
+	 */
+	long int current_top; /* current top index value */
+	long int new_top;
+
+	current_top = new_top = 0;
+
+	current_top = db_get_top(dbname);
+	new_top = db_get_top(dbname);
+	return new_top;
 }
