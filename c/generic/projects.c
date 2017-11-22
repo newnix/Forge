@@ -54,6 +54,24 @@ static sqlite3* taskdb;
 /* debug help */
 int debug = 0;
 
+/*
+ * I should probably be using structs to 
+ * track the query and similar data....
+ */
+
+typedef struct entry {
+	struct entry *previous;
+	struct entry *next;
+	unsigned long int index;
+	char *task_name;
+	char *task_desc;
+	char *expiration;
+	char urgent;
+} entry_t;
+
+/* this of course, will require rewriting some existing code to work properly */
+
+
 void run_help(void);
 int db_create_tables(const char *dbname);
 int db_destroy(const char *dbname);
@@ -416,10 +434,35 @@ db_get_top(const char *dbname) {
 	 * that actually modifies the database.
 	 */
 	sqlite3* taskdb;
+	sqlite3_stmt* table_code;
+	char *table_statement; 
+	long int ret;
+
+	&table_code = NULL;
+	table_statement = NULL;
+	ret = 0;
+
 	if ((taskdb = sqlite3_open(dbname)) == NULL) {
 		/* No database handler, bail out */
 		err("sqlite3");
+	} 
+
+	if (ret = calloc((size_t)1024, (size_t)1) == NULL) {
+		err("Could not allocate memory");
 	}
+	 
+	/* this may need to be replaced with an snprintf() call */
+	strncat(&table_statement, "select max(id) from %s;", &table_name,  1023);
+
+	if (sqlite3_prepare(taskdb, table_statement, NULL) != NULL) {
+		ret = sqlite3_step(table_code);
+	}
+
+	if (ret == 0 || 101) {
+		/* hopefully this means that we have a sqlite3 blob we can work with */
+		return 0;
+	}
+
 
 	return 0;
 }
