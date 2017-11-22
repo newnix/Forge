@@ -63,6 +63,7 @@ typedef struct entry {
 	struct entry *previous;
 	struct entry *next;
 	unsigned long int index;
+	char *table;
 	char *task_name;
 	char *task_desc;
 	char *expiration;
@@ -94,6 +95,7 @@ main(int argc, char *argv[]) {
 	const char *dbname, *table_name;
 	int entry_indx;
 	char ch;
+	int ret; /* simple return value placeholder */
 	
 	/* initialize to 0 */
 	aflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
@@ -166,8 +168,20 @@ main(int argc, char *argv[]) {
 	 * comprehensive argument parser.
 	 */
 
-	if (aflag == 1)
-		task_add_interactive(dbname, table_name);	
+	if (aflag == 1) {
+		ret = task_add_interactive(dbname, table_name);	
+		switch (ret) {
+			case 1:
+				fprintf(stdout,"Added %d task to the database.\n",ret);
+				break;
+			case 0:
+				fprintf(stdout,"Added no new tasks to the database.\n");
+				break;
+			default:
+				fprintf(stdout, "Added %d new tasks to the database.\n");
+				break;
+		}
+	}
 
 	return 0;
 }
@@ -297,7 +311,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	 * should recturn the number of tasks added. 
 	 */
 	char retry;
-	int ret, idx, expired, priority;
+	int ret, idx, expired, priority, added;
 	sqlite3_stmt* table_code;
 	const char *table_tail = NULL;
 	char table_statement[2048];
@@ -306,7 +320,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 
 	ret = sqlite3_open(dbname, &taskdb);
 	retry = 'n';
-	expired = idx = priority = 0;
+	expired = idx = priority = added = 0;
 	maxlen = 1;
 	
 	if (ret != 0) {
@@ -361,6 +375,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
 				fscanf(stdin,"%c",&retry);
 				fpurge(stdin);
+				added++;
 			} else {
 				fprintf(stdout,"There was a problem adding that task: %d\nTry adding again? [Y/n] ",ret);
 				fscanf(stdin,"%c",&retry);
@@ -458,7 +473,7 @@ db_get_top(const char *dbname) {
 		ret = sqlite3_step(table_code);
 	}
 
-	if (ret == 0 || 101) {
+	if (ret == 0 || ret == 101) {
 		/* hopefully this means that we have a sqlite3 blob we can work with */
 		return 0;
 	}
