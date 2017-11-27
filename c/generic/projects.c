@@ -96,6 +96,7 @@ main(int argc, char *argv[]) {
 	int entry_indx;
 	char ch;
 	int ret; /* simple return value placeholder */
+	struct entry task; /* should create an entry struct called "task" */
 	
 	/* initialize to 0 */
 	aflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
@@ -118,6 +119,7 @@ main(int argc, char *argv[]) {
 			case 'r':
 				rflag = 1;
 				entry_indx = (int)optarg;
+				/* task->index = (int)optarg; */
 				break;
 			case 'T':
 				tflag = 1;
@@ -236,6 +238,7 @@ db_init(const char *dbname) {
 		}
 		sqlite3_close(taskdb);
 	} while (1 < 0);
+	free(directory);
 	return 0;
 }
 
@@ -275,8 +278,10 @@ db_destroy(const char *dbname) {
 	char *directory;
 	const char dirsep = '/';
 	char confirm;
+	int ret;
 
 	confirm = '\0'; /* NULL initialization */
+	ret=0;
 	/* get the directory name, to use an absolute path */
 	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
 		strncpy(directory, dirname(dbname), 1024);
@@ -292,15 +297,17 @@ db_destroy(const char *dbname) {
 	if (upperc(confirm) != 'N') {
 		if (unlink(directory) == 0) {
 			fprintf(stdout,"Successfully deleted database %s\n",directory);
-			return 0;
+			ret = 0;
 		} else {
 			(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
-			return 2;
+			ret = 2;
 		}
 	} else {
 		fprintf(stdout,"Leaving %s alone...\n",directory);
-		return 0;
+		ret =  0;
 	}
+	free(directory);
+	return ret;
 }
 
 int
@@ -371,7 +378,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 
 		if (ret == 0) {
 			ret = sqlite3_step(table_code);
-			if ((ret == 0) && (ret == 101)) {
+			if ((ret == 0) || (ret == 101)) {
 				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
 				fscanf(stdin,"%c",&retry);
 				fpurge(stdin);

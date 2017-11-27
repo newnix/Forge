@@ -6,11 +6,13 @@
  * by Brian Kernighan and Dennis Ritchie on Page 73
  */
 
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-double s_atof(char *input);
+double s_atof(char *input, int len);
+int n_atoi(char c);
 
 extern char *__progname;
 
@@ -31,27 +33,93 @@ main(void) {
 		return 1;
 	}
 
-  output = 0.0; /* in case of error */
-
   for (;;) {
 	/* grab some input from the user */
   captured = getline(&input, &maxlen, stdin);
 		if (captured != -1) {
 			fprintf(stdout,"INFO: captured: %d\n", captured);
-			output = s_atof(input);
+			output = s_atof(input, captured);
+			(void)fprintf(stdout,"%0.3f\n",output);
 			break;
 		} else {
-			return -1;
+			return 2;
 			break;
 		}
 	}
-  (void)fprintf(stdout,"%0.3f\n",output);
 	
 	return 0;
 }
 
+/* 
+ * These really should be broken out into three separate functions,
+ * should I need to tackle this problem again, I'd rewrite it as such.
+ *
+ * However, for the purpose of solving this problem, this approach is sufficient
+ * and it clearly displays the calculations being done.
+ */
+
 double
-s_atof(char *input){
+s_atof(char *input, int len){
 	/* verify the size of *input */
-	return 0;
+	double value;
+	int i, dot, exp, power;
+	dot = power = i = value = 0;
+
+	/* Find the index of the decimal point */
+	while (i < len) {
+		if (input[i] == '.') {
+			dot = i;
+		}
+
+		/* Find the start of the exponential expression */
+		if (input[i] == 'e' || input[i] == 'E') {
+			exp = i;
+		}
+		i++;
+	}
+
+	/* reset index for base value calculation */
+	i = 0;
+	while (i < dot) {
+		power = (dot - i - 1); /* the power of magnitude of the digit based off distance from the decimal */
+		value += (pow(10,power) * n_atoi(input[i])); 
+		fprintf(stdout,"value: %f\n",value);
+		i++;
+	}
+
+	/* now we need to capture the decimal portion of the number */
+	i = dot++;
+	while (i < len) { 
+		/* test for the exponential expression and null terminator */
+		if (input[i] == 'e' || input[i] == 'E' || input[i] == 0) {
+			break;
+		}
+
+		power = (dot - i - 1); /* power of the magnitude of the decimal portion */
+		value += (pow(10,power) * n_atoi(input[i]));
+		fprintf(stdout,"value: %f\n",value);
+		i++;
+	}
+	
+	/* finally calculate the exponential expression */
+	i = exp++;
+	while (i < len) {
+		power = (len - i);
+		/* reusing dot for temp value storage */
+		dot  += (pow(10,power) * n_atoi(input[i])); 
+		fprintf(stdout,"Exponent value: %d\n",dot);
+		value *= pow(10,dot);
+		i++;
+	}
+	return value;
+}
+
+int
+n_atoi(char c) {
+	/* simply converts a char to an int, returns the int */
+	if (c <= 57 && c >= 48) {
+		return c - 48;
+	} else {
+		return 0;
+	}
 }
