@@ -63,7 +63,7 @@ s_atof(char *input, int len){
 	/* verify the size of *input */
 	double value;
 	int i, dot, exp, power;
-	dot = power = i = value = 0;
+	dot = exp = power = i = value = 0;
 
 	/* Find the index of the decimal point */
 	while (i < len) {
@@ -103,15 +103,17 @@ s_atof(char *input, int len){
 	
 	/* finally calculate the exponential expression */
 	i = exp++;
+	/* reset 'dot' to be recycled */
+	dot = 0;
 	while (i < len) {
 		power = (len - i);
 		/* reusing dot for temp value storage */
 		dot  += (pow(10,power) * n_atoi(input[i])); 
 		fprintf(stdout,"Exponent value: %d\n",dot);
-		value *= pow(10,dot);
 		i++;
 	}
-	return value;
+
+	return (value * dot);
 }
 
 int
