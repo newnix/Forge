@@ -106,14 +106,14 @@ s_atof(char *input, int len){
 	/* reset 'dot' to be recycled */
 	dot = 0;
 	while (i < len) {
-		power = (len - i);
+		power = (len - i - 2);
 		/* reusing dot for temp value storage */
 		dot  += (pow(10,power) * n_atoi(input[i])); 
-		fprintf(stdout,"Exponent value: %d\n",dot);
+		fprintf(stdout,"len: %d\ni: %d\nExponent value: %d\n", len, i, dot);
 		i++;
 	}
 
-	return (value * dot);
+	return (value *= pow(10,dot));
 }
 
 int
