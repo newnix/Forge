@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define negative 1
+#define positive 0
+
 double s_atof(char *input, int len);
 int n_atoi(char c);
 
@@ -37,9 +40,8 @@ main(void) {
 	/* grab some input from the user */
   captured = getline(&input, &maxlen, stdin);
 		if (captured != -1) {
-			fprintf(stdout,"INFO: captured: %d\n", captured);
 			output = s_atof(input, captured);
-			(void)fprintf(stdout,"%0.3f\n",output);
+			(void)fprintf(stdout,"%s converted to floating point representation is:\n%0.3f\n", input, output);
 			break;
 		} else {
 			return 2;
@@ -62,8 +64,8 @@ double
 s_atof(char *input, int len){
 	/* verify the size of *input */
 	double value;
-	int i, dot, exp, power;
-	dot = exp = power = i = value = 0;
+	int i, dot, exp, power, sign;;
+	dot = exp = power = sign = i = value = 0;
 
 	/* Find the index of the decimal point */
 	while (i < len) {
@@ -74,6 +76,12 @@ s_atof(char *input, int len){
 		/* Find the start of the exponential expression */
 		if (input[i] == 'e' || input[i] == 'E') {
 			exp = i;
+			if (input[++i] == '-') {
+				sign = negative;
+				exp++;
+			} else {
+				sign = positive;
+			}
 		}
 		i++;
 	}
@@ -83,7 +91,6 @@ s_atof(char *input, int len){
 	while (i < dot) {
 		power = (dot - i - 1); /* the power of magnitude of the digit based off distance from the decimal */
 		value += (pow(10,power) * n_atoi(input[i])); 
-		fprintf(stdout,"value: %f\n",value);
 		i++;
 	}
 
@@ -97,7 +104,6 @@ s_atof(char *input, int len){
 
 		power = (dot - i - 1); /* power of the magnitude of the decimal portion */
 		value += (pow(10,power) * n_atoi(input[i]));
-		fprintf(stdout,"value: %f\n",value);
 		i++;
 	}
 	
@@ -109,11 +115,14 @@ s_atof(char *input, int len){
 		power = (len - i - 2);
 		/* reusing dot for temp value storage */
 		dot  += (pow(10,power) * n_atoi(input[i])); 
-		fprintf(stdout,"len: %d\ni: %d\nExponent value: %d\n", len, i, dot);
 		i++;
 	}
 
-	return (value *= pow(10,dot));
+	if (sign == negative) {
+		return (value /= (double)pow(10,dot));
+	} else {
+		return (value *= pow(10, dot));
+	}
 }
 
 int
