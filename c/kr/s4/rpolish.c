@@ -59,6 +59,12 @@ main(int argc, char **argv) {
 					printf("ERR: divide by zero\n");
 				}
 				break;
+			case '\n':
+				printf("\t%.8g\n", pop());
+				break;
+			default:
+				printf("ERR: unknown command\n");
+				break;
 		}
 	}
 	return 0;
