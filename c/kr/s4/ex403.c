@@ -50,6 +50,13 @@ main(int argc, char **argv) {
 				 * to treat this properly, either as a negative number or a 
 				 * subtraction operation
 				 */
+				/* 
+				 * Pseudocode:
+				 * if (s++ is digit) {
+				 * then push(-1 * s++);
+				 * }
+				 * Otherwise, assume we have an operator
+				 */
 				op2 = pop();
 				push(pop() - op2);
 				break;
@@ -115,6 +122,13 @@ getop(char s[]) {
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
 	s[1] = 0;
+	/*
+	 * make sign = 1 if we hit a \-
+	 */
+	if (c == '-')
+		sign = 1;
+	/* we need to be able to detect if there's a number though */
+
 	if (!isdigit(c) && c != 32)
 		return c; /* not a number */
 	
