@@ -31,6 +31,10 @@
  */ 
 
 #include <assert.h>
+/*
+ * Libxml2 includes need to
+ * go here
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <sqlite3.h>
