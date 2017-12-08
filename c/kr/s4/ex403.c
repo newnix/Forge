@@ -23,20 +23,26 @@ double pop(void);
 void push(double);
 void ungetch(int);
 
+int negative;
 int sp = 0;
 double val[MAXVAL];
 
 /* reverse polish calculator portion */
 int 
-main(int argc, char **argv) {
+main(void) {
 	int type;
 	double op2;
 	char s[MAXOP];
 
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
-			case NUMBER: 
-				push(atof(s));
+			case NUMBER: /* this should also hold negative numbers */
+				if (negative == 1) {
+					op2 = atof(s);
+					op2 *= -1;
+					push(op2);
+				}
+				push(op2);
 				break;
 			case '+':
 				push(pop() + pop());
@@ -45,22 +51,17 @@ main(int argc, char **argv) {
 				push(pop() + pop());
 				break;
 			case '-':
-				/* 
-				 * we need to test if there's a number directly following or not
-				 * to treat this properly, either as a negative number or a 
-				 * subtraction operation
-				 */
-				/* 
-				 * Pseudocode:
-				 * if (s++ is digit) {
-				 * then push(-1 * s++);
-				 * }
-				 * Otherwise, assume we have an operator
-				 */
-				op2 = pop();
-				push(pop() - op2);
-				break;
+				if (sp == 0 && negative == 1) {
+					/* bail out if there's no values in the stack yet */
+					break;
+				} else {
+					op2 = pop();
+					push(pop() - op2);
+					break;
+				}
 			case '%':
+				op2 = pop();
+				push((int)pop() % (int)op2);
 				break;
 			case '/':
 				op2 = pop();
@@ -125,12 +126,14 @@ getop(char s[]) {
 	/*
 	 * make sign = 1 if we hit a \-
 	 */
-	if (c == '-')
-		sign = 1;
-	/* we need to be able to detect if there's a number though */
+	if (c == '-') {
+		negative = 1;
+	}
 
-	if (!isdigit(c) && c != 32)
+	if (!isdigit(c) && c != 32) {
+		if (negative == 1){ negative = 0;}
 		return c; /* not a number */
+	}
 	
 	i = 0;
 	if (isdigit(c)) /* collect integer part */
