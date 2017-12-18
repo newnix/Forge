@@ -8,7 +8,7 @@ SRC = projects.c
 TARGET = projects
 INCS = -I. -I/usr/include -I/usr/local/include -I/usr/local/include
 LIBS = -L. -L/usr/local/lib -L/usr/lib 
-CFLAGS = -Oz -fpic -fpie -fPIC -fPIE -ftrapv -fstack-protector-all -fstack-protector-strong -static -march=native -Wall -Wextra -pedantic -Werror
+CFLAGS = -Oz -fpic -fpie -fPIC -fPIE -ftrapv -fstack-protector-all -fstack-protector-strong -static -march=native -Wall -Wextra -pedantic 
 LDFLAGS = -z relro -z now -z combreloc -static -lc -lsqlite3
 CC = clang-devel
 
@@ -27,11 +27,12 @@ options:
 build:
 	$(CC) $(SRC) -o $(TARGET) $(CFLAGS) $(LDFLAGS) ${INCS} ${LIBS}
 
-install:
+install: build
 	mkdir -p $(DESTDIR)$(PREFIX)
 	install -g $(GROUP) -o $(USER) -m 0755 -s -S $(DESTDIR)$(PREFIX) $(TARGET) 
 	@echo "Run $(DESTDIR)$(PREFIX)$(TARGET) -h for usage information"
 
 uninstall:
+	rm -f $(TARGET)
 	rm -f $(DESTDIR)$(PREFIX)$(TARGET)
 

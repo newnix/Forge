@@ -41,6 +41,11 @@
 
 #include "charconv.h"
 
+#define DBMAX 512
+#define TASKSIZE 32
+#define DESCSIZE 1024
+#define TASKEXPR 10
+
 /*
  * This program will maintain and modify a "TODO" database, 
  * allowing you to easily check on projects as needed from the
@@ -75,9 +80,9 @@ typedef struct entry {
 
 void run_help(void);
 int db_create_tables(const char *dbname);
-int db_destroy(const char *dbname);
+int db_destroy(const char *dbname, size_t dbsize);
 int db_init(const char *dbname);
-int db_reinit(const char *dbname);
+int db_reinit(const char *dbname, size_t dbsize);
 int task_add_interactive(const char *dbname, const char *table_name);
 int task_add(char *name, char *desc, char *due, char *priority);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
@@ -88,29 +93,34 @@ int task_list(int limit, const char *dbname); /* default action */
 int
 main(int argc, char *argv[]) {
 	/* create a couple of flags */
-	unsigned short int aflag, eflag, kflag, lflag, nflag, pflag, rflag, tflag, uflag;
+	unsigned short int aflag, dflag, eflag, kflag, lflag, nflag, pflag, rflag, tflag, uflag;
 	char entry_name[32];
 	char entry_desc[1024];
 	char entry_priority[32];
-	const char *dbname, *table_name;
+	char *dbname, *table_name;
 	int entry_indx;
 	char ch;
 	int ret; /* simple return value placeholder */
 	struct entry task; /* should create an entry struct called "task" */
+	size_t dbsize; /* size of the database name */
 	
 	/* initialize to 0 */
-	aflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
+	aflag = dflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
 	taskdb = NULL;
 	dbname = "test.db";
 	table_name = "tasklist";
 
-	while ((ch = getopt(argc, argv, "aep:r:u:T:nklh")) != -1) {
+	while ((ch = getopt(argc, argv, "ad:ep:r:u:T:nklh")) != -1) {
 		switch (ch) {
 			case 'a':
 				aflag = 1;
 				break;
 			case 'e':
 				eflag = 1;
+				break;
+			case 'd':
+				dflag = 1;
+				strncpy(dbname,optarg,DBMAX);
 				break;
 			case 'p':
 				pflag = 1;
@@ -142,6 +152,7 @@ main(int argc, char *argv[]) {
 				break;
 		}
 	}
+	dbsize = sizeof(dbname);
 
 	/* Check for some incompatible flags */
 	if ((aflag == 1) && (rflag == 1)) {
@@ -158,9 +169,9 @@ main(int argc, char *argv[]) {
 	}
 	if ((kflag == 1) && (nflag == 1)) {
 		(void)fprintf(stdout,"WARN: re-initializing task database, you will lose any existing tasks\n");
-		db_reinit(dbname);
+		db_reinit(dbname, dbsize);
 	} else if (kflag == 1) {
-		db_destroy(dbname);
+		db_destroy(dbname, dbsize);
 	} else if (nflag == 1) {
 		db_init(dbname);
 	}
@@ -180,7 +191,7 @@ main(int argc, char *argv[]) {
 				fprintf(stdout,"Added no new tasks to the database.\n");
 				break;
 			default:
-				fprintf(stdout, "Added %d new tasks to the database.\n");
+				fprintf(stdout, "Added %d new tasks to the database.\n", ret);
 				break;
 		}
 	}
@@ -207,9 +218,9 @@ run_help(void){
 }
 
 int
-db_reinit(const char *dbname) {
+db_reinit(const char *dbname, size_t dbsize) {
 	/* kill and rebuild the task database */
-	db_destroy(dbname);
+	db_destroy(dbname,dbsize);
 	db_init(dbname);
 	db_create_tables(dbname);
 	return 0;
@@ -220,6 +231,7 @@ db_init(const char *dbname) {
 	/* create the task database */
 	int ret; /* check for return codes */
 	char *directory; /* I don't anticipate the directories being longer than this */
+	directory = "0";
 	(void)fprintf(stdout,"This is where we initialise task database:%s\n",dbname);
 	do {
 		/* start the engine */
@@ -272,7 +284,7 @@ db_create_tables(const char *dbname) {
 }
 
 int
-db_destroy(const char *dbname) {
+db_destroy(const char *dbname, size_t dbsize) {
 	/* destroy the database */
 	/* this should ALWAYS be interactive */
 	char *directory;
@@ -286,7 +298,7 @@ db_destroy(const char *dbname) {
 	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
 		strncpy(directory, dirname(dbname), 1024);
 		strncat(directory, &dirsep, 1);
-		strncat(directory, dbname, sizeof(dbname));
+		strncat(directory, dbname, dbsize);
 	}
 
 	/* verify that we want to actually delete the database */
@@ -322,7 +334,8 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	sqlite3_stmt* table_code;
 	const char *table_tail = NULL;
 	char table_statement[2048];
-	char taskname[32], taskdesc[1024], urgent, taskexpire[10];
+	char  urgent;
+	char *taskname, *taskdesc, *taskexpire;
 	size_t maxlen;
 
 	ret = sqlite3_open(dbname, &taskdb);
@@ -330,6 +343,20 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	expired = idx = priority = added = 0;
 	maxlen = 1;
 	
+	/* this should prevent incompatible pointer types from being used */
+	if ((taskname = calloc(1, TASKSIZE)) == NULL) {
+		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
+		return -1;
+	}
+	if (taskdesc = calloc(1, DESCSIZE) == NULL) {
+		fprintf(stderr,"Error allocated memory in task_add_interactive()\n");
+		return -1;
+	}
+	if (taskexpire = calloc(1, TASKEXPR) == NULL) {
+		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
+		return -1;
+	}
+
 	if (ret != 0) {
 		/* verify that we didn't get a NULL value */
 		do {
@@ -365,7 +392,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		urgent = fgetc(stdin);
 		fpurge(stdin);
 		fprintf(stdout,"What is the priority of this task? (1-10): ");
-		fscanf(stdin,"%d",priority);
+		fscanf(stdin,"%d",&priority);
 		fpurge(stdin);
 
 		maxlen = 2047;
@@ -400,7 +427,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		memset(&taskname, 0, (size_t)32);
 		memset(&taskdesc, 0, (size_t)1024);
 		memset(&taskexpire, 0, (size_t)10);
-		ugent ^= urgent; 
+		urgent ^= urgent; 
 		priority ^= priority;
 	} while (upperc(retry) == 'Y');
 
