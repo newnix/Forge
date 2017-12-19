@@ -32,11 +32,13 @@
  */
 
 #include <ctype.h>
+#include <err.h>
 #include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sqlite3.h>
+#include <pthread.h>
 #include <unistd.h>
 
 #include "charconv.h"
@@ -64,7 +66,8 @@ int debug = 0;
  * track the query and similar data....
  */
 
-typedef struct entry {
+struct entry {
+	/* this allows for a linked list, which may or may not be useful */
 	struct entry *previous;
 	struct entry *next;
 	unsigned long int index;
@@ -73,7 +76,7 @@ typedef struct entry {
 	char *task_desc;
 	char *expiration;
 	char urgent;
-} entry_t;
+};
 
 /* this of course, will require rewriting some existing code to work properly */
 
@@ -84,9 +87,10 @@ int db_destroy(const char *dbname, size_t dbsize);
 int db_init(const char *dbname);
 int db_reinit(const char *dbname, size_t dbsize);
 int task_add_interactive(const char *dbname, const char *table_name);
-int task_add(char *name, char *desc, char *due, char *priority);
+int task_add(struct entry new_task);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
-int task_upd(int task, char *old_desc, char *old_due, char *old_priority, char *new_desc, char *new_due, char *new_priority);
+int task_upd(struct entry old_ent, struct entry new_ent);
+/* this should probably use a union, to accept either the index or name */
 int task_del(int task, const char *dbname);
 int task_list(int limit, const char *dbname); /* default action */
 
@@ -348,11 +352,11 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
 		return -1;
 	}
-	if (taskdesc = calloc(1, DESCSIZE) == NULL) {
+	if ((taskdesc = calloc(1, DESCSIZE)) == NULL) {
 		fprintf(stderr,"Error allocated memory in task_add_interactive()\n");
 		return -1;
 	}
-	if (taskexpire = calloc(1, TASKEXPR) == NULL) {
+	if ((taskexpire = calloc(1, TASKEXPR)) == NULL) {
 		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
 		return -1;
 	}
@@ -462,7 +466,7 @@ task_list(int limit, const char *dbname) {
 	 * This function should be called directly from the command-line, 
 	 * so we need to create a database handler.
 	 */
-	sqlite3_stmnt* list_statement;
+	sqlite3_stmt* list_statement;
 
 	list_statement = NULL;
 	return 0;
@@ -484,26 +488,27 @@ db_get_top(const char *dbname) {
 	 */
 	sqlite3* taskdb;
 	sqlite3_stmt* table_code;
-	char *table_statement; 
+	char *table_statement, *table_name; 
 	long int ret;
 
 	table_code = NULL;
 	table_statement = NULL;
 	ret = 0;
 
-	if ((taskdb = sqlite3_open(dbname)) == NULL) {
+	if ((ret = sqlite3_open(dbname,&taskdb)) == NULL) {
 		/* No database handler, bail out */
-		err("sqlite3");
+		fprintf(stderr,"Couldn't allocate space in db_get_top()\n");
 	} 
 
-	if (ret = calloc((size_t)1024, (size_t)1) == NULL) {
-		err("Could not allocate memory");
+	if ((ret = calloc((size_t)1024, (size_t)1)) == NULL) {
+		fprintf(stderr,"Couldn't allocate space in db_get_top()\n");
 	}
 	 
 	/* this may need to be replaced with an snprintf() call */
-	strncat(&table_statement, "select max(id) from %s;", &table_name,  1023);
+	/* strncat(&table_statement, "select max(id) from %s;", &table_name,  1023); */
+	snprintf(table_statement, 1024, "select max(id) from %s;", &table_name);
 
-	if (sqlite3_prepare(taskdb, table_statement, NULL) != NULL) {
+	if (sqlite3_prepare(taskdb, table_statement, 1024, &table_code, NULL) != NULL) {
 		ret = sqlite3_step(table_code);
 	}
 

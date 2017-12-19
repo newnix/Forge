@@ -1,15 +1,15 @@
 .POSIX:
 
-USER = ${USER}
+MUSER = ${USER}
 GROUP = ${USER}
 DESTDIR = ${HOME}
-PREFIX = /bin/
+PREFIX = /bin/c/
 SRC = projects.c
 TARGET = projects
 INCS = -I. -I/usr/include -I/usr/local/include -I/usr/local/include
 LIBS = -L. -L/usr/local/lib -L/usr/lib 
-CFLAGS = -Oz -fpic -fpie -fPIC -fPIE -ftrapv -fstack-protector-all -fstack-protector-strong -static -march=native -Wall -Wextra -pedantic 
-LDFLAGS = -z relro -z now -z combreloc -static -lc -lsqlite3
+CFLAGS = -Oz -fpic -fpie -fPIC -fPIE -ftrapv -fstack-protector-all -fstack-protector-strong -march=native -Wall -Wextra -pedantic 
+LDFLAGS = -z relro -z now -z combreloc -lc -lsqlite3 -lpthread -lm
 CC = clang-devel
 
 options:
@@ -27,9 +27,15 @@ options:
 build:
 	$(CC) $(SRC) -o $(TARGET) $(CFLAGS) $(LDFLAGS) ${INCS} ${LIBS}
 
+clean:
+	rm $(target)
+
 install: build
+	strip -s $(TARGET)
 	mkdir -p $(DESTDIR)$(PREFIX)
-	install -g $(GROUP) -o $(USER) -m 0755 -s -S $(DESTDIR)$(PREFIX) $(TARGET) 
+	chown $(USER):$(GROUP) $(TARGET)
+	chmod 0755 $(TARGET)
+	cp -fp $(TARGET) $(DESTDIR)$(PREFIX)$(TARGET)
 	@echo "Run $(DESTDIR)$(PREFIX)$(TARGET) -h for usage information"
 
 uninstall:
