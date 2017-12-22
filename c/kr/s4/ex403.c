@@ -37,11 +37,6 @@ main(void) {
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
 			case NUMBER: /* this should also hold negative numbers */
-				if (negative == 1) {
-					op2 = atof(s);
-					op2 *= -1;
-					push(op2);
-				}
 				push(op2);
 				break;
 			case '+':
@@ -51,14 +46,14 @@ main(void) {
 				push(pop() + pop());
 				break;
 			case '-':
-				if (sp == 0 && negative == 1) {
-					/* bail out if there's no values in the stack yet */
-					break;
-				} else {
+				/*
+				 * This gets returned by getop(), 
+				 * there should be no need to modify 
+				 * behaviour for potential negative numbers
+				 */
 					op2 = pop();
 					push(pop() - op2);
 					break;
-				}
 			case '%':
 				op2 = pop();
 				push((int)pop() % (int)op2);
@@ -123,15 +118,7 @@ getop(char s[]) {
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
 	s[1] = 0;
-	/*
-	 * make sign = 1 if we hit a \-
-	 */
-	if (c == '-') {
-		negative = 1;
-	}
-
-	if (!isdigit(c) && c != 32) {
-		if (negative == 1){ negative = 0;}
+	if (!isdigit(c) && c != 32 && c != '-') {
 		return c; /* not a number */
 	}
 	
