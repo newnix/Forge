@@ -37,7 +37,11 @@ main(void) {
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
 			case NUMBER: /* this should also hold negative numbers */
-				push(op2);
+				if (negative == 1) {
+					push(-1 * atof(s));
+				} else {
+					push(atof(s));
+				}
 				break;
 			case '+':
 				push(pop() + pop());
@@ -46,13 +50,12 @@ main(void) {
 				push(pop() + pop());
 				break;
 			case '-':
-				/*
-				 * This gets returned by getop(), 
-				 * there should be no need to modify 
-				 * behaviour for potential negative numbers
-				 */
-					op2 = pop();
-					push(pop() - op2);
+					if (negative == 1) {
+						break;
+					} else {
+						op2 = pop();
+						push(pop() - op2);
+					}
 					break;
 			case '%':
 				op2 = pop();
@@ -73,6 +76,7 @@ main(void) {
 				printf("ERR: unknown command\n");
 				break;
 		}
+	fprintf(stdout,"Currently in main() loop\n");
 	}
 	return 0;
 }
@@ -118,10 +122,18 @@ getop(char s[]) {
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
 	s[1] = 0;
-	if (!isdigit(c) && c != 32 && c != '-') {
+	fprintf(stdout,"in getop()\ni = %d\ns[i] = %c\n",i,s[i]);
+	if (c == '-' && isdigit(s[++i])) {
+		negative = 1;
+	} 
+
+	if (!isdigit(c) && c != 32) {
+		if (negative == 1) {
+			negative = 0;
+		} 
 		return c; /* not a number */
 	}
-	
+
 	i = 0;
 	if (isdigit(c)) /* collect integer part */
 		while (isdigit(s[++i] = c = getch()))
