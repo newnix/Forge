@@ -119,9 +119,10 @@ getop(char s[]) {
 
 	i = c = sign = space = 0;
 	
+	/* do not process spaces or tabs */
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
-	s[1] = 0;
+	s[1] = 0; /* set a NULL terminator */
 	fprintf(stdout,"in getop()\ni = %d\ns[i] = %c\n",i,s[i]);
 	if (c == '-' && isdigit(s[++i])) {
 		negative = 1;
@@ -134,7 +135,18 @@ getop(char s[]) {
 		return c; /* not a number */
 	}
 
+	/* 
+	 * Important note: 
+	 * Because this function is passed a full string, 
+	 * but only processes them a character at a time
+	 * through the use of getchar(), the negative number 
+	 * handling has to accomodate this as well. 
+	 * only getting a new character from the string with
+	 * a call to getch(). 
+	 * s[++i] = c = getch();
+	 */
 	i = 0;
+	/* continue adding operands to the array */
 	if (isdigit(c)) /* collect integer part */
 		while (isdigit(s[++i] = c = getch()))
 			;
