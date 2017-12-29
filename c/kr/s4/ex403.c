@@ -124,15 +124,21 @@ getop(char s[]) {
 		;
 	s[1] = 0; /* set a NULL terminator */
 	fprintf(stdout,"in getop()\ni = %d\ns[i] = %c\n",i,s[i]);
-	if (c == '-' && isdigit(s[++i])) {
+	/* we may have a negative number, but we need to be sure */
+	if (c == '-') {
 		negative = 1;
+		if isdigit(c = getch()) {
+		/* this should catch negative numbers, but we need to ensure we get the full number */
+			s[++i] = (c * -1);
+			return(NUMBER);
+		}
 	} 
 
 	if (!isdigit(c) && c != 32) {
 		if (negative == 1) {
 			negative = 0;
 		} 
-		return c; /* not a number */
+		return(c); /* not a number */
 	}
 
 	/* 
