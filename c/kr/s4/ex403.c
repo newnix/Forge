@@ -36,7 +36,7 @@ main(void) {
 
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
-			case NUMBER: /* this should also hold negative numbers */
+			case NUMBER: /* this should also apply to negative numbers */
 				if (negative == 1) {
 					push(-1 * atof(s));
 				} else {
@@ -128,9 +128,16 @@ getop(char s[]) {
 	if (c == '-') {
 		negative = 1;
 		if isdigit(c = getch()) {
-		/* this should catch negative numbers, but we need to ensure we get the full number */
-			s[++i] = (c * -1);
+		/* 
+		 * s[] is an array, so we can't just multiply by a negative number here 
+		 * this, of course, is only temporary, as it only handles a single digit after '-' 
+		 */
+			s[i] = c ;
 			return(NUMBER);
+		} else {
+			/* ensure non-numeric operands reset negative ( negative ^ negative == 0 ) */
+			negative ^= negative;
+			return(c);
 		}
 	} 
 
