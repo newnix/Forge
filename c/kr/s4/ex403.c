@@ -39,6 +39,8 @@ main(void) {
 			case NUMBER: /* this should also apply to negative numbers */
 				if (negative == 1) {
 					push(-1 * atof(s));
+					/* reset negative */
+					negative ^= negative;
 				} else {
 					push(atof(s));
 				}
@@ -76,7 +78,6 @@ main(void) {
 				printf("ERR: unknown command\n");
 				break;
 		}
-	fprintf(stdout,"Currently in main() loop\n");
 	}
 	return 0;
 }
@@ -123,11 +124,10 @@ getop(char s[]) {
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
 	s[1] = 0; /* set a NULL terminator */
-	fprintf(stdout,"in getop()\ni = %d\ns[i] = %c\n",i,s[i]);
 	/* we may have a negative number, but we need to be sure */
 	if (c == '-') {
 		negative = 1;
-		if isdigit(c = getch()) {
+		if (isdigit(c = getch())) {
 		/* 
 		 * s[] is an array, so we can't just multiply by a negative number here 
 		 * this, of course, is only temporary, as it only handles a single digit after '-' 
