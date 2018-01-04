@@ -31,7 +31,7 @@ double val[MAXVAL];
 int 
 main(void) {
 	int type;
-	double op2;
+	double op1, op2;
 	char s[MAXOP];
 
 	while ((type = getop(s)) != EOF) {
@@ -49,7 +49,7 @@ main(void) {
 				push(pop() + pop());
 				break;
 			case '*':
-				push(pop() + pop());
+				push(pop() * pop());
 				break;
 			case '-':
 					if (negative == 1) {
@@ -60,8 +60,12 @@ main(void) {
 					}
 					break;
 			case '%':
+				/* this operation can never result in a negative number */
 				op2 = pop();
-				push((int)pop() % (int)op2);
+				op1 = pop();
+				if (op1 < 0) { op1 *= -1; } /* essentially abs() */
+				if (op2 < 0) { op2 *= -1; } 
+				push((int)op1 % (int)op2);
 				break;
 			case '/':
 				op2 = pop();
@@ -127,12 +131,18 @@ getop(char s[]) {
 	/* we may have a negative number, but we need to be sure */
 	if (c == '-') {
 		negative = 1;
-		if (isdigit(c = getch())) {
+		if (isdigit(s[i] = c = getch())) {
 		/* 
 		 * s[] is an array, so we can't just multiply by a negative number here 
 		 * this, of course, is only temporary, as it only handles a single digit after '-' 
 		 */
-			s[i] = c ;
+			while (isdigit(s[++i] = c = getch()))
+				;
+			if (c == '.') { /* collect the fractional portion */
+				while(isdigit(s[++i] = c = getch()))
+					;
+			}
+			s[i] = 0;
 			return(NUMBER);
 		} else {
 			/* ensure non-numeric operands reset negative ( negative ^ negative == 0 ) */
@@ -143,7 +153,7 @@ getop(char s[]) {
 
 	if (!isdigit(c) && c != 32) {
 		if (negative == 1) {
-			negative = 0;
+			negative ^= negative;
 		} 
 		return(c); /* not a number */
 	}
@@ -158,18 +168,18 @@ getop(char s[]) {
 	 * a call to getch(). 
 	 * s[++i] = c = getch();
 	 */
-	i = 0;
-	/* continue adding operands to the array */
-	if (isdigit(c)) /* collect integer part */
-		while (isdigit(s[++i] = c = getch()))
-			;
-	if (c == '.') /* collect the fractional portion */
-		while(isdigit(s[++i] = c = getch()))
-			;
-	s[i] = 0;
-	if (c != EOF)
-			ungetch(c);
-	return NUMBER;
+		i = 0;
+		/* continue adding operands to the array */
+		if (isdigit(c)) /* collect integer part */
+			while (isdigit(s[++i] = c = getch()))
+				;
+		if (c == '.') /* collect the fractional portion */
+			while(isdigit(s[++i] = c = getch()))
+				;
+		s[i] = 0;
+		if (c != EOF)
+				ungetch(c);
+		return NUMBER;
 }
 
 /* get a (possibly pushed back) character */
