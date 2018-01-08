@@ -31,34 +31,26 @@
  * DAMAGE.
  */
 
-/* 
- * Source code for experimental shell, nxi. 
- * meant to be a very simple, fast shell for interactive use, 
- * ideally will be a suitable interactive and scripting shell 
- * without the limitations of things like the Bourne/Almquist shells
- * or GNU BASH, while also not being as alienating as rc, and 
- * still being rather performant, instead of using something like 
- * python or another interpreted language. 
+/*
+ * this file should hold any general 
+ * purpose functions for nxi, that 
+ * aren't better categorized for other
+ * header files. 
  */
-
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-#include "nxiFuncts.h"
-
-char *prompt = "\n;; ";
-
+#ifndef __NXI_FUNCTIONS__
+#define __NXI_FUNCTIONS__
 int 
-main(int argc, char **argv) {
-	/* load the configuraiton files, and/or default values */
-	shell_init();
-
-	/* anticipate input from the user */
-	fprintf(stdout,"%s",prompt);
-	
-	/* clean up things */
+shell_init(void) {
 	return(0);
 }
+
+int
+command_loop(char **cmdstring) {
+	return(0);
+}
+
+int
+shell_destroy(void) {
+	return(0);
+}
+#endif
