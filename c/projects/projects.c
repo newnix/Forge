@@ -46,7 +46,7 @@
 #define DBMAX 512
 #define TASKSIZE 32
 #define DESCSIZE 1024
-#define TASKEXPR 10
+#define TASKEXPR 12
 
 /*
  * This program will maintain and modify a "TODO" database, 
@@ -340,12 +340,10 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	char table_statement[2048];
 	char  urgent;
 	char *taskname, *taskdesc, *taskexpire;
-	size_t maxlen;
 
 	ret = sqlite3_open(dbname, &taskdb);
 	retry = 'n';
 	expired = idx = priority = added = 0;
-	maxlen = 1;
 	
 	/* this should prevent incompatible pointer types from being used */
 	if ((taskname = calloc(1, TASKSIZE)) == NULL) {
@@ -380,17 +378,13 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	 * Add tasks to the database as dictated by the user
 	 */
 	do {
-		maxlen = 32;
 		fprintf(stdout,"Enter the task name: ");
-		getline(&taskname, &maxlen, stdin);
-		fpurge(stdin);
+		getline(&taskname, TASKSIZE, stdin);
 		fprintf(stdout,"Enter the task description:\n");
-		maxlen = 1024;
-		getline(&taskdesc, &maxlen, stdin);
+		getline(&taskdesc, DESCSIZE, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): \n");
-		maxlen = 12;
-		fscanf(stdin,"%10c",taskexpire);
+		getline(&taskexpire, TASKEXPR, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
 		urgent = fgetc(stdin);
@@ -399,9 +393,8 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		fscanf(stdin,"%d",&priority);
 		fpurge(stdin);
 
-		maxlen = 2047;
 		expired = 0;
-		snprintf(table_statement,maxlen,"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %d, %c, %s, %d);",
+		snprintf(table_statement,(2 * DESCSIZE),"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %d, %c, %s, %d);",
 		table_name, idx, taskname, taskdesc, priority, urgent, taskexpire, expired);
 		fprintf(stdout,"%s\n",table_statement);
 		/* we should now have enough values to add data to the database */

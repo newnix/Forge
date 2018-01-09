@@ -28,7 +28,7 @@ build:
 	$(CC) $(SRC) -o $(TARGET) $(CFLAGS) $(LDFLAGS) ${INCS} ${LIBS}
 
 clean:
-	rm $(target)
+	@rm $(target)
 
 install: build
 	strip -s $(TARGET)
@@ -39,6 +39,6 @@ install: build
 	@echo "Run $(DESTDIR)$(PREFIX)$(TARGET) -h for usage information"
 
 uninstall:
-	rm -f $(TARGET)
-	rm -f $(DESTDIR)$(PREFIX)$(TARGET)
+	@rm -f $(TARGET)
+	@rm -f $(DESTDIR)$(PREFIX)$(TARGET)
 
