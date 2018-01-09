@@ -19,6 +19,8 @@
 #define MAXOP 100 /* max size of operand or operator */
 #define MAXVAL 100 /* max depth of the value stack */
 #define NUMBER 0 /* signal that a number was found */
+#define TOP 1 /* signal that we're requesting the top 2 values */
+#define SWAP 2 /* signal that we're swapping the top 2 values */
 
 char buf[BUFSIZE]; /* buffer for ungetch() */
 int bufp = 0; /* next free position in buf */
@@ -27,6 +29,9 @@ int getop(char []);
 double pop(void);
 void push(double);
 void ungetch(int);
+void get_top(double pair[2]);
+int swap_top(double pair[2]);
+void clear_stack(void);
 
 int negative;
 int sp = 0;
@@ -37,6 +42,7 @@ int
 main(void) {
 	int type;
 	double op1, op2;
+	double topvals[2];
 	char s[MAXOP];
 
 	while ((type = getop(s)) != EOF) {
@@ -82,8 +88,16 @@ main(void) {
 				break;
 			case 'c':
 				/* clear the stack */
-				fprintf(stdout,"Erasing stack...\n");
-				memset(val,0,MAXVAL);
+				clear_stack();
+			case TOP:
+				get_top(topvals);
+				printf("Top values: 1) %f\t2) %f\n",topvals[0], topvals[1]);
+				break;
+			case SWAP:
+				get_top(topvals); /* enusre we have the latest values from the stack */
+				swap_top(topvals);
+				printf("Top values: 1) %f\t2) %f\n",topvals[0], topvals[1]);
+				break;
 			case '\n':
 				printf("\t%.8g\n", pop());
 				break;
@@ -160,6 +174,12 @@ getop(char s[]) {
 		}
 	} 
 
+	if (c == 's') { 
+		return(SWAP);
+	} else if (c == 't') {
+		return(TOP);
+	}
+
 	if (!isdigit(c) && c != 32) {
 		if (negative == 1) {
 			negative ^= negative;
@@ -205,4 +225,23 @@ ungetch(int c) {
 	} else {
 		buf[bufp++] = c;
 	}
+}
+
+void
+get_top(double pair[2]) {
+	pair[0] = val[sp];
+	pair[1] = val[sp-1];
+}
+
+int swap_top(double pair[2]) {
+	double temp;
+	temp = pair[0]; 
+	pair[0] = pair[1]; 
+	pair[1] = temp;
+	return(0);
+}
+
+void
+clear_stack(void) {
+	memset(val, 0, BUFSIZE);
 }
