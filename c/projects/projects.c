@@ -43,11 +43,6 @@
 
 #include "charconv.h"
 
-#define DBMAX 512
-#define TASKSIZE 32
-#define DESCSIZE 1024
-#define TASKEXPR 12
-
 /*
  * This program will maintain and modify a "TODO" database, 
  * allowing you to easily check on projects as needed from the
@@ -60,6 +55,11 @@ extern char *__progname;
 static sqlite3* taskdb;
 /* debug help */
 int debug = 0;
+/* #define's didn't work well, trying external vars */
+static size_t DBMAX = 512;
+static size_t TASKSIZE = 32;
+static size_t DESCSIZE = 1024;
+static size_t TASKEXPR = 12;
 
 /*
  * I should probably be using structs to 
@@ -111,6 +111,7 @@ main(int argc, char *argv[]) {
 	/* initialize to 0 */
 	aflag = dflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
 	taskdb = NULL;
+	/* this should be placed in the user's homedir, ideally as a dotfile to not clutter `ls` output */
 	dbname = "test.db";
 	table_name = "tasklist";
 
@@ -267,7 +268,7 @@ db_create_tables(const char *dbname) {
 	int ret; /* track the sqlite3 return values */ 
 	const char *table_tail = '\0';
 	/* TODO: this needs to be changed to work with any arbitrary table name */
-	const char *table_statement = "create table tasklist(title text, description text, priority integer, urgent integer, expires text, expired integer)";
+	const char *table_statement = "create table tasklist(id integer, title text, description text, priority integer, urgent integer, expires text, expired integer)";
 
 	if ((sqlite3_open(dbname, &taskdb)) != 0) {
 		fprintf(stderr,"ERR: Could not connect to database \"%s\"\n",dbname);
@@ -379,12 +380,12 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	 */
 	do {
 		fprintf(stdout,"Enter the task name: ");
-		getline(&taskname, TASKSIZE, stdin);
+		getline(&taskname, &TASKSIZE, stdin);
 		fprintf(stdout,"Enter the task description:\n");
-		getline(&taskdesc, DESCSIZE, stdin);
+		getline(&taskdesc, &DESCSIZE, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): \n");
-		getline(&taskexpire, TASKEXPR, stdin);
+		getline(&taskexpire, &TASKEXPR, stdin);
 		fpurge(stdin);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
 		urgent = fgetc(stdin);
@@ -394,9 +395,10 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		fpurge(stdin);
 
 		expired = 0;
-		snprintf(table_statement,(2 * DESCSIZE),"insert into %s (id, title, description, priority, urgent, expires, expired) values (%d, %s, %s, %d, %c, %s, %d);",
+		/* This may need to be corrected to not contain newlines, or have them wrapped in quotes to work properly */
+		snprintf(table_statement,(2 * DESCSIZE),"insert into %s (id, title, description, priority, urgent, expires, expired) values ('%d', '%s', '%s', '%d', '%c', '%s', '%d');",
 		table_name, idx, taskname, taskdesc, priority, urgent, taskexpire, expired);
-		fprintf(stdout,"%s\n",table_statement);
+		fprintf(stdout,"\nUsed the following query:\n%s\n",table_statement);
 		/* we should now have enough values to add data to the database */
 		ret = sqlite3_prepare(taskdb, table_statement, 2048, &table_code, &table_tail);
 
