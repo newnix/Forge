@@ -83,9 +83,9 @@ struct entry {
 
 void run_help(void);
 int db_create_tables(const char *dbname);
-int db_destroy(const char *dbname, size_t dbsize);
+int db_destroy(const char *dbname);
 int db_init(const char *dbname);
-int db_reinit(const char *dbname, size_t dbsize);
+int db_reinit(const char *dbname);
 int task_add_interactive(const char *dbname, const char *table_name);
 int task_add(struct entry new_task);
 /* This can probably be done better with structs, but I'm not sure how to set that up yet */
@@ -98,22 +98,25 @@ int
 main(int argc, char *argv[]) {
 	/* create a couple of flags */
 	unsigned short int aflag, dflag, eflag, kflag, lflag, nflag, pflag, rflag, tflag, uflag;
+	char *homedir; /* It'd be ideal to default to ~/.${DBNAME} */
 	char entry_name[32];
-	char entry_desc[1024];
 	char entry_priority[32];
-	char *dbname, *table_name;
+	char entry_desc[1024];
+	char dbname[DBMAX], dbtarget[DBMAX];
+	char table_name[1024];
 	int entry_indx;
-	char ch;
 	int ret; /* simple return value placeholder */
 	struct entry task; /* should create an entry struct called "task" */
-	size_t dbsize; /* size of the database name */
+	char ch;
 	
 	/* initialize to 0 */
 	aflag = dflag = eflag = kflag = lflag = nflag = pflag = rflag = tflag = uflag = entry_indx = 0;
 	taskdb = NULL;
 	/* this should be placed in the user's homedir, ideally as a dotfile to not clutter `ls` output */
-	dbname = "test.db";
-	table_name = "tasklist";
+	strncpy(dbtarget, "test.db", DBMAX);
+	strncpy(table_name, "tasklist", 1024);
+	/* get the $HOME */
+	homedir = getenv("HOME");
 
 	while ((ch = getopt(argc, argv, "ad:ep:r:u:T:nklh")) != -1) {
 		switch (ch) {
@@ -125,7 +128,8 @@ main(int argc, char *argv[]) {
 				break;
 			case 'd':
 				dflag = 1;
-				strncpy(dbname,optarg,DBMAX);
+				memset(dbname, 0, DBMAX);
+				strncpy(dbtarget,optarg,DBMAX);
 				break;
 			case 'p':
 				pflag = 1;
@@ -152,12 +156,13 @@ main(int argc, char *argv[]) {
 				break;
 			case 'h':
 				run_help();
-				return 0;
+				return(0);
 			default:
 				break;
 		}
 	}
-	dbsize = sizeof(dbname);
+	/* assemble the full path of dbname */
+	snprintf(dbname, DBMAX, "%s/%s", homedir, dbtarget);
 
 	/* Check for some incompatible flags */
 	if ((aflag == 1) && (rflag == 1)) {
@@ -174,9 +179,9 @@ main(int argc, char *argv[]) {
 	}
 	if ((kflag == 1) && (nflag == 1)) {
 		(void)fprintf(stdout,"WARN: re-initializing task database, you will lose any existing tasks\n");
-		db_reinit(dbname, dbsize);
+		db_reinit(dbname);
 	} else if (kflag == 1) {
-		db_destroy(dbname, dbsize);
+		db_destroy(dbname);
 	} else if (nflag == 1) {
 		db_init(dbname);
 	}
@@ -201,7 +206,7 @@ main(int argc, char *argv[]) {
 		}
 	}
 
-	return 0;
+	return(0);
 }
 
 void
@@ -223,31 +228,26 @@ run_help(void){
 }
 
 int
-db_reinit(const char *dbname, size_t dbsize) {
+db_reinit(const char *dbname) {
 	/* kill and rebuild the task database */
-	db_destroy(dbname,dbsize);
+	db_destroy(dbname);
 	db_init(dbname);
 	db_create_tables(dbname);
-	return 0;
+	return(0);
 }
 
 int
 db_init(const char *dbname) {
 	/* create the task database */
 	int ret; /* check for return codes */
-	char *directory; /* I don't anticipate the directories being longer than this */
-	directory = "0";
-	(void)fprintf(stdout,"This is where we initialise task database:%s\n",dbname);
+	(void)fprintf(stdout,"This is where we initialise task database: %s\n",dbname);
 	do {
 		/* start the engine */
 		if ((ret = sqlite3_initialize()) != 0) {
 			(void)fprintf(stderr,"Failed to initialize sqlite3 lib, ret:%d\n",ret);
 			break;
 		}
-		if ((directory = calloc((size_t)1024, (size_t)1)) != NULL) {
-			strncpy(directory, dirname(dbname), 1024);
-			(void)fprintf(stdout,"Task database at %s/%s has been sucessfully created.\n", directory,  dbname);
-		}
+		(void)fprintf(stdout,"Task database at %s has been sucessfully created.\n", dbname);
 		/* open a db connection */
 		if ((ret = sqlite3_open(dbname, &taskdb)) != 0) {
 			(void)fprintf(stderr,"Failed to open a connection to %s, ret:%d\n",dbname,ret);
@@ -255,8 +255,7 @@ db_init(const char *dbname) {
 		}
 		sqlite3_close(taskdb);
 	} while (1 < 0);
-	free(directory);
-	return 0;
+	return(0);
 }
 
 int
@@ -268,11 +267,11 @@ db_create_tables(const char *dbname) {
 	int ret; /* track the sqlite3 return values */ 
 	const char *table_tail = '\0';
 	/* TODO: this needs to be changed to work with any arbitrary table name */
-	const char *table_statement = "create table tasklist(id integer, title text, description text, priority integer, urgent integer, expires text, expired integer)";
+	char *table_statement = "create table tasklist(id integer, title text, description text, priority integer, urgent integer, expires text, expired integer)";
 
 	if ((sqlite3_open(dbname, &taskdb)) != 0) {
 		fprintf(stderr,"ERR: Could not connect to database \"%s\"\n",dbname);
-		return 1;
+		return(1);
 	} else {
 		ret = sqlite3_prepare_v2(taskdb, table_statement, 1024, &table_code, &table_tail);
 		if (ret != 0) { /* return  code is not "ok" or "done" */
@@ -285,46 +284,37 @@ db_create_tables(const char *dbname) {
 		}
 	}
 	sqlite3_close(taskdb);
-	return 0;
+	return(0);
 }
 
 int
-db_destroy(const char *dbname, size_t dbsize) {
+db_destroy(const char *dbname) {
 	/* destroy the database */
 	/* this should ALWAYS be interactive */
-	char *directory;
-	const char dirsep = '/';
 	char confirm;
 	int ret;
 
 	confirm = '\0'; /* NULL initialization */
 	ret=0;
-	/* get the directory name, to use an absolute path */
-	if ((directory = malloc(sizeof(char) * 1024)) != NULL) {
-		strncpy(directory, dirname(dbname), 1024);
-		strncat(directory, &dirsep, 1);
-		strncat(directory, dbname, dbsize);
-	}
 
 	/* verify that we want to actually delete the database */
-	fprintf(stdout,"WARNING: This WILL delete all data in %s!\nAre you sure you want to continue? [Y/n] ",directory);
+	fprintf(stdout,"WARNING: This WILL delete all data in %s!\nAre you sure you want to continue? [y/N] ",dbname);
 	scanf("%c",&confirm);
 	fpurge(stdin);
 	
 	if (upperc(confirm) != 'N') {
-		if (unlink(directory) == 0) {
-			fprintf(stdout,"Successfully deleted database %s\n",directory);
+		if (unlink(dbname) == 0) {
+			fprintf(stdout,"Successfully deleted database %s\n",dbname);
 			ret = 0;
 		} else {
-			(void)fprintf(stderr,"ERR: Could not delete %s!\n",directory);
+			(void)fprintf(stderr,"ERR: Could not delete %s!\n",dbname);
 			ret = 2;
 		}
 	} else {
-		fprintf(stdout,"Leaving %s alone...\n",directory);
+		fprintf(stdout,"Leaving %s alone...\n",dbname);
 		ret =  0;
 	}
-	free(directory);
-	return ret;
+	return(ret);
 }
 
 int
@@ -349,15 +339,15 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	/* this should prevent incompatible pointer types from being used */
 	if ((taskname = calloc(1, TASKSIZE)) == NULL) {
 		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
-		return -1;
+		return(-1);
 	}
 	if ((taskdesc = calloc(1, DESCSIZE)) == NULL) {
 		fprintf(stderr,"Error allocated memory in task_add_interactive()\n");
-		return -1;
+		return(-1);
 	}
 	if ((taskexpire = calloc(1, TASKEXPR)) == NULL) {
 		fprintf(stderr,"Error allocating memory in task_add_interactive()\n");
-		return -1;
+		return(-1);
 	}
 
 	if (ret != 0) {
@@ -436,7 +426,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	if (taskdb != NULL) {
 		sqlite3_close(taskdb);
 	}
-	return 0;
+	return(0);
 }
 
 int
@@ -451,7 +441,7 @@ db_check_expirations(const char *dbname) {
 	sqlite3_stmt* expire_statement;
 
 	expire_statement = NULL;
-	return 0;
+	return(0);
 }
 
 int
@@ -464,7 +454,7 @@ task_list(int limit, const char *dbname) {
 	sqlite3_stmt* list_statement;
 
 	list_statement = NULL;
-	return 0;
+	return(0);
 }
 
 void
@@ -509,11 +499,11 @@ db_get_top(const char *dbname) {
 
 	if (ret == 0 || ret == 101) {
 		/* hopefully this means that we have a sqlite3 blob we can work with */
-		return 0;
+		return(0);
 	}
 
 
-	return 0;
+	return(0);
 }
 
 int 
@@ -530,5 +520,5 @@ db_reorder(const char *dbname) {
 
 	current_top = db_get_top(dbname);
 	new_top = db_get_top(dbname);
-	return new_top;
+	return(new_top);
 }
