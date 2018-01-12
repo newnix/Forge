@@ -26,9 +26,16 @@ main(void) {
 	fprintf(stdout, "Reading environmental data for UID: %u, EUID: %u...\n",uid, euid);
 	fprintf(stdout, "Username: %s\n$HOME: %s\n",username, homedir);
 	for (envp = 0; environ[envp] != NULL; envp++) {
-		fprintf(stdout, "%p\t%s\n", environ[envp], environ[envp]);
+		fprintf(stdout, "%p\t%s\n", &environ[envp], environ[envp]);
 	}
 
+	/* 
+	 * There used to be a sizeof(environ) call here, to show the 
+	 * number of entries allocated, but it would always return 8. 
+	 * This is due to the size of **environ being 8bytes on a 
+	 * 64-bit machine, like all pointers. If this were run on 
+	 * a 32-bit machine, I would expect sizeof(environ) to return 4.
+	 */
 	fprintf(stdout,"\nRead %d environmental variables\n", envp);
 	return(0);
 }
