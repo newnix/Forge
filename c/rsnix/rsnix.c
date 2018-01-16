@@ -1,5 +1,5 @@
 /*  
- *  Copyright (c) 2017, Exile Heavy Industries
+ *  Copyright (c) 2017-2018, Exile Heavy Industries
  *  All rights reserved.
  *  
  *  Redistribution and use in source and binary forms, with or without

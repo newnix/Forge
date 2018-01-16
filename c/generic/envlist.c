@@ -1,6 +1,8 @@
 /*
  * This binary should just print the environmental 
  * variables in **environ, and exits
+ *
+ * Literally a reimplemented env(1), with fewer features
  */
 
 #include <stdio.h>
