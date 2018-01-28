@@ -41,3 +41,5 @@ main(void) {
 	fprintf(stdout,"\nRead %d environmental variables\n", envp);
 	return(0);
 }
+
+/* create new setenv() functions */
