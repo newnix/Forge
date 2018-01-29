@@ -1,0 +1,1182 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ADD	c/generic/rsnix.c	/^#define ADD /;"	d	file:
+ADD	c/rsnix/rsnix.c	/^#define ADD /;"	d	file:
+ADDR_SIZE	cpp/sowcpp/src/ch12/prog12-15.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+ADDR_SIZE	cpp/sowcpp/src/ch12/prog12-16.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+ADD_H	cpp/sowcpp/src/headers/add.h	/^#define ADD_H$/;"	d
+AUTOMOBILE_H	cpp/sowcpp/src/ch15/automobile.h	/^#define AUTOMOBILE_H$/;"	d
+AUXIL_H	cpp/sowcpp/src/headers/auxil.h	/^#define AUXIL_H /;"	d
+BUDGET_H	cpp/sowcpp/src/headers/budgetv1.h	/^#define BUDGET_H$/;"	d
+BUDGET_H	cpp/sowcpp/src/headers/budgetv2.h	/^#define BUDGET_H /;"	d
+BUDGET_H	cpp/sowcpp/src/headers/budgetv3.h	/^#define BUDGET_H /;"	d
+BUFSIZE	c/kr/s1/ex123.c	/^#define BUFSIZE /;"	d	file:
+BUFSIZE	c/kr/s4/ex403.c	/^#define BUFSIZE /;"	d	file:
+BUFSIZE	c/kr/s4/ex404.c	/^#define BUFSIZE /;"	d	file:
+BUFSIZE	c/kr/s4/ex405.c	/^#define BUFSIZE /;"	d	file:
+BUFSIZE	c/kr/s4/rpolish.c	/^#define BUFSIZE /;"	d	file:
+Budget	cpp/sowcpp/src/headers/budgetv1.h	/^        Budget()$/;"	f	class:Budget
+Budget	cpp/sowcpp/src/headers/budgetv1.h	/^class Budget$/;"	c
+Budget	cpp/sowcpp/src/headers/budgetv2.h	/^        Budget()$/;"	f	class:Budget
+Budget	cpp/sowcpp/src/headers/budgetv2.h	/^class Budget$/;"	c
+Budget	cpp/sowcpp/src/headers/budgetv3.h	/^        Budget()$/;"	f	class:Budget
+Budget	cpp/sowcpp/src/headers/budgetv3.h	/^class Budget$/;"	c
+CAR_H	cpp/sowcpp/src/ch15/car.h	/^#define CAR_H$/;"	d
+CAR_H	cpp/sowcpp/src/headers/car.h	/^#define CAR_H$/;"	d
+CC	c/generic/Makefile	/^CC = clang-devel$/;"	m
+CC	c/projects/Makefile	/^CC = clang-devel$/;"	m
+CFLAGS	c/cthw/exercise01/Makefile	/^CFLAGS=-Wall -g$/;"	m
+CFLAGS	c/cthw/exercise03/Makefile	/^CFLAGS=-Wall -g -Ofast -j9 -march=bdver2$/;"	m
+CFLAGS	c/cthw/exercise04/Makefile	/^CFLAGS= -Wall -g -Ofast -march=bdver2$/;"	m
+CFLAGS	c/generic/Makefile	/^CFLAGS = -fPIC -Oz -fstack-protector-all -fstack-protector-strong -fpic -fpie -fPIE -pie$/;"	m
+CFLAGS	c/projects/Makefile	/^CFLAGS = -Oz -fpic -fpie -fPIC -fPIE -ftrapv -fstack-protector-all -fstack-protector-strong -march=native -Wall -Wextra -pedantic $/;"	m
+CHANGE	c/generic/rsnix.c	/^#define CHANGE /;"	d	file:
+CHANGE	c/rsnix/rsnix.c	/^#define CHANGE /;"	d	file:
+CHARCONV_H	c/kr/headers/charconv.h	/^#define CHARCONV_H$/;"	d
+CHARCONV_H	c/projects/charconv.h	/^#define CHARCONV_H$/;"	d
+CIRCLE_H	cpp/sowcpp/src/circle.h	/^#define CIRCLE_H$/;"	d
+CIRCLE_H	cpp/sowcpp/src/headers/circle.h	/^#define CIRCLE_H$/;"	d
+CODE	c/kr/s1/ex123.c	/^#define CODE /;"	d	file:
+COMMENT	c/kr/s1/ex123.c	/^#define COMMENT /;"	d	file:
+COPY_H	c/kr/headers/copy.h	/^#define	COPY_H$/;"	d
+COSINE	c/kr/s4/ex405.c	/^#define COSINE /;"	d	file:
+CSSTUDENT_H	cpp/sowcpp/src/ch15/csStudent.h	/^#define CSSTUDENT_H$/;"	d
+CS_HOURS	cpp/sowcpp/src/ch15/csStudent.h	/^const int CS_HOURS = 40;    \/\/ CS hours required$/;"	v
+CUBE_H	cpp/sowcpp/src/ch15/cube.h	/^#define CUBE_H$/;"	d
+CURVEDACTIVITY_H	cpp/sowcpp/src/ch15/curvedActivity.h	/^#define CURVEDACTIVITY_H$/;"	d
+DATE	cpp/sowcpp/src/a5main.cpp	/^const short DESC_NUM = 51, DATE = 12;$/;"	v
+DATETIME_H	cpp/sowcpp/src/ch15/dateTime.h	/^#define DATETIME_H$/;"	d
+DATE_H	cpp/sowcpp/src/ch15/date.h	/^#define DATE_H$/;"	d
+DBMAX	c/projects/projects.c	/^static size_t DBMAX = 512;$/;"	v	file:
+DEFAULT_SCORE	cpp/sowcpp/src/headers/studentTestScores.h	/^const double DEFAULT_SCORE = 0.0;$/;"	v
+DEFAULT_SCORE	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^const double DEFAULT_SCORE = 0.0;$/;"	v
+DEFAULT_SCORE	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^const double DEFAULT_SCORE = 0.0;$/;"	v
+DESCSIZE	c/projects/projects.c	/^static size_t DESCSIZE = 1024;$/;"	v	file:
+DESC_NUM	cpp/sowcpp/src/a5main.cpp	/^const short DESC_NUM = 51, DATE = 12;$/;"	v
+DESTDIR	c/generic/Makefile	/^DESTDIR = ${HOME}$/;"	m
+DESTDIR	c/projects/Makefile	/^DESTDIR = ${HOME}$/;"	m
+DOWNLOAD	c/generic/rsnix.c	/^#define DOWNLOAD /;"	d	file:
+DOWNLOAD	c/rsnix/rsnix.c	/^#define DOWNLOAD /;"	d	file:
+Demo	cpp/sowcpp/src/ch13/prog13-10.cpp	/^Demo::Demo()$/;"	f	class:Demo
+Demo	cpp/sowcpp/src/ch13/prog13-10.cpp	/^class Demo$/;"	c	file:
+Demo	cpp/sowcpp/src/ch13/prog13-5.cpp	/^Demo::Demo()$/;"	f	class:Demo
+Demo	cpp/sowcpp/src/ch13/prog13-5.cpp	/^class Demo$/;"	c	file:
+EXP	c/kr/s4/ex405.c	/^#define EXP /;"	d	file:
+FAVNUM	cpp/sowcpp/src/macroasobject.cpp	/^#define FAVNUM /;"	d	file:
+FEETINCHES_H	cpp/sowcpp/src/headers/feetInches.h	/^#define FEETINCHES_H$/;"	d
+FINALEXAM_H	cpp/sowcpp/src/ch15/finalExam.h	/^#define FINALEXAM_H$/;"	d
+FINALEXAM_H	cpp/sowcpp/src/ch15/finalExamv2.h	/^#define FINALEXAM_H$/;"	d
+GEN_ED_HOURS	cpp/sowcpp/src/ch15/csStudent.h	/^const int GEN_ED_HOURS = 60;    \/\/ General education hours$/;"	v
+GETLINE_H	c/kr/headers/get_line.h	/^#define GETLINE_H$/;"	d
+GRADEDACTIVITY_H	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^#define GRADEDACTIVITY_H$/;"	d
+GRADEDACTIVITY_H	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^#define GRADEDACTIVITY_H$/;"	d
+GRADEDACTIVITY_H	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^#define GRADEDACTIVITY_H$/;"	d
+GROUP	c/projects/Makefile	/^GROUP = ${USER}$/;"	m
+GrossPay	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    double GrossPay;    \/\/ Pay pre-taxes$/;"	m	struct:PayRoll	file:
+IN	c/kr/s1/ex112.c	/^#define IN /;"	d	file:
+IN	c/kr/s1/wc-bare.c	/^#define IN /;"	d	file:
+INCLUDE	c/generic/Makefile	/^INCLUDE = -I\/usr\/include -I\/usr\/local\/include$/;"	m
+INCS	c/projects/Makefile	/^INCS = -I. -I\/usr\/include -I\/usr\/local\/include -I\/usr\/local\/include$/;"	m
+LDFLAGS	c/generic/Makefile	/^LDFLAGS = -z relro -z now -z combreloc$/;"	m
+LDFLAGS	c/projects/Makefile	/^LDFLAGS = -z relro -z now -z combreloc -lc -lsqlite3 -lpthread -lm$/;"	m
+LIBS	c/generic/Makefile	/^LIBS = -L\/usr\/lib -L\/usr\/local\/lib -Wl,-rpath,\/usr\/local\/lib -gssapi_krb5 -lk5crypto -lcom_err -lz -lkrb5 -lc -lxml2 -lsqlite3$/;"	m
+LIBS	c/projects/Makefile	/^LIBS = -L. -L\/usr\/local\/lib -L\/usr\/lib $/;"	m
+LIST	c/generic/rsnix.c	/^#define LIST /;"	d	file:
+LIST	c/rsnix/rsnix.c	/^#define LIST /;"	d	file:
+LOG	c/kr/s4/ex405.c	/^#define LOG /;"	d	file:
+LOWER	c/kr/s1/temp3.c	/^#define LOWER /;"	d	file:
+LOWER	c/kr/s11/temp3.c	/^#define LOWER /;"	d	file:
+MATH_HOURS	cpp/sowcpp/src/ch15/csStudent.h	/^const int MATH_HOURS = 20;  \/\/ Math hours required$/;"	v
+MAX	c/kr/s1/2darray.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/detab.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/entab.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/ex117.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/ex118.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/ex119.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/ex122.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s1/extvar.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s2/ex204.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s2/ex205.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s2/ex210.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s2/upperconv.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s3/ex302.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s3/ex303.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s3/itoa.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s3/reverse.c	/^#define MAX /;"	d	file:
+MAX	c/kr/s4/strcalc.c	/^#define MAX /;"	d	file:
+MAXLEN	c/kr/s4/ex401.c	/^#define MAXLEN /;"	d	file:
+MAXLEN	c/kr/s4/exgrep.c	/^#define MAXLEN /;"	d	file:
+MAXLINE	c/kr/s1/char_array2.c	/^#define MAXLINE /;"	d	file:
+MAXLINE	c/kr/s1/char_arrays.c	/^#define MAXLINE /;"	d	file:
+MAXOP	c/kr/s4/ex403.c	/^#define MAXOP /;"	d	file:
+MAXOP	c/kr/s4/ex404.c	/^#define MAXOP /;"	d	file:
+MAXOP	c/kr/s4/ex405.c	/^#define MAXOP /;"	d	file:
+MAXOP	c/kr/s4/rpolish.c	/^#define MAXOP /;"	d	file:
+MAXSTR	c/kr/s4/ex402.c	/^#define MAXSTR /;"	d	file:
+MAXVAL	c/kr/s4/ex403.c	/^#define MAXVAL /;"	d	file:
+MAXVAL	c/kr/s4/ex404.c	/^#define MAXVAL /;"	d	file:
+MAXVAL	c/kr/s4/ex405.c	/^#define MAXVAL /;"	d	file:
+MAXVAL	c/kr/s4/rpolish.c	/^#define MAXVAL /;"	d	file:
+METER_H	cpp/sowcpp/src/headers/meter.h	/^#define METER_H$/;"	d
+MIN	c/kr/s1/ex117.c	/^#define MIN /;"	d	file:
+MUSER	c/projects/Makefile	/^MUSER = ${USER}$/;"	m
+MessageLoop	py/ansbot.py	/^from telepot.loop import MessageLoop$/;"	i
+NAME	c/generic/Makefile	/^NAME = rsnix$/;"	m
+NAME_SIZE	cpp/sowcpp/src/ch12/prog12-15.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+NAME_SIZE	cpp/sowcpp/src/ch12/prog12-16.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+NUMBER	c/kr/s4/ex403.c	/^#define NUMBER /;"	d	file:
+NUMBER	c/kr/s4/ex404.c	/^#define NUMBER /;"	d	file:
+NUMBER	c/kr/s4/ex405.c	/^#define NUMBER /;"	d	file:
+NUMBER	c/kr/s4/rpolish.c	/^#define NUMBER /;"	d	file:
+OFFICER_H	cpp/sowcpp/src/headers/officer.h	/^#define OFFICER_H$/;"	d
+OMAX	c/kr/s3/ex303.c	/^#define OMAX /;"	d	file:
+OUT	c/kr/s1/ex112.c	/^#define OUT /;"	d	file:
+OUT	c/kr/s1/wc-bare.c	/^#define OUT /;"	d	file:
+PASSFAILEXAM_H	cpp/sowcpp/src/ch15/passFailExam.h	/^#define PASSFAILEXAM_H$/;"	d
+PASSFAIL_H	cpp/sowcpp/src/ch15/passFail.h	/^#define PASSFAIL_H$/;"	d
+PHONE_SIZE	cpp/sowcpp/src/ch12/prog12-15.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+PHONE_SIZE	cpp/sowcpp/src/ch12/prog12-16.cpp	/^const int NAME_SIZE = 51, ADDR_SIZE = 51, PHONE_SIZE = 14;$/;"	v
+PI	cpp/sowcpp/src/ch11/prog11-2.cpp	/^const double PI = 3.14159;$/;"	v
+PI	cpp/sowcpp/src/ch11/prog11-7.cpp	/^const double PI = 3.14159;$/;"	v
+PI	cpp/sowcpp/src/circle.h	/^        double PI = 3.14159;    \/\/ Approximate value of pi$/;"	m	class:circle
+POW	c/kr/s4/ex405.c	/^#define POW /;"	d	file:
+PREFIX	c/generic/Makefile	/^PREFIX = bin\/c\/$/;"	m
+PREFIX	c/projects/Makefile	/^PREFIX = \/bin\/c\/$/;"	m
+PRINT_JOE	cpp/sowcpp/src/macroasobject.cpp	/^#define PRINT_JOE$/;"	d	file:
+PayRate	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    double PayRate; \/\/ Hourly Wage$/;"	m	struct:PayRoll	file:
+PayRoll	cpp/sowcpp/src/ch11/prog11-1.cpp	/^struct PayRoll$/;"	s	file:
+RATE	cpp/sowcpp/src/headers/ticket.h	/^        const float RATE = 25;   \/\/ Base rate of the parking ticket costs$/;"	m	class:ticket
+RECTANGLE_H	cpp/sowcpp/src/ch15/rectangle.h	/^#define RECTANGLE_H$/;"	d
+RECTANGLE_H	cpp/sowcpp/src/headers/rectangle.h	/^#define RECTANGLE_H$/;"	d
+RECTANGLE_H	cpp/sowcpp/src/headers/rectanglev4.h	/^#define RECTANGLE_H$/;"	d
+RECTANGLE_H	cpp/sowcpp/src/rectangle.h	/^#define RECTANGLE_H$/;"	d
+REMOVE	c/generic/rsnix.c	/^#define REMOVE /;"	d	file:
+REMOVE	c/rsnix/rsnix.c	/^#define REMOVE /;"	d	file:
+REVERSE_H	c/kr/headers/reverse.h	/^#define REVERSE_H$/;"	d
+SECENT	c/kr/s4/ex405.c	/^#define SECENT /;"	d	file:
+SETDIR	c/generic/rsnix.c	/^#define SETDIR /;"	d	file:
+SETDIR	c/rsnix/rsnix.c	/^#define SETDIR /;"	d	file:
+SETLABEL	c/generic/rsnix.c	/^#define SETLABEL /;"	d	file:
+SETLABEL	c/rsnix/rsnix.c	/^#define SETLABEL /;"	d	file:
+SETURL	c/generic/rsnix.c	/^#define SETURL /;"	d	file:
+SETURL	c/rsnix/rsnix.c	/^#define SETURL /;"	d	file:
+SHAPES_H	cpp/sowcpp/src/shape.h	/^#define SHAPES_H$/;"	d
+SINE	c/kr/s4/ex405.c	/^#define SINE /;"	d	file:
+SIZE	cpp/sowcpp/src/binsearch.cpp	/^const int SIZE = 20;$/;"	v
+SIZE	cpp/sowcpp/src/linearsearch.cpp	/^const int SIZE = 5; $/;"	v
+SPACES	c/kr/s1/detab.c	/^#define SPACES /;"	d	file:
+SPACES	c/kr/s1/entab.c	/^#define SPACES /;"	d	file:
+SRC	c/generic/Makefile	/^SRC = rsnix.c$/;"	m
+SRC	c/projects/Makefile	/^SRC = projects.c$/;"	m
+STEP	c/kr/s1/temp3.c	/^#define STEP /;"	d	file:
+STEP	c/kr/s11/temp3.c	/^#define STEP /;"	d	file:
+STUDENTTESTSCORES_H	cpp/sowcpp/src/headers/studentTestScores.h	/^#define STUDENTTESTSCORES_H$/;"	d
+STUDENTTESTSCORES_H	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^#define STUDENTTESTSCORES_H$/;"	d
+STUDENTTESTSCORES_H	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^#define STUDENTTESTSCORES_H$/;"	d
+STUDENT_H	cpp/sowcpp/src/ch15/student.h	/^#define STUDENT_H$/;"	d
+SUV_H	cpp/sowcpp/src/ch15/suv.h	/^#define SUV_H$/;"	d
+SWAP	c/kr/s4/ex404.c	/^#define SWAP /;"	d	file:
+SWAP	c/kr/s4/ex405.c	/^#define SWAP /;"	d	file:
+TABSTOP	c/kr/headers/charconv.h	/^#define TABSTOP /;"	d
+TABSTOP	c/kr/s3/ex302.c	/^#define TABSTOP /;"	d	file:
+TABSTOP	c/projects/charconv.h	/^#define TABSTOP /;"	d
+TAN	c/kr/s4/ex405.c	/^#define TAN /;"	d	file:
+TARGET	c/projects/Makefile	/^TARGET = projects$/;"	m
+TASKEXPR	c/projects/projects.c	/^static size_t TASKEXPR = 12;$/;"	v	file:
+TASKSIZE	c/projects/projects.c	/^static size_t TASKSIZE = 32;$/;"	v	file:
+TICKET_H	cpp/sowcpp/src/headers/ticket.h	/^#define TICKET_H$/;"	d
+TIME_H	cpp/sowcpp/src/ch15/time.h	/^#define TIME_H$/;"	d
+TOP	c/kr/s4/ex404.c	/^#define TOP /;"	d	file:
+TOP	c/kr/s4/ex405.c	/^#define TOP /;"	d	file:
+TREE_H	cpp/sowcpp/src/headers/tree.h	/^#define TREE_H$/;"	d
+TRUCK_H	cpp/sowcpp/src/ch15/truck.h	/^#define TRUCK_H$/;"	d
+UPDATE	c/generic/rsnix.c	/^#define UPDATE /;"	d	file:
+UPDATE	c/rsnix/rsnix.c	/^#define UPDATE /;"	d	file:
+UPPER	c/kr/s1/temp3.c	/^#define UPPER /;"	d	file:
+UPPER	c/kr/s11/temp3.c	/^#define UPPER /;"	d	file:
+WRAP	c/kr/s1/ex122.c	/^#define WRAP /;"	d	file:
+_GRABC_H_	c/kr/headers/grabc.h	/^#define _GRABC_H_$/;"	d
+__NXI_FUNCTIONS__	c/nxi/nxiFuncts.h	/^#define __NXI_FUNCTIONS__$/;"	d
+__RSNIX_OPML__	c/generic/rsnix_opml.h	/^#define __RSNIX_OPML__$/;"	d
+__RSNIX_OPML__	c/rsnix/rsnix_opml.h	/^#define __RSNIX_OPML__$/;"	d
+_start	asm/amd64/lolcat.asm	/^_start:$/;"	l
+_start	asm/amd64/lolcat_stolen.asm	/^_start:$/;"	l
+aRATE	cpp/sowcpp/src/headers/ticket.h	/^        const float aRATE = 10;  \/\/ Rate of the parking ticket after the initial hour$/;"	m	class:ticket
+accountNum	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string accountNum;  \/\/ Hold the account number$/;"	m	struct:bankAcc	file:
+acctBal	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    double acctBal;     \/\/ Hold the account balance$/;"	m	struct:bankAcc	file:
+add	cpp/sowcpp/src/addexp.cpp	/^int add(int x, int y)$/;"	f
+add	cpp/sowcpp/src/reusfunct.cpp	/^int add(int x, int y)$/;"	f
+addBudget	cpp/sowcpp/src/auxil.cpp	/^void auxOffice::addBudget(double b, Budget &div)$/;"	f	class:auxOffice
+addBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        void addBudget(double b)    \/\/ Add each budget request to the static var corpBudget$/;"	f	class:Budget
+addBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        void addBudget(double b)$/;"	f	class:Budget
+addBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        void addBudget(double b)$/;"	f	class:Budget
+addRecord	cpp/sowcpp/src/a5main.cpp	/^void addRecord(fstream &file)$/;"	f
+add_pass	bash/cryptvault.bash	/^add_pass()$/;"	f
+add_sub	c/generic/rsnix.c	/^add_sub(char *sub_name, char *sub_url){$/;"	f
+add_sub	c/rsnix/rsnix.c	/^add_sub(char *sub_name, char *sub_url){$/;"	f
+address	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string address;$/;"	m	struct:place	file:
+address1	cpp/sowcpp/src/ch12/prog12-15.cpp	/^    char address1[ADDR_SIZE];$/;"	m	struct:info	file:
+address1	cpp/sowcpp/src/ch12/prog12-16.cpp	/^    char address1[ADDR_SIZE];$/;"	m	struct:info	file:
+address2	cpp/sowcpp/src/ch12/prog12-15.cpp	/^    char address2[ADDR_SIZE];$/;"	m	struct:info	file:
+address2	cpp/sowcpp/src/ch12/prog12-16.cpp	/^    char address2[ADDR_SIZE];$/;"	m	struct:info	file:
+adjustScore	cpp/sowcpp/src/ch15/finalExamv2.cpp	/^void finalExam::adjustScore()$/;"	f	class:finalExam
+age	cpp/sowcpp/src/ch12/prog12-15.cpp	/^    int age;$/;"	m	struct:info	file:
+age	cpp/sowcpp/src/ch12/prog12-16.cpp	/^    int age;$/;"	m	struct:info	file:
+allan_questions	c/generic/bsdnow_qs.c	/^extern const char *allan_questions[10] = { "If you could no longer use UNIX-like systems, what OS would you use?\\n", \/* 1 *\/$/;"	v
+animal	cpp/sowcpp/src/ch15/prog15-15.cpp	/^        animal()$/;"	f	class:animal
+animal	cpp/sowcpp/src/ch15/prog15-15.cpp	/^class animal$/;"	c	file:
+any	c/kr/s2/ex205.c	/^int any(char s1[], char s2[])$/;"	f
+area	cpp/sowcpp/src/ch11/prog11-2.cpp	/^    double area;        \/\/ The area$/;"	m	struct:circle	file:
+area	cpp/sowcpp/src/ch11/prog11-7.cpp	/^    double area;    \/\/ The area$/;"	m	struct:circle	file:
+area	cpp/sowcpp/src/shape.h	/^        double area;    \/\/ Holds the area of the shape$/;"	m	class:shapes
+ask_questions	c/generic/bsdnow_qs.c	/^ask_questions(char *name) {$/;"	f
+automobile	cpp/sowcpp/src/ch15/automobile.h	/^        automobile()$/;"	f	class:automobile
+automobile	cpp/sowcpp/src/ch15/automobile.h	/^        automobile(string amake, int amodel, int amile, double aprice)$/;"	f	class:automobile
+automobile	cpp/sowcpp/src/ch15/automobile.h	/^class automobile$/;"	c
+auxBudget	cpp/sowcpp/src/headers/auxil.h	/^        double auxBudget;$/;"	m	class:auxOffice
+auxOffice	cpp/sowcpp/src/headers/auxil.h	/^        auxOffice()$/;"	f	class:auxOffice
+auxOffice	cpp/sowcpp/src/headers/auxil.h	/^class auxOffice$/;"	c
+badge	cpp/sowcpp/src/headers/officer.h	/^        int badge;      \/\/ Officer's badge number$/;"	m	class:officer
+bankAcc	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^struct bankAcc$/;"	s	file:
+baseClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^        baseClass() \/\/ Constructor$/;"	f	class:baseClass
+baseClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^class baseClass$/;"	c	file:
+baseClass	cpp/sowcpp/src/ch15/prog15-8.cpp	/^class baseClass$/;"	c	file:
+benedict_questions	c/generic/bsdnow_qs.c	/^extern const char *benedict_questions[10] = { "If you could no longer use UNIX-like systems, what OS would you use?\\n", \/* 1 *\/$/;"	v
+binarySearch	cpp/sowcpp/src/binsearch.cpp	/^int binarySearch(const int array[], int size, int value)$/;"	f
+binsearch	c/kr/s3/binsearch.c	/^int binsearch(int x, int v[], int n)$/;"	f
+binsearch2	c/kr/s3/ex301.c	/^int binsearch2(int x, int v[], int n)$/;"	f
+birthdate	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    date birthdate;     \/\/ Nested structure$/;"	m	struct:employeeInfo	file:
+bitcount	c/kr/s2/bitcount.c	/^int bitcount(unsigned int x)$/;"	f
+boring	c/kr/s3/ex306.c	/^#define boring /;"	d	file:
+bot	py/ansbot.py	/^bot = telepot.Bot('426960720:AAGCuthrFGenO1HZ2Gk9W6LKgUdB4OPDVp8')$/;"	v
+bubbleSort	cpp/sowcpp/src/a1main.cpp	/^int bubbleSort(long array[], int size)$/;"	f
+buf	c/kr/s4/ex403.c	/^char buf[BUFSIZE]; \/* buffer for ungetch() *\/$/;"	v
+buf	c/kr/s4/ex404.c	/^char buf[BUFSIZE]; \/* buffer for ungetch() *\/$/;"	v
+buf	c/kr/s4/ex405.c	/^char buf[BUFSIZE]; \/* buffer for ungetch() *\/$/;"	v
+buf	c/kr/s4/rpolish.c	/^char buf[BUFSIZE]; \/* buffer for ungetch() *\/$/;"	v
+bufp	c/kr/s4/ex403.c	/^int bufp = 0; \/* next free position in buf *\/$/;"	v
+bufp	c/kr/s4/ex404.c	/^int bufp = 0; \/* next free position in buf *\/$/;"	v
+bufp	c/kr/s4/ex405.c	/^int bufp = 0; \/* next free position in buf *\/$/;"	v
+bufp	c/kr/s4/rpolish.c	/^int bufp = 0; \/* next free position in buf *\/$/;"	v
+build_all	sysutil/sysbuild.sh	/^build_all(){$/;"	f
+build_dlq	c/generic/rsnix.c	/^build_dlq(int *feed_ids){$/;"	f
+build_dlq	c/rsnix/rsnix.c	/^build_dlq(int *feed_ids){$/;"	f
+build_kernel	sysutil/sysbuild.sh	/^build_kernel(){$/;"	f
+build_world	sysutil/sysbuild.sh	/^build_world(){$/;"	f
+buildbase	c/kr/s4/ex402.c	/^buildbase(char baseval, int power, int powerval) {$/;"	f
+calcArea	cpp/sowcpp/src/circle.h	/^        void calcArea()$/;"	f	class:circle
+calcArea	cpp/sowcpp/src/rectangle.h	/^        void calcArea()$/;"	f	class:rectangle
+car	cpp/sowcpp/src/ch15/car.h	/^        car() : automobile()$/;"	f	class:car
+car	cpp/sowcpp/src/ch15/car.h	/^        car(string carMake, int carModel, int carMileage, double carPrice, int carDoors) : automobile(carMake, carModel, carMileage, carPrice)$/;"	f	class:car
+car	cpp/sowcpp/src/ch15/car.h	/^class car : public automobile$/;"	c
+car	cpp/sowcpp/src/headers/car.h	/^        car(string ma, string mo, string c, string p, float t)$/;"	f	class:car
+car	cpp/sowcpp/src/headers/car.h	/^class car$/;"	c
+centerX	cpp/sowcpp/src/circle.h	/^        long centerX;                        \/\/ Center point x value$/;"	m	class:circle
+centerY	cpp/sowcpp/src/circle.h	/^        long centerY;                        \/\/ Center point y value$/;"	m	class:circle
+changeRecord	cpp/sowcpp/src/a5main.cpp	/^void changeRecord(fstream &file)$/;"	f
+change_sub	c/generic/rsnix.c	/^change_sub(int feed_id, char *old_name, char *new_name){$/;"	f
+change_sub	c/rsnix/rsnix.c	/^change_sub(int feed_id, char *old_name, char *new_name){$/;"	f
+char_buffer	asm/amd64/lolcat.asm	/^	char_buffer db 0$/;"	d
+char_buffer	asm/amd64/lolcat_stolen.asm	/^	char_buffer db 0$/;"	d
+charclass	c/kr/s4/strcalc.c	/^charclass(char *s) {$/;"	f
+circle	cpp/sowcpp/src/ch11/prog11-2.cpp	/^struct circle$/;"	s	file:
+circle	cpp/sowcpp/src/ch11/prog11-7.cpp	/^struct circle$/;"	s	file:
+circle	cpp/sowcpp/src/circle.h	/^        circle()$/;"	f	class:circle
+circle	cpp/sowcpp/src/circle.h	/^        circle(double r, long x, long y)$/;"	f	class:circle
+circle	cpp/sowcpp/src/circle.h	/^class circle : public shapes$/;"	c
+circle	cpp/sowcpp/src/headers/circle.h	/^        circle()$/;"	f	class:circle
+circle	cpp/sowcpp/src/headers/circle.h	/^class circle$/;"	c
+city	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string city;$/;"	m	struct:place	file:
+class	c/kr/s3/ex303.c	/^int class(char x, char y)$/;"	f
+clear_stack	c/kr/s4/ex404.c	/^clear_stack(void) {$/;"	f
+clear_stack	c/kr/s4/ex405.c	/^clear_stack(void) {$/;"	f
+color	cpp/sowcpp/src/headers/car.h	/^        string color;   \/\/ Color of the car$/;"	m	class:car
+command_loop	c/nxi/nxiFuncts.h	/^command_loop(char **cmdstring) {$/;"	f
+compute	c/kr/s4/strcalc.c	/^compute(char *s) { $/;"	f
+condense	c/kr/s1/ex118.c	/^void condense(char s[], char c[])$/;"	f
+condense	c/kr/s4/strcalc.c	/^condense(char * string, int start, int stop, int length) {$/;"	f
+cook_args	c/generic/rsnix.c	/^cook_args(unsigned short int flags, char *directory, char *label, char *url){$/;"	f
+cook_args	c/rsnix/rsnix.c	/^cook_args(unsigned short int flags, char *directory, char *label, char *url){$/;"	f
+copy	c/kr/headers/copy.h	/^void copy(char from[], char to[])$/;"	f
+copy	c/kr/s1/char_array2.c	/^void copy(char to[], char from[])$/;"	f
+copy	c/kr/s1/char_arrays.c	/^void copy(char to[], char from[])$/;"	f
+copy	c/kr/s1/detab.c	/^void copy(char to[], char from[])$/;"	f
+copy	c/kr/s1/ex117.c	/^void copy(char to[], char from[])$/;"	f
+copy	c/kr/s1/ex118.c	/^void copy(char to[], char from[])$/;"	f
+copy	c/kr/s1/extvar.c	/^void copy(void)$/;"	f
+copy	c/kr/s2/ex202.c	/^void copy(char from[], char to[])$/;"	f
+corpBudget	cpp/sowcpp/src/budget.cpp	/^double Budget::corpBudget = 0;$/;"	m	class:Budget	file:
+corpBudget	cpp/sowcpp/src/ch14/prog14-4.cpp	/^double Budget::corpBudget = 0; \/\/ Declaring a definition and initial value in the global scope$/;"	m	class:Budget	file:
+corpBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        static double corpBudget;   \/\/ Static member$/;"	m	class:Budget
+corpBudget	cpp/sowcpp/src/headers/budgetv1.h	/^double Budget::corpBudget = 0;$/;"	m	class:Budget
+corpBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        static double corpBudget;   \/\/ Static member var$/;"	m	class:Budget
+corpBudget	cpp/sowcpp/src/headers/budgetv2.h	/^double Budget::corpBudget = 0;$/;"	m	class:Budget
+corpBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        static double corpBudget;   \/\/ Static member var$/;"	m	class:Budget
+cost	cpp/pcode/a4main_pcode.cpp	/^    float cost;         \/\/ Holds the cost of each drink$/;"	m	struct:drinks	file:
+cost	cpp/sowcpp/src/a4main.cpp	/^    double cost;        \/\/ Holds the cost of each drink$/;"	m	struct:drink	file:
+cost	cpp/sowcpp/src/headers/ticket.h	/^        float cost;              \/\/ Cost of the parking ticket$/;"	m	class:ticket
+countbits	c/kr/s2/ex209.c	/^int countbits(unsigned int x)$/;"	f
+createTestScoresArray	cpp/sowcpp/src/headers/studentTestScores.h	/^        void createTestScoresArray( int size )$/;"	f	class:studentTestScores
+createTestScoresArray	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^        void createTestScoresArray( int size )$/;"	f	class:studentTestScores
+createTestScoresArray	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^        void createTestScoresArray(int size)$/;"	f	class:studentTestScores
+credithours	cpp/sowcpp/src/ch11/prog11-8.cpp	/^    int credithours;    \/\/ Credit hours enrolled$/;"	m	struct:student	file:
+csHours	cpp/sowcpp/src/ch15/csStudent.h	/^        int csHours;    \/\/ Hours of cs courses taken$/;"	m	class:csStudent
+csStudent	cpp/sowcpp/src/ch15/csStudent.h	/^        csStudent() : student()$/;"	f	class:csStudent
+csStudent	cpp/sowcpp/src/ch15/csStudent.h	/^        csStudent(string n, string i, int y) : student(n, i, y)$/;"	f	class:csStudent
+csStudent	cpp/sowcpp/src/ch15/csStudent.h	/^class csStudent : public student$/;"	c
+cube	cpp/sowcpp/src/ch15/cube.h	/^        cube() : rectangle()$/;"	f	class:cube
+cube	cpp/sowcpp/src/ch15/cube.h	/^        cube(double h, double l, double w) : rectangle(w, l)    \/\/ creates a cube based on the created rectangle$/;"	f	class:cube
+cube	cpp/sowcpp/src/ch15/cube.h	/^class cube : public rectangle$/;"	c
+curvedActivity	cpp/sowcpp/src/ch15/curvedActivity.h	/^        curvedActivity() : gradedActivity()$/;"	f	class:curvedActivity
+curvedActivity	cpp/sowcpp/src/ch15/curvedActivity.h	/^class curvedActivity : public gradedActivity$/;"	c
+dClass	cpp/sowcpp/src/ch15/prog15-8.cpp	/^class dClass : public baseClass$/;"	c	file:
+date	cpp/sowcpp/src/a5main.cpp	/^    char date[DATE];$/;"	m	struct:inventory	file:
+date	cpp/sowcpp/src/ch11/prog11-5.cpp	/^struct date$/;"	s	file:
+date	cpp/sowcpp/src/ch15/date.h	/^        date()$/;"	f	class:date
+date	cpp/sowcpp/src/ch15/date.h	/^        date(int d, int m, int y)$/;"	f	class:date
+date	cpp/sowcpp/src/ch15/date.h	/^class date$/;"	c
+dateTime	cpp/sowcpp/src/ch15/dateTime.cpp	/^dateTime::dateTime() : date(), time()$/;"	f	class:dateTime
+dateTime	cpp/sowcpp/src/ch15/dateTime.cpp	/^dateTime::dateTime(int d, int m, int y, int hr, int mi, int se) : date(d, m, y), time(hr, mi, se)$/;"	f	class:dateTime
+dateTime	cpp/sowcpp/src/ch15/dateTime.h	/^class dateTime : public date, public time$/;"	c
+day	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	g	file:
+day	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	g	file:
+day	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	g	file:
+day	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int day;$/;"	m	struct:date	file:
+day	cpp/sowcpp/src/ch15/date.h	/^        int day;$/;"	m	class:date
+db_check_expirations	c/generic/projects.c	/^db_check_expirations(const char *dbname) {$/;"	f
+db_check_expirations	c/projects/projects.c	/^db_check_expirations(const char *dbname) {$/;"	f
+db_create_tables	c/generic/projects.c	/^db_create_tables(const char *dbname) {$/;"	f
+db_create_tables	c/projects/projects.c	/^db_create_tables(const char *dbname) {$/;"	f
+db_destroy	c/generic/projects.c	/^db_destroy(const char *dbname) {$/;"	f
+db_destroy	c/projects/projects.c	/^db_destroy(const char *dbname) {$/;"	f
+db_get_top	c/projects/projects.c	/^db_get_top(const char *dbname) {$/;"	f
+db_init	c/generic/projects.c	/^db_init(const char *dbname) {$/;"	f
+db_init	c/projects/projects.c	/^db_init(const char *dbname) {$/;"	f
+db_reinit	c/generic/projects.c	/^db_reinit(const char *dbname) {$/;"	f
+db_reinit	c/projects/projects.c	/^db_reinit(const char *dbname) {$/;"	f
+db_reorder	c/projects/projects.c	/^db_reorder(const char *dbname) {$/;"	f
+debug	c/generic/projects.c	/^int debug = 0;$/;"	v
+debug	c/projects/projects.c	/^int debug = 0;$/;"	v
+derivedClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^        derivedClass()  \/\/ Constructor$/;"	f	class:derivedClass
+derivedClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^class derivedClass : public baseClass$/;"	c	file:
+description	cpp/sowcpp/src/ch11/prog11-6.cpp	/^    string description; \/\/ Part description$/;"	m	struct:inventoryItem	file:
+determineGrade	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        void determineGrade()  \/\/ Determines the letter grade$/;"	f	class:gradedActivity
+diameter	cpp/sowcpp/src/ch11/prog11-2.cpp	/^    double diameter;    \/\/ The diameter$/;"	m	struct:circle	file:
+diameter	cpp/sowcpp/src/ch11/prog11-7.cpp	/^    double diameter;    \/\/ The diameter$/;"	m	struct:circle	file:
+dir	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string dir;     \/\/ Movie director$/;"	m	struct:favMov	file:
+displayGrade	cpp/sowcpp/src/ch15/prog15-10.cpp	/^void displayGrade(const gradedActivity &activity)$/;"	f
+displayGrade	cpp/sowcpp/src/ch15/prog15-12.cpp	/^void displayGrade(const gradedActivity &activity)$/;"	f
+displayGrade	cpp/sowcpp/src/ch15/prog15-13.cpp	/^void displayGrade(const gradedActivity *activity)$/;"	f
+displayGrade	cpp/sowcpp/src/ch15/prog15-14.cpp	/^void displayGrade(const gradedActivity *activity)$/;"	f
+displayStudent	cpp/sowcpp/src/ch14/prog14-6.cpp	/^void displayStudent(studentTestScores s)$/;"	f
+displayValues	cpp/sowcpp/src/ch09/prog9-13.cpp	/^void displayValues(const int *numbers, int size)$/;"	f
+display_subs	c/generic/rsnix.c	/^display_subs(){$/;"	f
+display_subs	c/rsnix/rsnix.c	/^display_subs(){$/;"	f
+displayday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^void displayday(day d)$/;"	f
+divBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        double divBudget;           \/\/ Instance member var$/;"	m	class:Budget
+divBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        double divBudget;           \/\/ Instance member var$/;"	m	class:Budget
+divisionBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        double divisionBudget;      \/\/ Instance member$/;"	m	class:Budget
+dm	cpp/pscpp/src/ch01/0109.cpp	/^double dm(float sec)$/;"	f
+dog	cpp/sowcpp/src/ch15/prog15-15.cpp	/^        dog() : animal()$/;"	f	class:dog
+dog	cpp/sowcpp/src/ch15/prog15-15.cpp	/^class dog : public animal$/;"	c	file:
+dollarFormat	cpp/sowcpp/src/ch10/prog10-23.cpp	/^void dollarFormat(std::string &currency)$/;"	f
+doors	cpp/sowcpp/src/ch15/car.h	/^        int doors;  \/\/ Number of doors the car has$/;"	m	class:car
+doubleValue	cpp/sowcpp/src/ch09/prog9-11.cpp	/^void doubleValue(int *input)$/;"	f
+doublenum	cpp/sowcpp/src/reusfunct.cpp	/^int doublenum(int x)$/;"	f
+drink	cpp/sowcpp/src/a4main.cpp	/^struct drink$/;"	s	file:
+drinks	cpp/pcode/a4main_pcode.cpp	/^struct drinks$/;"	s	file:
+drive	cpp/sowcpp/src/ch15/truck.h	/^        string drive;   \/\/ Indicates manual or automatic transmission$/;"	m	class:truck
+du	cpp/pscpp/src/ch01/0109.cpp	/^double du(float sec)$/;"	f
+dump_questions	c/generic/bsdnow_qs.c	/^dump_questions(char *dumpname) { $/;"	f
+dump_source	c/generic/fopen.c	/^dump_source(void) {$/;"	f
+empNum	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    int empNum;         \/\/ Employee id$/;"	m	struct:employeePay	file:
+empNumber	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    int empNumber;  \/\/ Employee Number$/;"	m	struct:PayRoll	file:
+employeeInfo	cpp/sowcpp/src/ch11/prog11-5.cpp	/^struct employeeInfo$/;"	s	file:
+employeeNum	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int employeeNum;$/;"	m	struct:employeeInfo	file:
+employeePay	cpp/sowcpp/src/ch11/prog11-3.cpp	/^struct employeePay$/;"	s	file:
+entabulate	c/kr/s1/entab.c	/^void entabulate(char in[], int len, char out[])$/;"	f
+entry	c/projects/projects.c	/^struct entry {$/;"	s	file:
+escape	c/kr/headers/charconv.h	/^void escape(char to[], char from[])$/;"	f
+escape	c/kr/s3/ex302.c	/^void escape(char s[], char t[])$/;"	f
+escape	c/projects/charconv.h	/^void escape(char to[], char from[])$/;"	f
+ex_atof	c/kr/s4/atof.c	/^double ex_atof(char * s) {$/;"	f
+exfunct	cpp/sowcpp/src/functlook.cpp	/^void exfunct()$/;"	f
+exit	asm/amd64/lolcat.asm	/^exit:$/;"	l
+exit	asm/amd64/lolcat_stolen.asm	/^exit:$/;"	l
+expand	c/kr/s3/ex303.c	/^void expand(char input[], char expand[])$/;"	f
+expand_tab	c/kr/s1/detab.c	/^void expand_tab(char in[], char out[])$/;"	f
+expiration	c/projects/projects.c	/^	char *expiration;$/;"	m	struct:entry	file:
+fahr2cent	c/kr/s1/temp4.c	/^float fahr2cent(float t)$/;"	f
+favMov	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^struct favMov$/;"	s	file:
+favnum	cpp/sowcpp/src/macroasobject.cpp	/^#define favnum$/;"	d	file:
+feet	cpp/sowcpp/src/headers/feetInches.h	/^        int feet;   \/\/ To hold the number of feet$/;"	m	class:feetInches
+feetInches	cpp/sowcpp/src/headers/feetInches.h	/^        feetInches(int f = 0, int i = 0)$/;"	f	class:feetInches
+feetInches	cpp/sowcpp/src/headers/feetInches.h	/^class feetInches$/;"	c
+fetch_subs	c/generic/rsnix.c	/^fetch_subs(){ $/;"	f
+fetch_subs	c/rsnix/rsnix.c	/^fetch_subs(){ $/;"	f
+finalExam	cpp/sowcpp/src/ch15/finalExam.h	/^        finalExam( int questions, int missed)$/;"	f	class:finalExam
+finalExam	cpp/sowcpp/src/ch15/finalExam.h	/^        finalExam()$/;"	f	class:finalExam
+finalExam	cpp/sowcpp/src/ch15/finalExam.h	/^class finalExam : public gradedActivity$/;"	c
+finalExam	cpp/sowcpp/src/ch15/finalExamv2.h	/^        finalExam()$/;"	f	class:finalExam
+finalExam	cpp/sowcpp/src/ch15/finalExamv2.h	/^        finalExam(int nquestions, int nmissed)$/;"	f	class:finalExam
+finalExam	cpp/sowcpp/src/ch15/finalExamv2.h	/^class finalExam : public gradedActivity$/;"	c
+flavor	cpp/pcode/a4main_pcode.cpp	/^    string flavor;      \/\/ Holds the flavor of the drink$/;"	m	struct:drinks	file:
+flavor	cpp/sowcpp/src/a4main.cpp	/^    string flavor;      \/\/ Holds the flavor of the drink$/;"	m	struct:drink	file:
+flipbits	c/kr/s2/ex207.c	/^unsigned short int flipbits(unsigned short int x, unsigned short int p, unsigned short int n)$/;"	f
+friday	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	e	enum:day	file:
+friday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+friday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+genEdHours	cpp/sowcpp/src/ch15/csStudent.h	/^        int genEdHours; \/\/ Hours of general education taken$/;"	m	class:csStudent
+gen_key	bash/cryptvault.bash	/^gen_key()$/;"	f
+gen_pass	bash/cryptvault.bash	/^gen_pass()$/;"	f
+getArea	cpp/sowcpp/src/shape.h	/^        double getArea() const$/;"	f	class:shapes
+getBadge	cpp/sowcpp/src/headers/officer.h	/^        int getBadge() const$/;"	f	class:officer
+getChoice	cpp/pcode/a4main_pcode.cpp	/^int getChoice(Drink [])$/;"	f
+getChoice	cpp/sowcpp/src/a4main.cpp	/^int getChoice(drink[])$/;"	f
+getColor	cpp/sowcpp/src/headers/car.h	/^        string getColor() const$/;"	f	class:car
+getCorpBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        double getCorpBudget() const    \/\/ Return the static var$/;"	f	class:Budget
+getCorpBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        double getCorpBudget() const$/;"	f	class:Budget
+getCorpBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        double getCorpBudget() const$/;"	f	class:Budget
+getData	cpp/sowcpp/src/ch11/prog11-8.cpp	/^void getData(student *s)$/;"	f
+getDay	cpp/sowcpp/src/ch15/date.h	/^        int getDay() const$/;"	f	class:date
+getDivBudget	cpp/sowcpp/src/headers/auxil.h	/^        double getDivBudget() const$/;"	f	class:auxOffice
+getDivBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        double getDivBudget() const$/;"	f	class:Budget
+getDivBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        double getDivBudget() const$/;"	f	class:Budget
+getDivisionBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        double getDivisionBudget() const    \/\/ Returns the budget request for a given division$/;"	f	class:Budget
+getDoors	cpp/sowcpp/src/ch15/car.h	/^        int getDoors() const$/;"	f	class:car
+getDrive	cpp/sowcpp/src/ch15/truck.h	/^        string getDrive() const$/;"	f	class:truck
+getF	cpp/sowcpp/src/headers/feetInches.h	/^        int getF() const$/;"	f	class:feetInches
+getHour	cpp/sowcpp/src/ch15/time.h	/^        int getHour() const$/;"	f	class:time
+getI	cpp/sowcpp/src/headers/feetInches.h	/^        int getI() const$/;"	f	class:feetInches
+getID	cpp/sowcpp/src/ch15/student.h	/^        string getID() const$/;"	f	class:student
+getItem	cpp/sowcpp/src/ch11/prog11-6.cpp	/^void getItem(inventoryItem &p)  \/\/ Uses a reference parameter$/;"	f
+getLength	cpp/sowcpp/src/rectangle.h	/^        long getLength() const$/;"	f	class:rectangle
+getLetter	cpp/sowcpp/src/ch15/finalExamv2.cpp	/^char gradedActivity::getLetter() const$/;"	f	class:gradedActivity
+getLetter	cpp/sowcpp/src/ch15/gradedActivityv1.cpp	/^char gradedActivity::getLetter() const$/;"	f	class:gradedActivity
+getLetter	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        virtual char getLetter() const$/;"	f	class:gradedActivity
+getLetter	cpp/sowcpp/src/ch15/passFail.cpp	/^char passFail::getLetter() const$/;"	f	class:passFail
+getMake	cpp/sowcpp/src/ch15/automobile.h	/^        string getMake() const$/;"	f	class:automobile
+getMake	cpp/sowcpp/src/headers/car.h	/^        string getMake() const$/;"	f	class:car
+getMile	cpp/sowcpp/src/ch15/automobile.h	/^        int getMile() const$/;"	f	class:automobile
+getMin	cpp/sowcpp/src/ch15/time.h	/^        int getMin() const$/;"	f	class:time
+getMinPassingScore	cpp/sowcpp/src/ch15/passFail.h	/^        double getMinPassingScore() const$/;"	f	class:passFail
+getMissed	cpp/sowcpp/src/ch15/finalExam.h	/^        int getMissed() const$/;"	f	class:finalExam
+getMissed	cpp/sowcpp/src/ch15/finalExamv2.h	/^        int getMissed() const$/;"	f	class:finalExam
+getMissed	cpp/sowcpp/src/ch15/passFailExam.h	/^        int getMissed() const$/;"	f	class:passFailExam
+getModel	cpp/sowcpp/src/ch15/automobile.h	/^        int getModel() const$/;"	f	class:automobile
+getModel	cpp/sowcpp/src/headers/car.h	/^        string getModel() const$/;"	f	class:car
+getMonth	cpp/sowcpp/src/ch15/date.h	/^        int getMonth() const$/;"	f	class:date
+getMovieData	cpp/pcode/a2main_pcode.cpp	/^int getMovieData(int *arrayptr, int counter)$/;"	f
+getMovieData	cpp/sowcpp/src/a2main.cpp	/^void getMovieData(int *arr, int size)$/;"	f
+getName	cpp/sowcpp/src/ch15/student.h	/^        string getName() const$/;"	f	class:student
+getName	cpp/sowcpp/src/headers/officer.h	/^        string getName() const$/;"	f	class:officer
+getNumQ	cpp/sowcpp/src/ch15/finalExam.h	/^        double getNumQ() const$/;"	f	class:finalExam
+getNumQ	cpp/sowcpp/src/ch15/passFailExam.h	/^        double getNumQ() const$/;"	f	class:passFailExam
+getNumTestScores	cpp/sowcpp/src/headers/studentTestScores.h	/^            int getNumTestScores() const$/;"	f	class:studentTestScores
+getNumTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            int getNumTestScores() const$/;"	f	class:studentTestScores
+getNumTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            int getNumTestScores()$/;"	f	class:studentTestScores
+getNumber	cpp/sowcpp/src/ch09/prog9-11.cpp	/^void getNumber(int *input)$/;"	f
+getObjectCount	cpp/sowcpp/src/headers/tree.h	/^        int getObjectCount() const$/;"	f	class:tree
+getP	cpp/sowcpp/src/ch15/finalExamv2.h	/^        double getP() const$/;"	f	class:finalExam
+getPass	cpp/sowcpp/src/ch15/suv.h	/^        int getPass() const$/;"	f	class:suv
+getPercentage	cpp/sowcpp/src/ch15/curvedActivity.h	/^        double getPercentage() const$/;"	f	class:curvedActivity
+getPlate	cpp/sowcpp/src/headers/car.h	/^        string getPlate() const$/;"	f	class:car
+getPoints	cpp/sowcpp/src/ch15/finalExam.h	/^        double getPoints() const$/;"	f	class:finalExam
+getPoints	cpp/sowcpp/src/ch15/passFailExam.h	/^        double getPoints() const$/;"	f	class:passFailExam
+getPrice	cpp/sowcpp/src/ch15/automobile.h	/^        double getPrice() const$/;"	f	class:automobile
+getQ	cpp/sowcpp/src/ch15/finalExamv2.h	/^        double getQ() const$/;"	f	class:finalExam
+getRadius	cpp/sowcpp/src/circle.h	/^        double getRadius() const$/;"	f	class:circle
+getRandomNumbers	cpp/sowcpp/src/ch09/prog9-15.cpp	/^int *getRandomNumbers(int num)$/;"	f
+getRaw	cpp/sowcpp/src/ch15/curvedActivity.h	/^        double getRaw() const$/;"	f	class:curvedActivity
+getRemainingHours	cpp/sowcpp/src/ch15/csStudent.cpp	/^int csStudent::getRemainingHours() const$/;"	f	class:csStudent
+getSales	cpp/sowcpp/src/ch09/prog9-12.cpp	/^void getSales(double *arr, int size)$/;"	f
+getScore	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        double getScore() const$/;"	f	class:gradedActivity
+getScore	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        double getScore() const$/;"	f	class:gradedActivity
+getScore	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        double getScore() const$/;"	f	class:gradedActivity
+getSec	cpp/sowcpp/src/ch15/time.h	/^        int getSec() const$/;"	f	class:time
+getStuName	cpp/sowcpp/src/headers/studentTestScores.h	/^            string getStuName() const$/;"	f	class:studentTestScores
+getStudentName	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            string getStudentName() const$/;"	f	class:studentTestScores
+getStudentName	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            string getStudentName() const$/;"	f	class:studentTestScores
+getTestScore	cpp/sowcpp/src/headers/studentTestScores.h	/^            double getTestScore( int index ) const$/;"	f	class:studentTestScores
+getTestScore	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            double getTestScore(int index) const$/;"	f	class:studentTestScores
+getTestScore	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            double getTestScore(int index) const$/;"	f	class:studentTestScores
+getTime	cpp/sowcpp/src/headers/car.h	/^        float getTime() const$/;"	f	class:car
+getTime	cpp/sowcpp/src/headers/meter.h	/^        float getTime() const   \/\/ Return the time alloted, in minutes$/;"	f	class:meter
+getWidth	cpp/sowcpp/src/rectangle.h	/^        long getWidth() const$/;"	f	class:rectangle
+getX	cpp/sowcpp/src/circle.h	/^        long getX() const$/;"	f	class:circle
+getY	cpp/sowcpp/src/circle.h	/^        long getY() const$/;"	f	class:circle
+getYear	cpp/sowcpp/src/ch15/date.h	/^        int getYear() const$/;"	f	class:date
+getYear	cpp/sowcpp/src/ch15/student.h	/^        int getYear() const$/;"	f	class:student
+get_line	c/kr/headers/get_line.h	/^int get_line(char *s, int lim) {$/;"	f
+get_line	c/kr/s1/char_array2.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s1/char_arrays.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s1/detab.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s1/ex117.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s1/ex118.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s2/ex202.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s2/ex203.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s2/upperconv.c	/^int get_line(char s[], int lim)$/;"	f
+get_line	c/kr/s4/exgrep.c	/^int get_line(char s[], int lim) {$/;"	f
+get_line2	c/kr/s2/ex202.c	/^int get_line2(char s[], int lim)$/;"	f
+get_top	c/kr/s4/ex404.c	/^get_top(double pair[2]) {$/;"	f
+get_top	c/kr/s4/ex405.c	/^get_top(double pair[2]) {$/;"	f
+geta	cpp/sowcpp/src/ch15/rectangle.h	/^        double geta() const$/;"	f	class:rectangle
+geta	cpp/sowcpp/src/headers/circle.h	/^        float  geta() const$/;"	f	class:circle
+geta	cpp/sowcpp/src/headers/rectangle.h	/^double rectangle::geta() const$/;"	f	class:rectangle
+geta	cpp/sowcpp/src/headers/rectanglev4.h	/^        double geta() const$/;"	f	class:rectangle
+getarea	cpp/sowcpp/src/ch13/prog13-1.cpp	/^double rectangle::getarea() const$/;"	f	class:rectangle
+getch	c/kr/s4/ex403.c	/^getch(void) { $/;"	f
+getch	c/kr/s4/ex404.c	/^getch(void) { $/;"	f
+getch	c/kr/s4/ex405.c	/^getch(void) { $/;"	f
+getch	c/kr/s4/rpolish.c	/^getch(void) { $/;"	f
+getcir	cpp/sowcpp/src/headers/circle.h	/^        float getcir() const$/;"	f	class:circle
+getdia	cpp/sowcpp/src/headers/circle.h	/^        float getdia() const$/;"	f	class:circle
+geth	cpp/sowcpp/src/ch15/cube.h	/^        double geth() const$/;"	f	class:cube
+getinfo	cpp/sowcpp/src/ch11/prog11-7.cpp	/^circle getinfo()$/;"	f
+getl	cpp/sowcpp/src/ch15/rectangle.h	/^        double getl() const$/;"	f	class:rectangle
+getl	cpp/sowcpp/src/headers/rectangle.h	/^double rectangle::getl() const$/;"	f	class:rectangle
+getl	cpp/sowcpp/src/headers/rectanglev4.h	/^        double getl() const$/;"	f	class:rectangle
+getlength	cpp/sowcpp/src/ch13/prog13-1.cpp	/^double rectangle::getlength() const$/;"	f	class:rectangle
+getline	c/kr/s1/ex119.c	/^int getline(char s[], int lim)$/;"	f
+getline	c/kr/s1/ex122.c	/^int getline(char s[], int max)$/;"	f
+getline	c/kr/s1/extvar.c	/^int getline(void)$/;"	f
+getop	c/kr/s4/ex403.c	/^getop(char s[]) {$/;"	f
+getop	c/kr/s4/ex404.c	/^getop(char s[]) {$/;"	f
+getop	c/kr/s4/ex405.c	/^getop(char s[]) {$/;"	f
+getop	c/kr/s4/rpolish.c	/^getop(char s[]) {$/;"	f
+getv	cpp/sowcpp/src/ch15/cube.h	/^        double getv() const$/;"	f	class:cube
+getvar	cpp/sowcpp/src/reusfunct.cpp	/^int getvar()$/;"	f
+getw	cpp/sowcpp/src/ch15/rectangle.h	/^        double getw() const$/;"	f	class:rectangle
+getw	cpp/sowcpp/src/headers/rectangle.h	/^double rectangle::getw() const$/;"	f	class:rectangle
+getw	cpp/sowcpp/src/headers/rectanglev4.h	/^        double getw() const$/;"	f	class:rectangle
+getwidth	cpp/sowcpp/src/ch13/prog13-1.cpp	/^double rectangle::getwidth() const$/;"	f	class:rectangle
+go_again	c/kr/s4/ex402.c	/^go_again(char c) {$/;"	f
+gpa	cpp/sowcpp/src/ch11/prog11-8.cpp	/^    double gpa;         \/\/ Current gpa$/;"	m	struct:student	file:
+grabc	c/kr/headers/grabc.h	/^char grabc()$/;"	f
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        gradedActivity()$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        gradedActivity(double s)$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^class gradedActivity$/;"	c
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        gradedActivity()$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        gradedActivity(double s)$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^class gradedActivity$/;"	c
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        gradedActivity()$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        gradedActivity(double s)$/;"	f	class:gradedActivity
+gradedActivity	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^class gradedActivity$/;"	c
+grossPay	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    double grossPay;    \/\/ Gross pay$/;"	m	struct:employeePay	file:
+handle	py/ansbot.py	/^def handle(msg):$/;"	f
+hash_vault	bash/cryptvault.bash	/^hash_vault()$/;"	f
+height	cpp/sowcpp/src/ch15/cube.h	/^        double height;  \/\/ add a dimension to the rectangle, making it 3D$/;"	m	class:cube
+hexcon	c/kr/s2/ex203.c	/^double hexcon(char h[], int len)$/;"	f
+hour	cpp/sowcpp/src/ch15/time.h	/^        int hour;$/;"	m	class:time
+hours	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    double hours;   \/\/ Hours Worked$/;"	m	struct:PayRoll	file:
+hours	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    double hours;       \/\/ Hours worked$/;"	m	struct:employeePay	file:
+hours	cpp/sowcpp/src/ch11/prog11-4.cpp	/^    int hours;      \/\/ Hours worked$/;"	m	struct:payInfo	file:
+hours	cpp/sowcpp/src/ch11/prog11-9.cpp	/^    int hours;  \/\/ Hours worked$/;"	m	union:paysource	file:
+htoi	c/kr/s2/ex203.c	/^double htoi(char s[], int len)$/;"	f
+id	cpp/sowcpp/src/ch15/student.h	/^        string id;      \/\/ Student ID number$/;"	m	class:student
+idnum	cpp/sowcpp/src/ch11/prog11-8.cpp	/^    int idnum;          \/\/ Student ID$/;"	m	struct:student	file:
+inch	cpp/sowcpp/src/headers/feetInches.h	/^        int inch;   \/\/ To hold the number of inches$/;"	m	class:feetInches
+index	c/projects/projects.c	/^	unsigned long int index;$/;"	m	struct:entry	file:
+info	cpp/sowcpp/src/ch12/prog12-15.cpp	/^struct info$/;"	s	file:
+info	cpp/sowcpp/src/ch12/prog12-16.cpp	/^struct info$/;"	s	file:
+interactive_mode	c/generic/rsnix.c	/^interactive_mode(){$/;"	f
+interactive_mode	c/rsnix/rsnix.c	/^interactive_mode(){$/;"	f
+interest	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    double interest;    \/\/ Hold the interest rate$/;"	m	struct:bankAcc	file:
+inv	cpp/pcode/a4main_pcode.cpp	/^    int inv;            \/\/ Number of drinks in the machine$/;"	m	struct:drinks	file:
+inv	cpp/sowcpp/src/a4main.cpp	/^    int inv;            \/\/ Number of drinks in the machine$/;"	m	struct:drink	file:
+inv	cpp/sowcpp/src/a5main.cpp	/^inventory inv;  \/\/ Holds the inventory entries$/;"	v
+inventory	cpp/sowcpp/src/a5main.cpp	/^struct inventory$/;"	s	file:
+inventoryItem	cpp/sowcpp/src/ch11/prog11-6.cpp	/^struct inventoryItem$/;"	s	file:
+isexpansion	c/kr/s3/ex303.c	/^int isexpansion(char x, char y, char z)$/;"	f
+isws	c/kr/s4/strcalc.c	/^isws(char c) {$/;"	f
+item	cpp/sowcpp/src/a5main.cpp	/^    char item[DESC_NUM];$/;"	m	struct:inventory	file:
+itoa	c/kr/s3/ex304.c	/^void itoa(int n, char s[]){$/;"	f
+itoa	c/kr/s3/ex306.c	/^void itoa(int x, char * s, int p) {$/;"	f
+itoa	c/kr/s3/itoa.c	/^void itoa(int n, char s[])$/;"	f
+itob	c/kr/s3/ex305.c	/^void itob(int n, char * s, int b){$/;"	f
+jump	cpp/sowcpp/src/functvar.cpp	/^void jump()$/;"	f
+key_check	bash/cryptvault.bash	/^key_check()$/;"	f
+length	cpp/sowcpp/src/ch13/prog13-1.cpp	/^        double length;$/;"	m	class:rectangle	file:
+length	cpp/sowcpp/src/ch15/rectangle.h	/^        double length;  \/\/ Length of the rectangle$/;"	m	class:rectangle
+length	cpp/sowcpp/src/headers/rectangle.h	/^        double length;$/;"	m	class:rectangle
+length	cpp/sowcpp/src/headers/rectanglev4.h	/^        double length;$/;"	m	class:rectangle
+length	cpp/sowcpp/src/rectangle.h	/^        long length;\/\/ Rectangle length$/;"	m	class:rectangle
+letter	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        char letter;    \/\/ To hold the letter grade$/;"	m	class:gradedActivity
+line	c/kr/s1/extvar.c	/^char line[MAX];	\/* current input line *\/$/;"	v
+longest	c/kr/s1/extvar.c	/^char longest[MAX];	\/* longest line of input *\/$/;"	v
+lower	c/kr/headers/charconv.h	/^void lower(char s[])$/;"	f
+lower	c/kr/s2/ex210.c	/^void lower(char s[])$/;"	f
+lower	c/projects/charconv.h	/^void lower(char s[])$/;"	f
+lowerc	c/kr/headers/charconv.h	/^char lowerc(char c)$/;"	f
+lowerc	c/projects/charconv.h	/^char lowerc(char c)$/;"	f
+main	c/cthw/exercise01/ex1.c	/^int main(int argc, char *argv[])$/;"	f
+main	c/cthw/exercise03/ex3.c	/^int main()$/;"	f
+main	c/cthw/exercise04/ex4.c	/^int main()$/;"	f
+main	c/generic/battery_life.c	/^main(void){$/;"	f
+main	c/generic/bitshift.c	/^main (void) {$/;"	f
+main	c/generic/bsdnow_qs.c	/^main(int argc, char *argv[]) { $/;"	f
+main	c/generic/dls.c	/^main(int argc, char **argv) { $/;"	f
+main	c/generic/envlist.c	/^main(void) {$/;"	f
+main	c/generic/fopen.c	/^main(int argc, char *argv[]) { $/;"	f
+main	c/generic/lolcat.c	/^main(int argc, char **argv) {$/;"	f
+main	c/generic/prntenv.c	/^main(char **envp){$/;"	f
+main	c/generic/projects.c	/^main(int argc, char *argv[]) {$/;"	f
+main	c/generic/rsnix.c	/^main(int argc, char *argv[]) {$/;"	f
+main	c/generic/sqlite3_check.c	/^main(void) {$/;"	f
+main	c/kr/s1/2d_dynamic_array.c	/^int main()$/;"	f
+main	c/kr/s1/2darray.c	/^int main()$/;"	f
+main	c/kr/s1/arrays.c	/^main()$/;"	f
+main	c/kr/s1/char_array2.c	/^int main()$/;"	f
+main	c/kr/s1/char_arrays.c	/^main()$/;"	f
+main	c/kr/s1/charcount1.c	/^main()$/;"	f
+main	c/kr/s1/charcount2.c	/^main()$/;"	f
+main	c/kr/s1/detab.c	/^int main()$/;"	f
+main	c/kr/s1/entab.c	/^int main()$/;"	f
+main	c/kr/s1/ex110.c	/^main()$/;"	f
+main	c/kr/s1/ex112.c	/^main()$/;"	f
+main	c/kr/s1/ex114.c	/^main()$/;"	f
+main	c/kr/s1/ex117.c	/^int main()$/;"	f
+main	c/kr/s1/ex118.c	/^int main()$/;"	f
+main	c/kr/s1/ex119.c	/^int main()$/;"	f
+main	c/kr/s1/ex122.c	/^int main()$/;"	f
+main	c/kr/s1/ex123.c	/^main(int argc, char **argv) {$/;"	f
+main	c/kr/s1/extvar.c	/^int main()$/;"	f
+main	c/kr/s1/fileCopy.c	/^main()$/;"	f
+main	c/kr/s1/fileCopy2.c	/^main()$/;"	f
+main	c/kr/s1/fileCopy3.c	/^main()$/;"	f
+main	c/kr/s1/fileCopy4.c	/^main()$/;"	f
+main	c/kr/s1/functions.c	/^main()$/;"	f
+main	c/kr/s1/helloworld.c	/^int main()$/;"	f
+main	c/kr/s1/helloworld_c.c	/^int main()$/;"	f
+main	c/kr/s1/linecount.c	/^main()$/;"	f
+main	c/kr/s1/temp.c	/^int main()$/;"	f
+main	c/kr/s1/temp2.c	/^int main()$/;"	f
+main	c/kr/s1/temp3.c	/^int main()$/;"	f
+main	c/kr/s1/temp4.c	/^main()$/;"	f
+main	c/kr/s1/wc-bare.c	/^main()$/;"	f
+main	c/kr/s11/fileCopy.c	/^main()$/;"	f
+main	c/kr/s11/fileCopy2.c	/^main()$/;"	f
+main	c/kr/s11/helloworld.c	/^int main()$/;"	f
+main	c/kr/s11/helloworld_c.c	/^int main()$/;"	f
+main	c/kr/s11/temp.c	/^int main()$/;"	f
+main	c/kr/s11/temp2.c	/^int main()$/;"	f
+main	c/kr/s11/temp3.c	/^int main()$/;"	f
+main	c/kr/s2/bitcount.c	/^int main ()$/;"	f
+main	c/kr/s2/bitopts.c	/^int main()$/;"	f
+main	c/kr/s2/ex201.c	/^int main()$/;"	f
+main	c/kr/s2/ex202.c	/^int main()$/;"	f
+main	c/kr/s2/ex203.c	/^int main()$/;"	f
+main	c/kr/s2/ex204.c	/^int main()$/;"	f
+main	c/kr/s2/ex205.c	/^int main()$/;"	f
+main	c/kr/s2/ex206.c	/^int main()$/;"	f
+main	c/kr/s2/ex207.c	/^int main()$/;"	f
+main	c/kr/s2/ex208.c	/^int main()$/;"	f
+main	c/kr/s2/ex209.c	/^int main()$/;"	f
+main	c/kr/s2/ex210.c	/^int main()$/;"	f
+main	c/kr/s2/upperconv.c	/^int main()$/;"	f
+main	c/kr/s3/binsearch.c	/^int main()$/;"	f
+main	c/kr/s3/ex301.c	/^int main()$/;"	f
+main	c/kr/s3/ex302.c	/^int main()$/;"	f
+main	c/kr/s3/ex303.c	/^int main()$/;"	f
+main	c/kr/s3/ex304.c	/^int main(void){$/;"	f
+main	c/kr/s3/ex305.c	/^int main(void){$/;"	f
+main	c/kr/s3/ex306.c	/^int main(void) {$/;"	f
+main	c/kr/s3/itoa.c	/^int main()$/;"	f
+main	c/kr/s3/reverse.c	/^int main()$/;"	f
+main	c/kr/s3/trim.c	/^int main(void) {$/;"	f
+main	c/kr/s4/atof-sci.c	/^main(void) {$/;"	f
+main	c/kr/s4/atof.c	/^int main(void) {$/;"	f
+main	c/kr/s4/ex401.c	/^int main(void) {$/;"	f
+main	c/kr/s4/ex402.c	/^int main(void) {$/;"	f
+main	c/kr/s4/ex403.c	/^main(void) {$/;"	f
+main	c/kr/s4/ex404.c	/^main(void) {$/;"	f
+main	c/kr/s4/ex405.c	/^main(void) {$/;"	f
+main	c/kr/s4/exgrep.c	/^int main(void) {$/;"	f
+main	c/kr/s4/rpolish.c	/^main(int argc, char **argv) {$/;"	f
+main	c/kr/s4/strcalc.c	/^main(void) {$/;"	f
+main	c/nxi/nxi.c	/^main(int argc, char **argv) {$/;"	f
+main	c/projects/projects.c	/^main(int argc, char *argv[]) {$/;"	f
+main	c/rsnix/rsnix.c	/^main(int argc, char *argv[]) {$/;"	f
+main	cpp/pcode/a2main_pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a3main_pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a4main_pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a5pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a6_pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a7pcode.cpp	/^int main()$/;"	f
+main	cpp/pcode/a8main_pcode.cpp	/^int main()$/;"	f
+main	cpp/pscpp/src/ch01/0105.cpp	/^int main()$/;"	f
+main	cpp/pscpp/src/ch01/0108.cpp	/^int main()$/;"	f
+main	cpp/pscpp/src/ch01/0109.cpp	/^int main()$/;"	f
+main	cpp/pscpp/src/ch02/0201.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a1main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a2main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a3main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a4main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a5main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a6main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a7main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/a8main.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/arrayloop.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/arraypractice.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/binsearch.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/bubblesort.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-11.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-12.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-13.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-14.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-15.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-4.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-7.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-8.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch09/prog9-9.cpp	/^int main ()$/;"	f
+main	cpp/sowcpp/src/ch10/prog10-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch10/prog10-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch10/prog10-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch10/prog10-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-11.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-12.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-13.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-14.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-4.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-7.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-8.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch11/prog11-9.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-11.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-12.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-13.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-14.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-15.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-16.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-4.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-7.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-8.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch12/prog12-9.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch13/prog13-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch13/prog13-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch13/prog13-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch13/prog13-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-4.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-8.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch14/prog14-9.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-1.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-10.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-12.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-13.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-14.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-15.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-17.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-18.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-2.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-3.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-4.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-5.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-6.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-7.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-8.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/ch15/prog15-9.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/functlook.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/functvar.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/headerpractice.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/hello.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/helloagain.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/linearsearch.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/macroasobject.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/mainexp.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/median.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/mode.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/reusfunct.cpp	/^int main()$/;"	f
+main	cpp/sowcpp/src/selectionsort.cpp	/^int main()$/;"	f
+mainOffice	cpp/sowcpp/src/auxil.cpp	/^void Budget::mainOffice(double b)$/;"	f	class:Budget
+mainOffice	cpp/sowcpp/src/budget.cpp	/^void Budget::mainOffice(double moffice)$/;"	f	class:Budget
+mainOffice	cpp/sowcpp/src/headers/budgetv2.h	/^void Budget::mainOffice(double moffice)$/;"	f	class:Budget
+maint	cpp/sowcpp/src/ch10/prog10-23.cpp	/^int maint()$/;"	f
+make	cpp/sowcpp/src/ch15/automobile.h	/^        string make;    \/\/ The make of the automobile$/;"	m	class:automobile
+make	cpp/sowcpp/src/headers/car.h	/^        string make;    \/\/ Make of the car$/;"	m	class:car
+makeArray	cpp/pcode/a2main_pcode.cpp	/^int *makeArray(int arrayAddresses)$/;"	f
+makeArray	cpp/sowcpp/src/a2main.cpp	/^int *makeArray(int num)$/;"	f
+mathHours	cpp/sowcpp/src/ch15/csStudent.h	/^        int mathHours;  \/\/ Hours of math taken$/;"	m	class:csStudent
+max	c/kr/s1/extvar.c	/^int max;	\/* max line length so far *\/$/;"	v
+max	c/kr/s2/ex203.c	/^#define max /;"	d	file:
+mean	cpp/pcode/a2main_pcode.cpp	/^double mean (int *arrayptr, int arraySize)$/;"	f
+mean	cpp/sowcpp/src/a2main.cpp	/^double mean(int *arr, int size)$/;"	f
+median	cpp/pcode/a2main_pcode.cpp	/^double median (int *arrayptr, int size)$/;"	f
+median	cpp/sowcpp/src/a2main.cpp	/^double median (int *arr, int size)$/;"	f
+median	cpp/sowcpp/src/median.cpp	/^double median (int *arr, int size)$/;"	f
+meter	cpp/sowcpp/src/headers/meter.h	/^        meter()$/;"	f	class:meter
+meter	cpp/sowcpp/src/headers/meter.h	/^class meter$/;"	c
+mileage	cpp/sowcpp/src/ch15/automobile.h	/^        int mileage;    \/\/ Mileage of the automobile$/;"	m	class:automobile
+min	cpp/sowcpp/src/ch15/time.h	/^        int min;$/;"	m	class:time
+minPassingScore	cpp/sowcpp/src/ch15/passFail.h	/^        double minPassingScore; \/\/ Minimum passing score for the activity$/;"	m	class:passFail
+missed	cpp/sowcpp/src/ch15/finalExam.h	/^        int missed;          \/\/ Questions missed$/;"	m	class:finalExam
+missed	cpp/sowcpp/src/ch15/finalExamv2.h	/^        int missed;     \/\/ Number of questions missed$/;"	m	class:finalExam
+missed	cpp/sowcpp/src/ch15/passFailExam.h	/^        int missed;     \/\/ Questions missed$/;"	m	class:passFailExam
+mode	cpp/pcode/a2main_pcode.cpp	/^int mode(int *arrayptr, int count)$/;"	f
+mode	cpp/sowcpp/src/a2main.cpp	/^int mode(int *arr, int size)$/;"	f
+mode	cpp/sowcpp/src/mode.cpp	/^int mode(int *array, int size)$/;"	f
+model	cpp/sowcpp/src/ch15/automobile.h	/^        int model;      \/\/ The automobile's year$/;"	m	class:automobile
+model	cpp/sowcpp/src/headers/car.h	/^        string model;   \/\/ Model of the car$/;"	m	class:car
+monday	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	e	enum:day	file:
+monday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+monday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+month	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int month;$/;"	m	struct:date	file:
+month	cpp/sowcpp/src/ch15/date.h	/^        int month;$/;"	m	class:date
+monthlyBal	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    double monthlyBal;  \/\/ Hold the monthly account balance$/;"	m	struct:bankAcc	file:
+multiply	cpp/sowcpp/src/reusfunct.cpp	/^int multiply(int x, int y)$/;"	f
+n_atoi	c/kr/s4/atof-sci.c	/^n_atoi(char c) {$/;"	f
+name	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string name;    \/\/ Movie name$/;"	m	struct:favMov	file:
+name	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    string name;    \/\/ Employee's Name$/;"	m	struct:PayRoll	file:
+name	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    string name;        \/\/ Employee name$/;"	m	struct:employeePay	file:
+name	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string name;$/;"	m	struct:employeeInfo	file:
+name	cpp/sowcpp/src/ch11/prog11-8.cpp	/^    string name;        \/\/ Student name$/;"	m	struct:student	file:
+name	cpp/sowcpp/src/ch12/prog12-15.cpp	/^    char name[NAME_SIZE];$/;"	m	struct:info	file:
+name	cpp/sowcpp/src/ch12/prog12-16.cpp	/^    char name[NAME_SIZE];$/;"	m	struct:info	file:
+name	cpp/sowcpp/src/ch15/student.h	/^        string name;    \/\/ Name of the student$/;"	m	class:student
+name	cpp/sowcpp/src/headers/officer.h	/^        string name;    \/\/ Officer's name$/;"	m	class:officer
+negative	c/kr/s4/atof-sci.c	/^#define negative /;"	d	file:
+negative	c/kr/s4/ex403.c	/^int negative;$/;"	v
+negative	c/kr/s4/ex404.c	/^int negative;$/;"	v
+negative	c/kr/s4/ex405.c	/^int negative;$/;"	v
+next	c/projects/projects.c	/^	struct entry *next;$/;"	m	struct:entry	typeref:struct:entry::entry	file:
+numQ	cpp/sowcpp/src/ch15/finalExam.h	/^        int numQ;            \/\/ Number of questions$/;"	m	class:finalExam
+numQ	cpp/sowcpp/src/ch15/finalExamv2.h	/^        int numQ;       \/\/ Holds the number of questions$/;"	m	class:finalExam
+numQ	cpp/sowcpp/src/ch15/passFailExam.h	/^        int numQ;        \/\/ Number of questions$/;"	m	class:passFailExam
+numTestScores	cpp/sowcpp/src/headers/studentTestScores.h	/^        int numTestScores;  \/\/ Number of test scores$/;"	m	class:studentTestScores
+numTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^        int numTestScores;  \/\/ Number of test scores$/;"	m	class:studentTestScores
+numTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^        int numTestScores;  \/\/ Number of test scores$/;"	m	class:studentTestScores
+objectCount	cpp/sowcpp/src/headers/tree.h	/^        static int objectCount; \/\/ Static var$/;"	m	class:tree
+objectCount	cpp/sowcpp/src/headers/tree.h	/^int tree::objectCount = 0;$/;"	m	class:tree
+officer	cpp/sowcpp/src/headers/officer.h	/^        officer()$/;"	f	class:officer
+officer	cpp/sowcpp/src/headers/officer.h	/^class officer$/;"	c
+onHand	cpp/sowcpp/src/ch11/prog11-6.cpp	/^    int onHand;         \/\/ Number of items on hand$/;"	m	struct:inventoryItem	file:
+openfile	cpp/sowcpp/src/ch12/prog12-5.cpp	/^bool openfile(fstream &file, string name)$/;"	f
+operator +	cpp/sowcpp/src/feetInches.cpp	/^feetInches feetInches::operator + (const feetInches &right)$/;"	f	class:feetInches
+operator ++	cpp/sowcpp/src/feetInches.cpp	/^feetInches feetInches::operator ++ ()$/;"	f	class:feetInches
+operator ++	cpp/sowcpp/src/feetInches.cpp	/^feetInches feetInches::operator ++ (int)$/;"	f	class:feetInches
+operator -	cpp/sowcpp/src/feetInches.cpp	/^feetInches feetInches::operator - (const feetInches &right)$/;"	f	class:feetInches
+operator <	cpp/sowcpp/src/feetInches.cpp	/^bool feetInches::operator < (const feetInches &right)$/;"	f	class:feetInches
+operator =	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            void operator =(const studentTestScores &right)$/;"	f	class:studentTestScores
+operator ==	cpp/sowcpp/src/feetInches.cpp	/^bool feetInches::operator == (const feetInches &right)$/;"	f	class:feetInches
+operator >	cpp/sowcpp/src/feetInches.cpp	/^bool feetInches::operator > (const feetInches &right)$/;"	f	class:feetInches
+padding	c/kr/s3/ex306.c	/^#define padding /;"	d	file:
+parsecmd	py/ansbot.py	/^def parsecmd(msg):$/;"	f
+partNum	cpp/sowcpp/src/ch11/prog11-6.cpp	/^    int partNum;        \/\/ Part number$/;"	m	struct:inventoryItem	file:
+pass	cpp/sowcpp/src/ch15/suv.h	/^        int pass;   \/\/ Number of passengers the suv can carry$/;"	m	class:suv
+passFail	cpp/sowcpp/src/ch15/passFail.h	/^        passFail() : gradedActivity()$/;"	f	class:passFail
+passFail	cpp/sowcpp/src/ch15/passFail.h	/^        passFail(double mps) : gradedActivity()$/;"	f	class:passFail
+passFail	cpp/sowcpp/src/ch15/passFail.h	/^class passFail : public gradedActivity$/;"	c
+passFailExam	cpp/sowcpp/src/ch15/passFailExam.h	/^        passFailExam() : passFail()$/;"	f	class:passFailExam
+passFailExam	cpp/sowcpp/src/ch15/passFailExam.h	/^        passFailExam(int questions, int nmissed, double mps) : passFail(mps)$/;"	f	class:passFailExam
+passFailExam	cpp/sowcpp/src/ch15/passFailExam.h	/^class passFailExam : public passFail$/;"	c
+pass_close	bash/cryptvault.bash	/^pass_close()$/;"	f
+pattern	c/kr/s4/exgrep.c	/^char pattern[] = "ould"; \/* pattern to search for *\/$/;"	v
+payInfo	cpp/sowcpp/src/ch11/prog11-4.cpp	/^struct payInfo$/;"	s	file:
+payRate	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    double payRate;     \/\/ Hourly pay$/;"	m	struct:employeePay	file:
+payRate	cpp/sowcpp/src/ch11/prog11-4.cpp	/^    double payRate; \/\/ Hourly pay rate$/;"	m	struct:payInfo	file:
+paysource	cpp/sowcpp/src/ch11/prog11-9.cpp	/^union paysource$/;"	u	file:
+percent	cpp/sowcpp/src/ch15/curvedActivity.h	/^        double percent; \/\/ Curve percentage$/;"	m	class:curvedActivity
+phone	cpp/sowcpp/src/ch12/prog12-15.cpp	/^    char phone[PHONE_SIZE];$/;"	m	struct:info	file:
+phone	cpp/sowcpp/src/ch12/prog12-16.cpp	/^    char phone[PHONE_SIZE];$/;"	m	struct:info	file:
+pi	cpp/sowcpp/src/headers/circle.h	/^        float pi = 3.14159;$/;"	m	class:circle
+place	cpp/sowcpp/src/ch11/prog11-5.cpp	/^struct place$/;"	s	file:
+plate	cpp/sowcpp/src/headers/car.h	/^        string plate;   \/\/ License plate of the car$/;"	m	class:car
+points	cpp/sowcpp/src/ch15/finalExam.h	/^        double points;       \/\/ Point of each question$/;"	m	class:finalExam
+points	cpp/sowcpp/src/ch15/finalExamv2.h	/^        double points;  \/\/ Holds the number of points each question's worth$/;"	m	class:finalExam
+points	cpp/sowcpp/src/ch15/passFailExam.h	/^        double points;  \/\/ Points per question$/;"	m	class:passFailExam
+pop	c/kr/s4/ex403.c	/^pop(void) {$/;"	f
+pop	c/kr/s4/ex404.c	/^pop(void) {$/;"	f
+pop	c/kr/s4/ex405.c	/^pop(void) {$/;"	f
+pop	c/kr/s4/rpolish.c	/^pop(void) {$/;"	f
+positive	c/kr/s4/atof-sci.c	/^#define positive /;"	d	file:
+power	c/kr/s1/functions.c	/^int power(int base, int n)$/;"	f
+pprint	py/ansbot.py	/^from pprint import pprint $/;"	i
+prefunct	cpp/sowcpp/src/functlook.cpp	/^void prefunct()$/;"	f
+pretty_print	c/generic/projects.c	/^pretty_print(char *sqlite_return) {$/;"	f
+pretty_print	c/projects/projects.c	/^pretty_print(char *sqlite_return) {$/;"	f
+previous	c/projects/projects.c	/^	struct entry *previous;$/;"	m	struct:entry	typeref:struct:entry::entry	file:
+price	cpp/sowcpp/src/ch11/prog11-6.cpp	/^    double price;       \/\/ Price of the item$/;"	m	struct:inventoryItem	file:
+price	cpp/sowcpp/src/ch15/automobile.h	/^        double price;   \/\/ Cost of the automobile$/;"	m	class:automobile
+print_battery	c/generic/battery_life.c	/^print_battery(void){$/;"	f
+print_help	c/generic/bsdnow_qs.c	/^print_help(void) { $/;"	f
+print_help	c/generic/rsnix.c	/^print_help(){$/;"	f
+print_help	c/rsnix/rsnix.c	/^print_help(){$/;"	f
+print_sources	c/generic/fopen.c	/^print_sources(void) { $/;"	f
+prod	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string prod;    \/\/ Movie producer$/;"	m	struct:favMov	file:
+prompt	c/nxi/nxi.c	/^char *prompt = "\\n;; ";$/;"	v
+push	c/kr/s4/ex403.c	/^push(double f) {$/;"	f
+push	c/kr/s4/ex404.c	/^push(double f) {$/;"	f
+push	c/kr/s4/ex405.c	/^push(double f) {$/;"	f
+push	c/kr/s4/rpolish.c	/^push(double f) {$/;"	f
+put_char	asm/amd64/lolcat.asm	/^put_char:$/;"	l
+put_char	asm/amd64/lolcat_stolen.asm	/^put_char:$/;"	l
+radius	cpp/sowcpp/src/ch11/prog11-2.cpp	/^    double radius;      \/\/ The radius$/;"	m	struct:circle	file:
+radius	cpp/sowcpp/src/ch11/prog11-7.cpp	/^    double radius;  \/\/ The radius$/;"	m	struct:circle	file:
+radius	cpp/sowcpp/src/circle.h	/^        double radius;                       \/\/ Holds the radius of the circle$/;"	m	class:circle
+radius	cpp/sowcpp/src/headers/circle.h	/^        float radius;$/;"	m	class:circle
+rawS	cpp/sowcpp/src/ch15/curvedActivity.h	/^        double rawS;    \/\/ Unadjusted score$/;"	m	class:curvedActivity
+read_char	asm/amd64/lolcat.asm	/^read_char:$/;"	l
+read_char	asm/amd64/lolcat_stolen.asm	/^read_char:$/;"	l
+read_char	c/generic/lolcat.c	/^read_char() {$/;"	f
+read_opml	c/generic/rsnix_opml.h	/^read_opml(FILE *opml) {$/;"	f
+read_opml	c/rsnix/rsnix_opml.h	/^read_opml(FILE *opml) {$/;"	f
+rectangle	cpp/sowcpp/src/ch13/prog13-1.cpp	/^class rectangle$/;"	c	file:
+rectangle	cpp/sowcpp/src/ch15/rectangle.h	/^        rectangle()$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/ch15/rectangle.h	/^        rectangle(double w, double l)$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/ch15/rectangle.h	/^class rectangle$/;"	c
+rectangle	cpp/sowcpp/src/headers/rectangle.h	/^class rectangle$/;"	c
+rectangle	cpp/sowcpp/src/headers/rectangle.h	/^rectangle::rectangle()$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/headers/rectanglev4.h	/^        rectangle(double w, double l)  \/\/ Constructor$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/headers/rectanglev4.h	/^class rectangle$/;"	c
+rectangle	cpp/sowcpp/src/rectangle.h	/^        rectangle()$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/rectangle.h	/^        rectangle(long w, long l)$/;"	f	class:rectangle
+rectangle	cpp/sowcpp/src/rectangle.h	/^class rectangle : public shapes$/;"	c
+rel	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string rel;     \/\/ Movie release year$/;"	m	struct:favMov	file:
+residence	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    place residence;    \/\/ Nested structure$/;"	m	struct:employeeInfo	file:
+restart	c/generic/bsdnow_qs.c	/^restart(char *again) {$/;"	f
+return5	cpp/sowcpp/src/functvar.cpp	/^int return5()$/;"	f
+reverse	c/kr/headers/charconv.h	/^void reverse(char s[])$/;"	f
+reverse	c/kr/headers/reverse.h	/^void reverse(char s[], int len, char r[])$/;"	f
+reverse	c/kr/s1/ex119.c	/^void reverse(char s[], int len, char r[])$/;"	f
+reverse	c/kr/s3/ex304.c	/^void reverse(char s[]){$/;"	f
+reverse	c/kr/s3/itoa.c	/^void reverse(char s[])$/;"	f
+reverse	c/kr/s3/reverse.c	/^void reverse(char s[])$/;"	f
+reverse	c/projects/charconv.h	/^void reverse(char s[])$/;"	f
+rm_sub	c/generic/rsnix.c	/^rm_sub(int feed_id){$/;"	f
+rm_sub	c/rsnix/rsnix.c	/^rm_sub(int feed_id){$/;"	f
+rrot	c/kr/s2/ex208.c	/^unsigned short int rrot(unsigned short int x, unsigned short int n)$/;"	f
+rsale	cpp/sowcpp/src/a5main.cpp	/^    float rsale;$/;"	m	struct:inventory	file:
+run	sysutil/sysbuild.sh	/^run(){$/;"	f
+run_help	c/generic/projects.c	/^run_help(void){$/;"	f
+run_help	c/kr/s1/ex123.c	/^run_help(void) {$/;"	f
+run_help	c/projects/projects.c	/^run_help(void){$/;"	f
+s_atof	c/kr/s4/atof-sci.c	/^s_atof(char *input, int len){$/;"	f
+sales	cpp/sowcpp/src/ch11/prog11-9.cpp	/^    double sales;   \/\/ Amount of sales$/;"	m	union:paysource	file:
+saturday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+saturday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+save_files	c/generic/rsnix.c	/^save_files(FILE *filename, char *dl_link){$/;"	f
+save_files	c/rsnix/rsnix.c	/^save_files(FILE *filename, char *dl_link){$/;"	f
+sci_atof	c/kr/s4/ex402.c	/^sci_atof(char *s) {$/;"	f
+score	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        double score;   \/\/ Holds the numeric score$/;"	m	class:gradedActivity
+score	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        double score;   \/\/ Holds the numeric score$/;"	m	class:gradedActivity
+score	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        double score;   \/\/ To hold the numeric score$/;"	m	class:gradedActivity
+searchList	cpp/sowcpp/src/linearsearch.cpp	/^int searchList(const int list[], int numElems, int value)$/;"	f
+sec	cpp/sowcpp/src/ch15/time.h	/^        int sec;$/;"	m	class:time
+section	asm/amd64/lolcat.asm	/^section .data$/;"	l
+section	asm/amd64/lolcat.asm	/^section .text$/;"	l
+section	asm/amd64/lolcat_stolen.asm	/^section .data$/;"	l
+section	asm/amd64/lolcat_stolen.asm	/^section .text$/;"	l
+selectionSort	cpp/sowcpp/src/a1main.cpp	/^int selectionSort(long array[], int size)$/;"	f
+selectionSort	cpp/sowcpp/src/a2main.cpp	/^void selectionSort(int array[], int size)$/;"	f
+selectionSort	cpp/sowcpp/src/selectionsort.cpp	/^void selectionSort(int array[], int size)$/;"	f
+set	cpp/sowcpp/src/ch15/finalExam.cpp	/^void finalExam::set(int nquestions, int nmissed)$/;"	f	class:finalExam
+set	cpp/sowcpp/src/ch15/finalExamv2.cpp	/^void finalExam::set(int nquestions, int nmissed)$/;"	f	class:finalExam
+set	cpp/sowcpp/src/ch15/passFailExam.cpp	/^void passFailExam::set(int questions, int nmissed)$/;"	f	class:passFailExam
+set	cpp/sowcpp/src/ch15/student.h	/^        void set(string n, string i, int y)$/;"	f	class:student
+setBadge	cpp/sowcpp/src/headers/officer.h	/^        void setBadge(int b)$/;"	f	class:officer
+setColor	cpp/sowcpp/src/headers/car.h	/^        void setColor(string c)$/;"	f	class:car
+setCsHours	cpp/sowcpp/src/ch15/csStudent.h	/^        void setCsHours(int c)$/;"	f	class:csStudent
+setFeet	cpp/sowcpp/src/headers/feetInches.h	/^        void setFeet(int f)$/;"	f	class:feetInches
+setGenEdHours	cpp/sowcpp/src/ch15/csStudent.h	/^        void setGenEdHours(int g)$/;"	f	class:csStudent
+setInch	cpp/sowcpp/src/headers/feetInches.h	/^        void setInch(int i)$/;"	f	class:feetInches
+setLength	cpp/sowcpp/src/rectangle.h	/^        void setLength(long l)$/;"	f	class:rectangle
+setMake	cpp/sowcpp/src/headers/car.h	/^        void setMake(string m)$/;"	f	class:car
+setMathHours	cpp/sowcpp/src/ch15/csStudent.h	/^        void setMathHours(int m)$/;"	f	class:csStudent
+setMinPassingScore	cpp/sowcpp/src/ch15/passFail.h	/^        void setMinPassingScore(double mps)$/;"	f	class:passFail
+setModel	cpp/sowcpp/src/headers/car.h	/^        void setModel(string m)$/;"	f	class:car
+setName	cpp/sowcpp/src/headers/officer.h	/^        void setName(string s)$/;"	f	class:officer
+setPerc	cpp/sowcpp/src/ch15/curvedActivity.h	/^        void setPerc(double c)$/;"	f	class:curvedActivity
+setPlate	cpp/sowcpp/src/headers/car.h	/^        void setPlate(string p)$/;"	f	class:car
+setRadius	cpp/sowcpp/src/circle.h	/^        void setRadius(double r) $/;"	f	class:circle
+setScore	cpp/sowcpp/src/ch15/curvedActivity.h	/^        void setScore(double s)$/;"	f	class:curvedActivity
+setScore	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        void setScore(double s)$/;"	f	class:gradedActivity
+setScore	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        void setScore(double s)$/;"	f	class:gradedActivity
+setScore	cpp/sowcpp/src/ch15/gradedActivityv3.h	/^        void setScore(double s)$/;"	f	class:gradedActivity
+setStuName	cpp/sowcpp/src/headers/studentTestScores.h	/^            void setStuName( string name )$/;"	f	class:studentTestScores
+setStudentName	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            void setStudentName(string name)$/;"	f	class:studentTestScores
+setStudentName	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            void setStudentName(string name)$/;"	f	class:studentTestScores
+setTestScore	cpp/sowcpp/src/headers/studentTestScores.h	/^            void setTestScore( double score, int index )$/;"	f	class:studentTestScores
+setTestScore	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            void setTestScore(double score, int index)$/;"	f	class:studentTestScores
+setTestScore	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            void setTestScore(double score, int index)$/;"	f	class:studentTestScores
+setTime	cpp/sowcpp/src/headers/car.h	/^        void setTime(float t)$/;"	f	class:car
+setTime	cpp/sowcpp/src/headers/meter.h	/^        void setTime(float t)$/;"	f	class:meter
+setWidth	cpp/sowcpp/src/rectangle.h	/^        void setWidth(long w)$/;"	f	class:rectangle
+setX	cpp/sowcpp/src/circle.h	/^        void setX(long x)$/;"	f	class:circle
+setY	cpp/sowcpp/src/circle.h	/^        void setY(long y)$/;"	f	class:circle
+set_color	asm/amd64/lolcat.asm	/^set_color:$/;"	l
+set_color	asm/amd64/lolcat_stolen.asm	/^set_color:$/;"	l
+set_color	c/generic/lolcat.c	/^void set_color(int color) {$/;"	f
+setbits	c/kr/s2/ex206.c	/^unsigned short int setbits(unsigned short int x, unsigned short int p, unsigned short int n, unsigned short int y)$/;"	f
+setl	cpp/sowcpp/src/headers/rectangle.h	/^void rectangle::setl(double l)$/;"	f	class:rectangle
+setl	cpp/sowcpp/src/headers/rectanglev4.h	/^        void setl(double l)$/;"	f	class:rectangle
+setlength	cpp/sowcpp/src/ch13/prog13-1.cpp	/^void rectangle::setlength(double l)$/;"	f	class:rectangle
+setpow	c/kr/s4/ex402.c	/^setpow(char *power, int index, int powsize) {$/;"	f
+setr	cpp/sowcpp/src/headers/circle.h	/^        void setr(float r)$/;"	f	class:circle
+setw	cpp/sowcpp/src/headers/rectangle.h	/^void rectangle::setw(double w)$/;"	f	class:rectangle
+setw	cpp/sowcpp/src/headers/rectanglev4.h	/^        void setw(double w)$/;"	f	class:rectangle
+setwidth	cpp/sowcpp/src/ch13/prog13-1.cpp	/^void rectangle::setwidth(double w)$/;"	f	class:rectangle
+shapes	cpp/sowcpp/src/shape.h	/^        shapes()$/;"	f	class:shapes
+shapes	cpp/sowcpp/src/shape.h	/^class shapes$/;"	c
+shell_destroy	c/nxi/nxiFuncts.h	/^shell_destroy(void) {$/;"	f
+shell_init	c/nxi/nxiFuncts.h	/^shell_init(void) {$/;"	f
+show	cpp/sowcpp/src/ch12/prog12-5.cpp	/^void show(fstream &file)$/;"	f
+show	cpp/sowcpp/src/ch12/prog12-6.cpp	/^void show(fstream &file)$/;"	f
+showArray	cpp/sowcpp/src/a1main.cpp	/^void showArray(long array[], int size)$/;"	f
+showArray	cpp/sowcpp/src/bubblesort.cpp	/^void showArray(const int array[], int size)$/;"	f
+showArray	cpp/sowcpp/src/selectionsort.cpp	/^void showArray(const int array[], int size)$/;"	f
+showDateTime	cpp/sowcpp/src/ch15/dateTime.cpp	/^void dateTime::showDateTime() const$/;"	f	class:dateTime
+showItem	cpp/sowcpp/src/ch11/prog11-6.cpp	/^void showItem(inventoryItem p)$/;"	f
+showMessage	cpp/sowcpp/src/ch15/prog15-8.cpp	/^        void showMessage()$/;"	f	class:baseClass
+showMessage	cpp/sowcpp/src/ch15/prog15-8.cpp	/^        void showMessage()$/;"	f	class:dClass
+sign_vault	bash/cryptvault.bash	/^sign_vault()$/;"	f
+simplify	cpp/sowcpp/src/feetInches.cpp	/^void feetInches::simplify()$/;"	f	class:feetInches
+slength	c/kr/s2/ex202.c	/^#define slength /;"	d	file:
+sortArray	cpp/sowcpp/src/bubblesort.cpp	/^void sortArray(int array[], int size)$/;"	f
+sp	c/kr/s4/ex403.c	/^int sp = 0;$/;"	v
+sp	c/kr/s4/ex404.c	/^int sp = 0;$/;"	v
+sp	c/kr/s4/ex405.c	/^int sp = 0;$/;"	v
+sp	c/kr/s4/rpolish.c	/^int sp = 0;$/;"	v
+spcws	c/kr/s4/strcalc.c	/^spcws(char * s) {$/;"	f
+squeeze	c/kr/s2/ex204.c	/^void squeeze(char s[], int c)$/;"	f
+state	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string state;$/;"	m	struct:place	file:
+stock	cpp/sowcpp/src/a5main.cpp	/^    int stock;$/;"	m	struct:inventory	file:
+strindex	c/kr/s4/exgrep.c	/^int strindex(char s[], char t[]) {$/;"	f
+strip_file	c/kr/s1/ex123.c	/^strip_file(char * source, size_t bsize) {$/;"	f
+strrindex	c/kr/s4/ex401.c	/^int strrindex(char *s, char *t) {$/;"	f
+stuName	cpp/sowcpp/src/headers/studentTestScores.h	/^        string stuName; \/\/ The student's name$/;"	m	class:studentTestScores
+stuName	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^        string stuName; \/\/ Student name$/;"	m	class:studentTestScores
+stuName	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^        string stuName; \/\/ Student's name$/;"	m	class:studentTestScores
+student	cpp/sowcpp/src/ch11/prog11-8.cpp	/^struct student$/;"	s	file:
+student	cpp/sowcpp/src/ch15/student.h	/^        student()$/;"	f	class:student
+student	cpp/sowcpp/src/ch15/student.h	/^        student(string n, string i, int y)$/;"	f	class:student
+student	cpp/sowcpp/src/ch15/student.h	/^class student$/;"	c
+studentTestScores	cpp/sowcpp/src/headers/studentTestScores.h	/^            studentTestScores( string name, int numScores )$/;"	f	class:studentTestScores
+studentTestScores	cpp/sowcpp/src/headers/studentTestScores.h	/^class studentTestScores$/;"	c
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            studentTestScores(const studentTestSocers &obj)$/;"	f	class:studentTestScores
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            studentTestScores(string name, int numScores)$/;"	f	class:studentTestScores
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^class studentTestScores$/;"	c
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            studentTestScores(const studentTestScores &obj)$/;"	f	class:studentTestScores
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            studentTestScores(string name, int numScores)$/;"	f	class:studentTestScores
+studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^class studentTestScores$/;"	c
+subtract	cpp/sowcpp/src/reusfunct.cpp	/^int subtract(int x, int y)$/;"	f
+sunday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+sunday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+suv	cpp/sowcpp/src/ch15/suv.h	/^        suv() : automobile()$/;"	f	class:suv
+suv	cpp/sowcpp/src/ch15/suv.h	/^        suv(string sMake, int sModel, int sMileage, double sPrice, int sPass) : automobile(sMake, sModel, sMileage, sPrice)$/;"	f	class:suv
+suv	cpp/sowcpp/src/ch15/suv.h	/^class suv : public automobile$/;"	c
+swap_top	c/kr/s4/ex404.c	/^int swap_top(double pair[2]) {$/;"	f
+swap_top	c/kr/s4/ex405.c	/^int swap_top(double pair[2]) {$/;"	f
+sys	py/ansbot.py	/^import sys$/;"	i
+table	c/projects/projects.c	/^	char *table;$/;"	m	struct:entry	file:
+task_add_interactive	c/generic/projects.c	/^task_add_interactive(const char *dbname, const char *table_name) {$/;"	f
+task_add_interactive	c/projects/projects.c	/^task_add_interactive(const char *dbname, const char *table_name) {$/;"	f
+task_desc	c/projects/projects.c	/^	char *task_desc;$/;"	m	struct:entry	file:
+task_list	c/generic/projects.c	/^task_list(int limit, const char *dbname) {$/;"	f
+task_list	c/projects/projects.c	/^task_list(int limit, const char *dbname) {$/;"	f
+task_name	c/projects/projects.c	/^	char *task_name;$/;"	m	struct:entry	file:
+taskdb	c/generic/projects.c	/^static sqlite3* taskdb;$/;"	v	file:
+taskdb	c/projects/projects.c	/^static sqlite3* taskdb;$/;"	v	file:
+telepot	py/ansbot.py	/^import telepot$/;"	i
+testNum	cpp/sowcpp/src/ch10/prog10-2.cpp	/^bool testNum(char custNum[], int size)$/;"	f
+testScores	cpp/sowcpp/src/headers/studentTestScores.h	/^        double *testScores; \/\/ Points to an array of test scores$/;"	m	class:studentTestScores
+testScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^        double *testScores; \/\/ Points to an array of test scores$/;"	m	class:studentTestScores
+testScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^        double *testScores; \/\/ Points to an array of test scores$/;"	m	class:studentTestScores
+test_logfile	sysutil/sysbuild.sh	/^test_logfile(){$/;"	f
+thursday	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	e	enum:day	file:
+thursday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+thursday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+ticket	cpp/sowcpp/src/headers/ticket.h	/^class ticket$/;"	c
+ticketCost	cpp/sowcpp/src/headers/ticket.h	/^       float ticketCost(float meter.time, float car.time )$/;"	f	class:ticket
+time	cpp/sowcpp/src/ch15/time.h	/^        time()$/;"	f	class:time
+time	cpp/sowcpp/src/ch15/time.h	/^        time(int h, int m, int s)$/;"	f	class:time
+time	cpp/sowcpp/src/ch15/time.h	/^class time$/;"	c
+time	cpp/sowcpp/src/headers/car.h	/^        float time;     \/\/ Time the car's been parked$/;"	m	class:car
+time	cpp/sowcpp/src/headers/meter.h	/^        float time; \/\/ Time the car can be parked$/;"	m	class:meter
+time	py/ansbot.py	/^import time$/;"	i
+toMorse	cpp/pcode/a3main_pcode.cpp	/^string toMorse(string)$/;"	f
+toMorseCode	cpp/sowcpp/src/a3main.cpp	/^string toMorseCode(string english)$/;"	f
+totalSales	cpp/sowcpp/src/ch09/prog9-12.cpp	/^double totalSales(double *arr, int size)$/;"	f
+transaction	cpp/pcode/a4main_pcode.cpp	/^void transaction(Drink [], int, double &)$/;"	f
+transaction	cpp/sowcpp/src/a4main.cpp	/^void transaction(drink drink[], int choice, double payment)$/;"	f
+tree	cpp/sowcpp/src/headers/tree.h	/^        tree()$/;"	f	class:tree
+tree	cpp/sowcpp/src/headers/tree.h	/^class tree$/;"	c
+trim	c/kr/s3/trim.c	/^int trim(char s[]) {$/;"	f
+truck	cpp/sowcpp/src/ch15/truck.h	/^        truck() : automobile()$/;"	f	class:truck
+truck	cpp/sowcpp/src/ch15/truck.h	/^        truck(string tMake, int tModel, int tMileage, double tPrice, string tDrive) : automobile(tMake, tModel, tMileage, tPrice)$/;"	f	class:truck
+truck	cpp/sowcpp/src/ch15/truck.h	/^class truck : public automobile$/;"	c
+tuesday	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	e	enum:day	file:
+tuesday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+tuesday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+ungetch	c/kr/s4/ex403.c	/^ungetch(int c) {$/;"	f
+ungetch	c/kr/s4/ex404.c	/^ungetch(int c) {$/;"	f
+ungetch	c/kr/s4/ex405.c	/^ungetch(int c) {$/;"	f
+ungetch	c/kr/s4/rpolish.c	/^ungetch(int c) {$/;"	f
+update_subs	c/generic/rsnix.c	/^update_subs(){$/;"	f
+update_subs	c/rsnix/rsnix.c	/^update_subs(){$/;"	f
+upload	sysutil/sysbuild.sh	/^upload(){$/;"	f
+upper	c/generic/bsdnow_qs.c	/^upper(char *s) {$/;"	f
+upper	c/kr/headers/charconv.h	/^void upper(char s[])$/;"	f
+upper	c/kr/s2/upperconv.c	/^char upper(int c)$/;"	f
+upper	c/projects/charconv.h	/^void upper(char s[])$/;"	f
+upperc	c/kr/headers/charconv.h	/^char upperc(char c)$/;"	f
+upperc	c/projects/charconv.h	/^char upperc(char c)$/;"	f
+urgent	c/projects/projects.c	/^	char urgent;$/;"	m	struct:entry	file:
+usage	sysutil/sysbuild.sh	/^usage(){$/;"	f
+val	c/kr/s4/ex403.c	/^double val[MAXVAL];$/;"	v
+val	c/kr/s4/ex404.c	/^double val[MAXVAL];$/;"	v
+val	c/kr/s4/ex405.c	/^double val[MAXVAL];$/;"	v
+val	c/kr/s4/rpolish.c	/^double val[MAXVAL];$/;"	v
+val	cpp/pscpp/src/ch01/0108.cpp	/^int val(short pen, short nic, short dim, short qua)$/;"	f
+verify	c/kr/s4/strcalc.c	/^verify(char * s) {$/;"	f
+viewRecord	cpp/sowcpp/src/a5main.cpp	/^void viewRecord(fstream &file)$/;"	f
+volume	cpp/sowcpp/src/ch15/cube.h	/^        double volume;  \/\/ holds the volume of the cube, or more accurately, the rectangular prism.$/;"	m	class:cube
+wednesday	cpp/sowcpp/src/ch11/prog11-11.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday };$/;"	e	enum:day	file:
+wednesday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+wednesday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
+width	cpp/sowcpp/src/ch13/prog13-1.cpp	/^        double width;$/;"	m	class:rectangle	file:
+width	cpp/sowcpp/src/ch15/rectangle.h	/^        double width;   \/\/ Width of the rectangle$/;"	m	class:rectangle
+width	cpp/sowcpp/src/headers/rectangle.h	/^        double width;$/;"	m	class:rectangle
+width	cpp/sowcpp/src/headers/rectanglev4.h	/^        double width;$/;"	m	class:rectangle
+width	cpp/sowcpp/src/rectangle.h	/^        long width; \/\/ Rectangle width$/;"	m	class:rectangle
+wrapit	c/kr/s1/ex122.c	/^void wrapit(char s[], int len, int wlen, char w[])$/;"	f
+wsale	cpp/sowcpp/src/a5main.cpp	/^    float wsale;$/;"	m	struct:inventory	file:
+year	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int year;$/;"	m	struct:date	file:
+year	cpp/sowcpp/src/ch15/date.h	/^        int year;$/;"	m	class:date
+year	cpp/sowcpp/src/ch15/student.h	/^        int year;       \/\/ Year student was admitted$/;"	m	class:student
+zip	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string zip;$/;"	m	struct:place	file:
+~Demo	cpp/sowcpp/src/ch13/prog13-10.cpp	/^Demo::~Demo()$/;"	f	class:Demo
+~animal	cpp/sowcpp/src/ch15/prog15-15.cpp	/^        ~animal()$/;"	f	class:animal
+~baseClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^        ~baseClass()    \/\/ Destructor$/;"	f	class:baseClass
+~circle	cpp/sowcpp/src/headers/circle.h	/^        ~circle()$/;"	f	class:circle
+~derivedClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^        ~derivedClass() \/\/ Destructor$/;"	f	class:derivedClass
+~dog	cpp/sowcpp/src/ch15/prog15-15.cpp	/^        ~dog()$/;"	f	class:dog
+~studentTestScores	cpp/sowcpp/src/headers/studentTestScores.h	/^            ~studentTestScores()$/;"	f	class:studentTestScores
+~studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv2.h	/^            ~studentTestScores()$/;"	f	class:studentTestScores
+~studentTestScores	cpp/sowcpp/src/headers/studentTestScoresv3.h	/^            ~studentTestScores()$/;"	f	class:studentTestScores
