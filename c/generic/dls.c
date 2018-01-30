@@ -21,6 +21,7 @@ extern char *__progname;
 void run_help(void);
 int dls(char *target);
 int scan_args(int argsize, char **arglist);
+int prntent(FTSENT *entry);
 
 int
 main(int argc, char **argv) { 
@@ -36,13 +37,11 @@ main(int argc, char **argv) {
 		switch(ch) {
 			case 'h':
 				run_help();
-				break;
+				return(0);
 			case '1':
 				newline=1;
 				break;
 			default:
-				/* this does not get run if the user provides no flags */
-				fprintf(stdout,"ch = %d\n",ch);
 				break;
 		}
 	}
@@ -51,16 +50,38 @@ main(int argc, char **argv) {
 	return(0);
 }
 
+int
+dls(char *target) {
+	FTS *ftsp;
+	FTSENT *entry;
+	fprintf(stdout,"Listing contents of %s\n:",target);
+	ftsp = fts_open(&target, FTS_COMFOLLOW | FTS_SEEDOT,0);
+	entry = fts_read(ftsp);
+	if (entry != NULL) {
+		prntent(entry);
+	} else { 
+		return(-1);
+	}
+	return(0);
+}
+
+int
+prntent(FTSENT *entry) {
+	fprintf(stdout,"fts_info:    %d\n",entry->fts_info);
+	fprintf(stdout,"fts_accpath: %s\n",entry->fts_accpath);
+	fprintf(stdout,"fts_path:    %s\n",entry->fts_path);
+	fprintf(stdout,"filename:    %s\n",entry->fts_name);
+	fprintf(stdout,"fts_number:  %lld\n",entry->fts_number);
+	fprintf(stdout,"fts_pointer: %p\n",entry->fts_pointer);
+	return(0);
+}
+
 void
 run_help(void) { 
 	/* print out the usage info */
 	fprintf(stdout,"Minimal reimplementation of ls(1)\n");
-}
-
-int
-dls(char *target) {
-	fprintf(stdout,"Listing contents of %s\n:",target);
-	return(0);
+	fprintf(stdout,"\t-h\tThis text\n");
+	fprintf(stdout,"\t-1\tList one entry per line\n");
 }
 
 int
