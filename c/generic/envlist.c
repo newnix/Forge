@@ -14,6 +14,7 @@
 
 
 extern char **environ;
+extern char *__progname;
 
 /* some prototypes */
 void envwalk(void);
@@ -29,7 +30,7 @@ main(int argc, char **argv) {
 
 	ch = list = set = unset = 0;
 	
-	while ((ch = getopt(argc, argv, "d:hls:v:")) != 1) {
+	while ((ch = getopt(argc, argv, "d:hls:v:")) != -1) {
 		switch (ch) {
 			case 'd':
 				unset = 1;
@@ -59,11 +60,14 @@ main(int argc, char **argv) {
 				break;
 		}
 	}
-	if (set == 1) {
+	if (set == 1 && value != NULL) {
 		senv(variable,value);
+		free(variable);
+		free(value);
 	}
 	if (unset == 1) {
 		delenv(env);
+		free(env);
 	}
 	if (list == 1) {
 		envwalk();
@@ -79,7 +83,12 @@ delenv(char *env) {
 
 void
 run_help(void) {
-	fprintf(stdout,"basic reimplementation of the env(1) utility\n");
+	fprintf(stdout,"%s\n\tA basic reimplementation of the env(1) utility\n",__progname);
+	fprintf(stdout,"\t-d\tDeletes/unsets the provided environmental variable\n");
+	fprintf(stdout,"\t-h\tThis help text\n");
+	fprintf(stdout,"\t-l\tList the envorionmental variables\n");
+	fprintf(stdout,"\t-s\tSet the given environmental variable\n");
+	fprintf(stdout,"\t-v\tThe value of the variable passed by -s\n");
 }
 
 int
