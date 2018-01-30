@@ -46,8 +46,7 @@ main(int argc, char **argv) {
 		}
 	}
 	/* now actually look for directories to walk through */
-	scan_args(argc, argv);
-	return(0);
+	return(scan_args(argc, argv));
 }
 
 int
@@ -96,7 +95,9 @@ scan_args(int argsize, char **arglist) {
 		if (arglist[i][0] == '-') { 
 			/* do nothing */
 		} else { 
-			dls(arglist[i]);
+			if (dls(arglist[i]) == -1) {
+				return(-1);
+			}
 		}
 	}
 	return(0);
