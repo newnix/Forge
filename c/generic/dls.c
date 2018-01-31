@@ -61,6 +61,7 @@ dls(char **target) {
 	fprintf(stdout,"Listing contents of %s\n:",*target);
 	if ((ftsp = fts_open(target, FTS_PHYSICAL | FTS_COMFOLLOW | FTS_SEEDOT,0)) == NULL) {
 		err(1,"fts_open");
+		return(-1);
 	}
 
 	while ((entry = fts_read(ftsp)) != NULL) {
@@ -78,6 +79,7 @@ dls(char **target) {
 				prntent(entry);
 		}
 	}
+	fts_close(ftsp);
 	return(0);
 }
 
