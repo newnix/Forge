@@ -54,6 +54,14 @@ main(int argc, char **argv) {
 	return(scan_args(argc, argv));
 }
 
+/* 
+ * This function will end up passing duplicate values to 
+ * prntent(). This will need to be fixed somehow, possibly by 
+ * adding the entries to an array somewhere or possibly by 
+ * adding another case statement to the loop reading the fts
+ * entries. Will need to consult documentation and the ls(1) 
+ * source code to be certain what the best course of action is.
+ */
 int
 dls(char **target) {
 	FTS *ftsp;
