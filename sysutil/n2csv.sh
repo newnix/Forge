@@ -113,7 +113,11 @@ nagios_convert() {
   do
       echo -e "Reading $conffile"
       echo -e "--------------------------------------------------\n$conffile\n--------------------------------------------------" >> ${outdir}/${outfile}
-      awk "/${important_regexp}/ {print \$2\"${record_separator}\"}" $conffile | paste - - - >> ${outdir}/${outfile}
+      if [ ignore_comments ]
+      then
+        sed -i.bak -u -e '/#/d' $conffile
+      fi
+        awk "/${important_regexp}/ {print \$2\"${record_separator}\"}" $conffile | paste - - - >> ${outdir}/${outfile}
   done
 }
 
