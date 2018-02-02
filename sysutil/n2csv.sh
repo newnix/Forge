@@ -43,6 +43,7 @@ infile_extension="cfg"
 outdir=""
 outfile="nagios_hosts.csv"
 record_separator=","
+tools="awk mkdir paste rm sed touch"
 
 ## Delete the existing data in the output file ## 
 clean_oldfile() {
