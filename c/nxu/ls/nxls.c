@@ -55,8 +55,18 @@ extern char *__progname;
 int dbg;
 
 /* Function prototypes */
+void run_help(void);
 
 int
 main(int argc, char **argv) { 
   return(0);
+}
+
+void
+run_help(void) {
+  fprintf(stdout,"%s: New Exile's ls(1)\n",__progname);
+  fprintf(stdout,"\t-h\tThis help text\n");
+  fprintf(stdout,"\t-f\tFull struct info\n");
+  fprintf(stdout,"\t-S\tstat(2) struct info\n");
+  fprintf(stdout,"\t-1\tOne entry per line\n");
 }
