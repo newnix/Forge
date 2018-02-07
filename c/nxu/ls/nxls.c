@@ -56,9 +56,31 @@ int dbg;
 
 /* Function prototypes */
 void run_help(void);
+int scan_args(int argsize, char **arglist);
+/* apparently this is significantly different than using FTS */
+int printentry(void);
 
 int
 main(int argc, char **argv) { 
+  int opt;
+
+  opt = 0;
+
+  while ((opt = getopt(argc, argv, "fhS1") != -1)) {
+    switch(opt) {
+      case 'f': 
+        break; /* not currently implemented */
+      case 'h':
+        run_help();
+        return(0);
+      case 'S':
+        break; /* not currently implemented */
+      case '1':
+        break; /* not currently implemented */
+      default:
+        break;
+    }
+  }
   return(0);
 }
 
