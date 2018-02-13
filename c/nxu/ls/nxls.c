@@ -92,3 +92,8 @@ run_help(void) {
   fprintf(stdout,"\t-S\tstat(2) struct info\n");
   fprintf(stdout,"\t-1\tOne entry per line\n");
 }
+
+int
+scan_args(int argsize, char **arglist) {
+  return(0);
+}
