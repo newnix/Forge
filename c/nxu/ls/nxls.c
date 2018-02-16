@@ -56,9 +56,10 @@ int dbg;
 
 /* Function prototypes */
 void run_help(void);
-int scan_args(int argsize, char **arglist);
+int scan_args(char **arglist);
 /* apparently this is significantly different than using FTS */
 int printentry(void);
+int xls(char *target);
 
 int
 main(int argc, char **argv) { 
@@ -94,6 +95,23 @@ run_help(void) {
 }
 
 int
-scan_args(int argsize, char **arglist) {
+scan_args(char **arglist) {
+	int i;
+	for (i = 0; arglist[i] != NULL; i++) { 
+		if (arglist[i][0] != '-') {
+			xls(arglist[i]);
+		} else { 
+			break;
+		}
+	}
   return(0);
+}
+
+int
+xls(char *target) { 
+	/* pubs.opengroup.org has some good documentation for this */
+	if (nftw(target, fn, 10, NULL) != 0) { 
+		perror("ftw");
+	}
+	return(0);
 }
