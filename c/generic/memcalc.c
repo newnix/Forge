@@ -74,7 +74,7 @@ main(int argc, char **argv) {
 	if (pages != 0 && pagesize != 0) { 
 		print_meminfo(memsize(pagesize, pages));
 	} else { 
-		if (total != 0) { 
+		if (total != 0 && pagesize != 0) { 
 			print_shminfo(total, pagesize);
 		}
 	}
@@ -110,8 +110,8 @@ print_meminfo(uint64_t memsize) {
 
 void
 print_shminfo(uint64_t memsize, uint64_t pagesize) { 
-	fprintf(stdout,"Target of %luGB requires:\n",memsize);
-	fprintf(stdout,"\tkern.ipc.shmall=%lu\n",((memsize * 1073741824) / pagesize));
+	fprintf(stdout,"Target of %luGiB:\n",memsize);
+	fprintf(stdout,"\t%lu MiB\n\t%lu KiB\n\t%lu B\n",(memsize * 1024), (memsize * 1048576), (memsize * 1073741824));
 }
 
 void
