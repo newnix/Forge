@@ -58,8 +58,7 @@ int dbg;
 void run_help(void);
 int scan_args(char **arglist);
 /* apparently this is significantly different than using FTS */
-int printentry(void);
-int xls(char *target);
+int xls(char *target, const struct stat *info, struct FTW *ftw);
 
 int
 main(int argc, char **argv) { 
@@ -99,7 +98,9 @@ scan_args(char **arglist) {
 	int i;
 	for (i = 0; arglist[i] != NULL; i++) { 
 		if (arglist[i][0] != '-') {
-			xls(arglist[i]);
+			if (nftw(arglist[i], xls, 10, FTW_PHYS) == -1) {
+				perror("nftw");
+			}
 		} else { 
 			break;
 		}
@@ -108,10 +109,13 @@ scan_args(char **arglist) {
 }
 
 int
-xls(char *target) { 
+xls(char *target, const struct stat *info, struct FTW *ftw) { 
 	/* pubs.opengroup.org has some good documentation for this */
-	if (nftw(target, fn, 10, NULL) != 0) { 
-		perror("ftw");
-	}
+	fprintf(stdout,"stat(2) struct info for %s:\n",target);
+	fprintf(stdout,"st_ino:\t%llu\nst_nlink:\t%llu\n",info->st_ino, info->st_nlink);
+	fprintf(stdout,"st_dev:\t%llu\nst_mode:\t%o\n",info->st_dev, info->st_mode);
+	fprintf(stdout,"st_uid:\t%d\nst_gid:\t%d\n",info->st_uid, info->st_gid);
+	fprintf(stdout,"st_size:\t%llu\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
+	fprintf(stdout,"st_blksize:%u\n",info->st_blksize);
 	return(0);
 }
