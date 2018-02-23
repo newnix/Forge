@@ -48,6 +48,16 @@ main(int argc, char **argv) {
 
 	while getopt(argc,argv,"kmgt") {
 		switch(opt) {
+			case 'k': /* display KiB */
+				break;
+			case 'm': /* display MiB */
+				break;
+			case 'g': /* display GiB */
+				break;
+			case 't': /* display TiB */
+				break;
+			default: /* assume GiB, because it should be the most common need */
+				break;
 		}
 	}
 	return(0);
