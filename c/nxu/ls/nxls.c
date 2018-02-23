@@ -66,16 +66,26 @@ main(int argc, char **argv) {
 
   opt = 0;
 
-  while ((opt = getopt(argc, argv, "fhS1")) != -1) {
+  while ((opt = getopt(argc, argv, "afhrFHS1")) != -1) {
     switch(opt) {
-      case 'f': 
+			case 'a': /* include dotfiles */
+				break; /* not currently implemented */
+      case 'f': /* print full path instead of relative path */
         break; /* not currently implemented */
-      case 'h':
+      case 'h': /* help */
         run_help();
         return(0);
-      case 'S':
+			case 'l': /* longer output */
+				break; /* not currently implemented */
+			case 'r': /* recursive */
+				break; /* not currently implemented */
+			case 'H': /* human friendly sizes */
+				break; /* not currently implemented */
+      case 'F': /* append filetype symbols, like in 'ls -F' */
         break; /* not currently implemented */
-      case '1':
+      case 'S': /* full stat(2) struct info */
+        break; /* not currently implemented */
+      case '1': /* exactly one entry per line */
         break; /* not currently implemented */
       default:
         break;
@@ -88,8 +98,13 @@ main(int argc, char **argv) {
 void
 run_help(void) {
   fprintf(stdout,"%s: New Exile's ls(1)\n",__progname);
+	fprintf(stdout,"\t-a\tinclude dotfiles\n");
+	fprintf(stdout,"\t-f\tPrint absolute path instead of relative path\n");
   fprintf(stdout,"\t-h\tThis help text\n");
-  fprintf(stdout,"\t-f\tFull struct info\n");
+	fprintf(stdout,"\t-l\tLonger output\n");
+	fprintf(stdout,"\t-r\tRecursive listing\n");
+  fprintf(stdout,"\t-F\tAppend filetype symbols\n");
+	fprintf(stdout,"\t-H\tHuman friendly file sizes\n");
   fprintf(stdout,"\t-S\tstat(2) struct info\n");
   fprintf(stdout,"\t-1\tOne entry per line\n");
 }
