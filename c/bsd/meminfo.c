@@ -46,7 +46,7 @@ main(int argc, char **argv) {
 
 	memfree = memtotal = memused = units = 0;
 
-	while getopt(argc,argv,"kmgt") {
+	while ((getopt(argc,argv,"kmgt")) != -1) {
 		switch(opt) {
 			case 'k': /* display KiB */
 				break;
