@@ -66,7 +66,7 @@ main(int argc, char **argv) {
 
   opt = 0;
 
-  while ((opt = getopt(argc, argv, "fhS1") != -1)) {
+  while ((opt = getopt(argc, argv, "fhS1")) != -1) {
     switch(opt) {
       case 'f': 
         break; /* not currently implemented */
@@ -81,6 +81,7 @@ main(int argc, char **argv) {
         break;
     }
   }
+	scan_args(argv);
   return(0);
 }
 
@@ -96,7 +97,13 @@ run_help(void) {
 int
 scan_args(char **arglist) {
 	int i;
-	for (i = 0; arglist[i] != NULL; i++) { 
+	/*
+	 * We assume that any argument not starting with '-' 
+	 * is a target for us to display
+	 *
+	 * Since argv[0] is always __progname, start counting from 1
+	 */
+	for (i = 1; arglist[i] != NULL; i++) { 
 		if (arglist[i][0] != '-') {
 			if (nftw(arglist[i], xls, 10, FTW_PHYS) == -1) {
 				perror("nftw");
@@ -112,10 +119,10 @@ int
 xls(char *target, const struct stat *info, struct FTW *ftw) { 
 	/* pubs.opengroup.org has some good documentation for this */
 	fprintf(stdout,"stat(2) struct info for %s:\n",target);
-	fprintf(stdout,"st_ino:\t%llu\nst_nlink:\t%llu\n",info->st_ino, info->st_nlink);
-	fprintf(stdout,"st_dev:\t%llu\nst_mode:\t%o\n",info->st_dev, info->st_mode);
+	fprintf(stdout,"st_ino:\t%lu\nst_nlink:\t%u\n",info->st_ino, info->st_nlink);
+	fprintf(stdout,"st_dev:\t%u\nst_mode:\t%o\n",info->st_dev, info->st_mode);
 	fprintf(stdout,"st_uid:\t%d\nst_gid:\t%d\n",info->st_uid, info->st_gid);
-	fprintf(stdout,"st_size:\t%llu\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
-	fprintf(stdout,"st_blksize:%u\n",info->st_blksize);
+	fprintf(stdout,"st_size:\t%ld\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
+	fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
 	return(0);
 }
