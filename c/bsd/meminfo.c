@@ -31,34 +31,65 @@
  * DAMAGE.
  */
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
+#include <kvm.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <sys/types.h>
-#include <sys/sysctl.h>
+int meminfo(uint8_t UNITS);
+void run_help(void);
 
+extern char *__progname;
+/* 
+ * this should act similar to free(1) on Linux systems
+ */
 int
 main(int argc, char **argv) {
-	uint64_t memtotal, memused, memfree;
-	uint8_t units;
+	uint8_t UNITS;
 	char opt;
 
-	memfree = memtotal = memused = units = 0;
+	units = 0;
 
 	while ((getopt(argc,argv,"kmgt")) != -1) {
 		switch(opt) {
 			case 'k': /* display KiB */
+				UNITS ^= 0x00000001;
 				break;
 			case 'm': /* display MiB */
+				UNITS ^= 0x00000010;
 				break;
 			case 'g': /* display GiB */
+				UNITS ^= 0x00000100;
 				break;
 			case 't': /* display TiB */
+				UNITS ^= 0x00001000;
 				break;
 			default: /* assume GiB, because it should be the most common need */
 				break;
 		}
+	if (UNITS & 0) { 
+		run_help();
+	} else { 
+		meminfo(UNITS);
 	}
 	return(0);
 }
+
+int
+meminfo(uint8_t UNITS) {
+	return(0);
+}
+
+void
+run_help(void) {
+	fprintf(stdout,"%s: Print memory usage\n",__programe);
+	fprintf(stdout,"\t-h\tThis text\n");
+	fprintf(stdout,"\t-k\tUse Kilobytes for output\n");
+	fprintf(stdout,"\t-m\tUse Megabytes for output\n");
+	fprintf(stdout,"\t-g\tUse Gigabytes for output\n");
+	fprintf(stdout,"\t-t\tUse Terabytes for output\n");
+}
+
