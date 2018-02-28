@@ -121,7 +121,7 @@ scan_args(char **arglist) {
 			 * a nonzero value in that circumstance to prevent the recursive listing
 			 * seen currently 
 			 */
-			if (nftw(arglist[i], &xls, 10, FTW_PHYS) == -1) {
+			if (nftw(arglist[i], &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
 				perror("nftw");
 			}
 		} else { 
@@ -133,13 +133,17 @@ scan_args(char **arglist) {
 
 int
 xls(const char *target, const struct stat *info, int i, struct FTW *ftw) { 
-	/* pubs.opengroup.org has some good documentation for this */
-	fprintf(stdout,"stat(2) struct info for %s:\n",target);
-	fprintf(stdout,"st_ino:\t%lu\nst_nlink:\t%u\n",info->st_ino, info->st_nlink);
-	fprintf(stdout,"st_dev:\t%u\nst_mode:\t%o\n",info->st_dev, info->st_mode);
-	fprintf(stdout,"st_uid:\t%d\nst_gid:\t%d\n",info->st_uid, info->st_gid);
-	fprintf(stdout,"st_size:\t%ld\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
-	fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
-	fprintf(stdout,"ftw->base:\t%d\nftw->level:\t%d\n",ftw->base, ftw->level);
+	/* this should prevent listing recursively by default */
+	if (ftw->level < 2) {
+		fprintf(stdout,"stat(2) struct info for %s:\n",target);
+		fprintf(stdout,"st_ino:\t%lu\nst_nlink:\t%u\n",info->st_ino, info->st_nlink);
+		fprintf(stdout,"st_dev:\t%u\nst_mode:\t%o\n",info->st_dev, info->st_mode);
+		fprintf(stdout,"st_uid:\t%d\nst_gid:\t%d\n",info->st_uid, info->st_gid);
+		fprintf(stdout,"st_size:\t%ld\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
+		fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
+		fprintf(stdout,"ftw->base:\t%d\nftw->level:\t%d\n",ftw->base, ftw->level);
+	} else {
+		return(1);
+	}
 	return(0);
 }
