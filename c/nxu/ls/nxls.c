@@ -31,13 +31,8 @@
  * DAMAGE.
  */ 
 
-/* 
- * This is currently just a redo of dls.c, but using ftw(3) 
- * instead of the non-portable fts(3). It may eventually be replaced 
- * with a cleaner, better written version for the nxu project.
- * As that is meant to be a mostly feature-complete replacement
- * for the coreutils.
- */
+/* this is necessary for nftw(3) to work on linux for some reason */
+#define _XOPEN_SOURCE 500
 
 #include <sys/types.h>
 #include <sys/stat.h>
