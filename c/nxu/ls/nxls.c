@@ -136,12 +136,12 @@ xls(const char *target, const struct stat *info, int i, struct FTW *ftw) {
 	/* this should prevent listing recursively by default */
 	if (ftw->level < 2) {
 		fprintf(stdout,"stat(2) struct info for %s:\n",target);
-		fprintf(stdout,"st_ino:\t\t%lu\nst_nlink:\t%lu\n",info->st_ino, info->st_nlink);
-		fprintf(stdout,"st_dev:\t\t%lu\nst_mode:\t%o\n",info->st_dev, info->st_mode);
-		fprintf(stdout,"st_uid:\t\t%d\nst_gid:\t\t%d\n",info->st_uid, info->st_gid);
-		fprintf(stdout,"st_size:\t%ld\nst_blocks:\t%ld\n",info->st_size, info->st_blocks);
+		fprintf(stdout,"st_ino:\t\t%lu\tst_nlink:\t%lu\n",info->st_ino, info->st_nlink);
+		fprintf(stdout,"st_dev:\t\t%lu\tst_mode:\t%o\n",info->st_dev, info->st_mode);
+		fprintf(stdout,"st_uid:\t\t%d\tst_gid:\t\t%d\n",info->st_uid, info->st_gid);
+		fprintf(stdout,"st_size:\t%ld\tst_blocks:\t%ld\n",info->st_size, info->st_blocks);
 		fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
-		fprintf(stdout,"ftw->base:\t%d\nftw->level:\t%d\n",ftw->base, ftw->level);
+		fprintf(stdout,"ftw->base:\t%d\tftw->level:\t%d\n",ftw->base, ftw->level);
 	}
 	return(0);
 }
