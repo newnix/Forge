@@ -200,6 +200,7 @@ UPPER	c/kr/s1/temp3.c	/^#define UPPER /;"	d	file:
 UPPER	c/kr/s11/temp3.c	/^#define UPPER /;"	d	file:
 WRAP	c/kr/s1/ex122.c	/^#define WRAP /;"	d	file:
 _GRABC_H_	c/kr/headers/grabc.h	/^#define _GRABC_H_$/;"	d
+_XOPEN_SOURCE	c/nxu/ls/nxls.c	/^#define _XOPEN_SOURCE /;"	d	file:
 __NXI_FUNCTIONS__	c/nxi/nxiFuncts.h	/^#define __NXI_FUNCTIONS__$/;"	d
 __RSNIX_OPML__	c/generic/rsnix_opml.h	/^#define __RSNIX_OPML__$/;"	d
 __RSNIX_OPML__	c/rsnix/rsnix_opml.h	/^#define __RSNIX_OPML__$/;"	d
@@ -292,6 +293,7 @@ circle	cpp/sowcpp/src/headers/circle.h	/^        circle()$/;"	f	class:circle
 circle	cpp/sowcpp/src/headers/circle.h	/^class circle$/;"	c
 city	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    string city;$/;"	m	struct:place	file:
 class	c/kr/s3/ex303.c	/^int class(char x, char y)$/;"	f
+clean_oldfile	sysutil/n2csv.sh	/^clean_oldfile() {$/;"	f
 clear_stack	c/kr/s4/ex404.c	/^clear_stack(void) {$/;"	f
 clear_stack	c/kr/s4/ex405.c	/^clear_stack(void) {$/;"	f
 color	cpp/sowcpp/src/headers/car.h	/^        string color;   \/\/ Color of the car$/;"	m	class:car
@@ -359,8 +361,12 @@ db_init	c/projects/projects.c	/^db_init(const char *dbname) {$/;"	f
 db_reinit	c/generic/projects.c	/^db_reinit(const char *dbname) {$/;"	f
 db_reinit	c/projects/projects.c	/^db_reinit(const char *dbname) {$/;"	f
 db_reorder	c/projects/projects.c	/^db_reorder(const char *dbname) {$/;"	f
+dbg	c/generic/dls.c	/^int dbg;$/;"	v
+dbg	c/nxu/ls/nxls.c	/^int dbg;$/;"	v
 debug	c/generic/projects.c	/^int debug = 0;$/;"	v
 debug	c/projects/projects.c	/^int debug = 0;$/;"	v
+delenv	c/generic/envlist.c	/^delenv(char *env) {$/;"	f
+depcheck	sysutil/n2csv.sh	/^depcheck() {$/;"	f
 derivedClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^        derivedClass()  \/\/ Constructor$/;"	f	class:derivedClass
 derivedClass	cpp/sowcpp/src/ch15/prog15-4.cpp	/^class derivedClass : public baseClass$/;"	c	file:
 description	cpp/sowcpp/src/ch11/prog11-6.cpp	/^    string description; \/\/ Part description$/;"	m	struct:inventoryItem	file:
@@ -380,6 +386,7 @@ displayday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^void displayday(day d)$/;"	f
 divBudget	cpp/sowcpp/src/headers/budgetv2.h	/^        double divBudget;           \/\/ Instance member var$/;"	m	class:Budget
 divBudget	cpp/sowcpp/src/headers/budgetv3.h	/^        double divBudget;           \/\/ Instance member var$/;"	m	class:Budget
 divisionBudget	cpp/sowcpp/src/headers/budgetv1.h	/^        double divisionBudget;      \/\/ Instance member$/;"	m	class:Budget
+dls	c/generic/dls.c	/^dls(char **target) {$/;"	f
 dm	cpp/pscpp/src/ch01/0109.cpp	/^double dm(float sec)$/;"	f
 dog	cpp/sowcpp/src/ch15/prog15-15.cpp	/^        dog() : animal()$/;"	f	class:dog
 dog	cpp/sowcpp/src/ch15/prog15-15.cpp	/^class dog : public animal$/;"	c	file:
@@ -400,6 +407,8 @@ employeeNum	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int employeeNum;$/;"	m	struct
 employeePay	cpp/sowcpp/src/ch11/prog11-3.cpp	/^struct employeePay$/;"	s	file:
 entabulate	c/kr/s1/entab.c	/^void entabulate(char in[], int len, char out[])$/;"	f
 entry	c/projects/projects.c	/^struct entry {$/;"	s	file:
+envcheck	sysutil/n2csv.sh	/^envcheck() {$/;"	f
+envwalk	c/generic/envlist.c	/^envwalk(void) {$/;"	f
 escape	c/kr/headers/charconv.h	/^void escape(char to[], char from[])$/;"	f
 escape	c/kr/s3/ex302.c	/^void escape(char s[], char t[])$/;"	f
 escape	c/projects/charconv.h	/^void escape(char to[], char from[])$/;"	f
@@ -613,6 +622,7 @@ lower	c/kr/s2/ex210.c	/^void lower(char s[])$/;"	f
 lower	c/projects/charconv.h	/^void lower(char s[])$/;"	f
 lowerc	c/kr/headers/charconv.h	/^char lowerc(char c)$/;"	f
 lowerc	c/projects/charconv.h	/^char lowerc(char c)$/;"	f
+main	c/bsd/meminfo.c	/^main(int argc, char **argv) {$/;"	f
 main	c/cthw/exercise01/ex1.c	/^int main(int argc, char *argv[])$/;"	f
 main	c/cthw/exercise03/ex3.c	/^int main()$/;"	f
 main	c/cthw/exercise04/ex4.c	/^int main()$/;"	f
@@ -620,9 +630,11 @@ main	c/generic/battery_life.c	/^main(void){$/;"	f
 main	c/generic/bitshift.c	/^main (void) {$/;"	f
 main	c/generic/bsdnow_qs.c	/^main(int argc, char *argv[]) { $/;"	f
 main	c/generic/dls.c	/^main(int argc, char **argv) { $/;"	f
+main	c/generic/envlist.c	/^main(int argc, char **argv) {$/;"	f
 main	c/generic/envlist.c	/^main(void) {$/;"	f
 main	c/generic/fopen.c	/^main(int argc, char *argv[]) { $/;"	f
 main	c/generic/lolcat.c	/^main(int argc, char **argv) {$/;"	f
+main	c/generic/memcalc.c	/^main(int argc, char **argv) {$/;"	f
 main	c/generic/prntenv.c	/^main(char **envp){$/;"	f
 main	c/generic/projects.c	/^main(int argc, char *argv[]) {$/;"	f
 main	c/generic/rsnix.c	/^main(int argc, char *argv[]) {$/;"	f
@@ -699,6 +711,7 @@ main	c/kr/s4/exgrep.c	/^int main(void) {$/;"	f
 main	c/kr/s4/rpolish.c	/^main(int argc, char **argv) {$/;"	f
 main	c/kr/s4/strcalc.c	/^main(void) {$/;"	f
 main	c/nxi/nxi.c	/^main(int argc, char **argv) {$/;"	f
+main	c/nxu/ls/nxls.c	/^main(int argc, char **argv) { $/;"	f
 main	c/projects/projects.c	/^main(int argc, char *argv[]) {$/;"	f
 main	c/rsnix/rsnix.c	/^main(int argc, char *argv[]) {$/;"	f
 main	cpp/pcode/a2main_pcode.cpp	/^int main()$/;"	f
@@ -831,6 +844,10 @@ mean	cpp/sowcpp/src/a2main.cpp	/^double mean(int *arr, int size)$/;"	f
 median	cpp/pcode/a2main_pcode.cpp	/^double median (int *arrayptr, int size)$/;"	f
 median	cpp/sowcpp/src/a2main.cpp	/^double median (int *arr, int size)$/;"	f
 median	cpp/sowcpp/src/median.cpp	/^double median (int *arr, int size)$/;"	f
+mem_gb	c/generic/memcalc.c	/^mem_gb(uint64_t memsize) { $/;"	f
+mem_kb	c/generic/memcalc.c	/^mem_kb(uint64_t memsize) { $/;"	f
+mem_mb	c/generic/memcalc.c	/^mem_mb(uint64_t memsize) {$/;"	f
+memsize	c/generic/memcalc.c	/^memsize(uint64_t pagesize, uint64_t pages) {$/;"	f
 meter	cpp/sowcpp/src/headers/meter.h	/^        meter()$/;"	f	class:meter
 meter	cpp/sowcpp/src/headers/meter.h	/^class meter$/;"	c
 mileage	cpp/sowcpp/src/ch15/automobile.h	/^        int mileage;    \/\/ Mileage of the automobile$/;"	m	class:automobile
@@ -852,6 +869,7 @@ month	cpp/sowcpp/src/ch15/date.h	/^        int month;$/;"	m	class:date
 monthlyBal	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    double monthlyBal;  \/\/ Hold the monthly account balance$/;"	m	struct:bankAcc	file:
 multiply	cpp/sowcpp/src/reusfunct.cpp	/^int multiply(int x, int y)$/;"	f
 n_atoi	c/kr/s4/atof-sci.c	/^n_atoi(char c) {$/;"	f
+nagios_convert	sysutil/n2csv.sh	/^nagios_convert() {$/;"	f
 name	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string name;    \/\/ Movie name$/;"	m	struct:favMov	file:
 name	cpp/sowcpp/src/ch11/prog11-1.cpp	/^    string name;    \/\/ Employee's Name$/;"	m	struct:PayRoll	file:
 name	cpp/sowcpp/src/ch11/prog11-3.cpp	/^    string name;        \/\/ Employee name$/;"	m	struct:employeePay	file:
@@ -928,7 +946,10 @@ print_battery	c/generic/battery_life.c	/^print_battery(void){$/;"	f
 print_help	c/generic/bsdnow_qs.c	/^print_help(void) { $/;"	f
 print_help	c/generic/rsnix.c	/^print_help(){$/;"	f
 print_help	c/rsnix/rsnix.c	/^print_help(){$/;"	f
+print_meminfo	c/generic/memcalc.c	/^print_meminfo(uint64_t memsize) {$/;"	f
+print_shminfo	c/generic/memcalc.c	/^print_shminfo(uint64_t memsize, uint64_t pagesize) { $/;"	f
 print_sources	c/generic/fopen.c	/^print_sources(void) { $/;"	f
+prntent	c/generic/dls.c	/^prntent(FTSENT *entry) {$/;"	f
 prod	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string prod;    \/\/ Movie producer$/;"	m	struct:favMov	file:
 prompt	c/nxi/nxi.c	/^char *prompt = "\\n;; ";$/;"	v
 push	c/kr/s4/ex403.c	/^push(double f) {$/;"	f
@@ -959,6 +980,7 @@ rectangle	cpp/sowcpp/src/rectangle.h	/^        rectangle()$/;"	f	class:rectangle
 rectangle	cpp/sowcpp/src/rectangle.h	/^        rectangle(long w, long l)$/;"	f	class:rectangle
 rectangle	cpp/sowcpp/src/rectangle.h	/^class rectangle : public shapes$/;"	c
 rel	cpp/sowcpp/src/ch11/ch11_chkpt.cpp	/^    string rel;     \/\/ Movie release year$/;"	m	struct:favMov	file:
+remove_comments	sysutil/n2csv.sh	/^remove_comments() {$/;"	f
 residence	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    place residence;    \/\/ Nested structure$/;"	m	struct:employeeInfo	file:
 restart	c/generic/bsdnow_qs.c	/^restart(char *again) {$/;"	f
 return5	cpp/sowcpp/src/functvar.cpp	/^int return5()$/;"	f
@@ -974,15 +996,22 @@ rm_sub	c/rsnix/rsnix.c	/^rm_sub(int feed_id){$/;"	f
 rrot	c/kr/s2/ex208.c	/^unsigned short int rrot(unsigned short int x, unsigned short int n)$/;"	f
 rsale	cpp/sowcpp/src/a5main.cpp	/^    float rsale;$/;"	m	struct:inventory	file:
 run	sysutil/sysbuild.sh	/^run(){$/;"	f
+run_help	c/generic/dls.c	/^run_help(void) { $/;"	f
+run_help	c/generic/envlist.c	/^run_help(void) {$/;"	f
+run_help	c/generic/memcalc.c	/^run_help(void) {$/;"	f
 run_help	c/generic/projects.c	/^run_help(void){$/;"	f
 run_help	c/kr/s1/ex123.c	/^run_help(void) {$/;"	f
+run_help	c/nxu/ls/nxls.c	/^run_help(void) {$/;"	f
 run_help	c/projects/projects.c	/^run_help(void){$/;"	f
+run_help	sysutil/n2csv.sh	/^run_help() {$/;"	f
 s_atof	c/kr/s4/atof-sci.c	/^s_atof(char *input, int len){$/;"	f
 sales	cpp/sowcpp/src/ch11/prog11-9.cpp	/^    double sales;   \/\/ Amount of sales$/;"	m	union:paysource	file:
 saturday	cpp/sowcpp/src/ch11/prog11-12.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
 saturday	cpp/sowcpp/src/ch11/prog11-13.cpp	/^enum day { monday, tuesday, wednesday, thursday, friday, saturday, sunday };$/;"	e	enum:day	file:
 save_files	c/generic/rsnix.c	/^save_files(FILE *filename, char *dl_link){$/;"	f
 save_files	c/rsnix/rsnix.c	/^save_files(FILE *filename, char *dl_link){$/;"	f
+scan_args	c/generic/dls.c	/^scan_args(int argsize, char **arglist) { $/;"	f
+scan_args	c/nxu/ls/nxls.c	/^scan_args(char **arglist) {$/;"	f
 sci_atof	c/kr/s4/ex402.c	/^sci_atof(char *s) {$/;"	f
 score	cpp/sowcpp/src/ch15/gradedActivityv1.h	/^        double score;   \/\/ Holds the numeric score$/;"	m	class:gradedActivity
 score	cpp/sowcpp/src/ch15/gradedActivityv2.h	/^        double score;   \/\/ Holds the numeric score$/;"	m	class:gradedActivity
@@ -996,6 +1025,7 @@ section	asm/amd64/lolcat_stolen.asm	/^section .text$/;"	l
 selectionSort	cpp/sowcpp/src/a1main.cpp	/^int selectionSort(long array[], int size)$/;"	f
 selectionSort	cpp/sowcpp/src/a2main.cpp	/^void selectionSort(int array[], int size)$/;"	f
 selectionSort	cpp/sowcpp/src/selectionsort.cpp	/^void selectionSort(int array[], int size)$/;"	f
+senv	c/generic/envlist.c	/^senv(char *variable, char *value) {$/;"	f
 set	cpp/sowcpp/src/ch15/finalExam.cpp	/^void finalExam::set(int nquestions, int nmissed)$/;"	f	class:finalExam
 set	cpp/sowcpp/src/ch15/finalExamv2.cpp	/^void finalExam::set(int nquestions, int nmissed)$/;"	f	class:finalExam
 set	cpp/sowcpp/src/ch15/passFailExam.cpp	/^void passFailExam::set(int questions, int nmissed)$/;"	f	class:passFailExam
@@ -1055,6 +1085,7 @@ showDateTime	cpp/sowcpp/src/ch15/dateTime.cpp	/^void dateTime::showDateTime() co
 showItem	cpp/sowcpp/src/ch11/prog11-6.cpp	/^void showItem(inventoryItem p)$/;"	f
 showMessage	cpp/sowcpp/src/ch15/prog15-8.cpp	/^        void showMessage()$/;"	f	class:baseClass
 showMessage	cpp/sowcpp/src/ch15/prog15-8.cpp	/^        void showMessage()$/;"	f	class:dClass
+sign_vault	bash/cryptvault.bash	/^sign_vault
 sign_vault	bash/cryptvault.bash	/^sign_vault()$/;"	f
 simplify	cpp/sowcpp/src/feetInches.cpp	/^void feetInches::simplify()$/;"	f	class:feetInches
 slength	c/kr/s2/ex202.c	/^#define slength /;"	d	file:
@@ -1167,6 +1198,7 @@ width	cpp/sowcpp/src/headers/rectanglev4.h	/^        double width;$/;"	m	class:r
 width	cpp/sowcpp/src/rectangle.h	/^        long width; \/\/ Rectangle width$/;"	m	class:rectangle
 wrapit	c/kr/s1/ex122.c	/^void wrapit(char s[], int len, int wlen, char w[])$/;"	f
 wsale	cpp/sowcpp/src/a5main.cpp	/^    float wsale;$/;"	m	struct:inventory	file:
+xls	c/nxu/ls/nxls.c	/^xls(const char *target, const struct stat *info, int i, struct FTW *ftw) { $/;"	f
 year	cpp/sowcpp/src/ch11/prog11-5.cpp	/^    int year;$/;"	m	struct:date	file:
 year	cpp/sowcpp/src/ch15/date.h	/^        int year;$/;"	m	class:date
 year	cpp/sowcpp/src/ch15/student.h	/^        int year;       \/\/ Year student was admitted$/;"	m	class:student

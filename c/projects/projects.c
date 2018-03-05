@@ -50,6 +50,7 @@
  * potential issues with system updates. 
  */
 
+extern char **environ;
 extern char *__progname;
 /* task database */
 static sqlite3* taskdb;
@@ -99,6 +100,7 @@ main(int argc, char *argv[]) {
 	/* create a couple of flags */
 	unsigned short int aflag, dflag, eflag, kflag, lflag, nflag, pflag, rflag, tflag, uflag;
 	char *homedir; /* It'd be ideal to default to ~/.${DBNAME} */
+	char *editor; /* the editor used to write entries, default to vi per POSIX */
 	char entry_name[32];
 	char entry_priority[32];
 	char entry_desc[1024];
@@ -117,6 +119,10 @@ main(int argc, char *argv[]) {
 	strncpy(table_name, "tasklist", 1024);
 	/* get the $HOME */
 	homedir = getenv("HOME");
+	if ((editor = getenv("EDITOR")) == NULL) {
+		fprintf(stderr,"$EDITOR not set, using vi(1)...\n");
+		setenv("EDITOR","vi",1); /* forcibly overwrite $EDITOR */
+	}
 
 	while ((ch = getopt(argc, argv, "ad:ep:r:u:T:nklh")) != -1) {
 		switch (ch) {
@@ -451,9 +457,20 @@ task_list(int limit, const char *dbname) {
 	 * This function should be called directly from the command-line, 
 	 * so we need to create a database handler.
 	 */
+	int ret;
 	sqlite3_stmt* list_statement;
+	/* select id, title, description, priority from tasklist where expired=0 order by 1 asc; */
+	list_statement = "select id, title, description priority from tasklist where expired=0 order by 1 asc;"
+	ret = sqlite3_prepare(taskdb, list_statement, 2048, &table_code, &table_tail);
+	if (ret == 0) {
+		ret = sqlite3_step(table_code);
+	}
+	
+	if (ret == 0) {
+		/* clear out some memory areas we used */
+		memset(list_statement, 0, 84); /* should be the same as sizeof(list_statement) */
+	}
 
-	list_statement = NULL;
 	return(0);
 }
 
