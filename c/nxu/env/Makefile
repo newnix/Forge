@@ -21,13 +21,14 @@ build: ${SRC}
 	$(CC) ${SRC} -o $(TARGET) $(CFLAGS) $(LDFLAGS) $(INCS) $(LIBS)
 
 install: build
-	strip -s $(TARGET)
-	mkdir -p $(PREFIX)
-	chown $(USER):$(GROUP) $(TARGET)
-	chmod 0755 $(TARGET)
-	cp -fp $(TARGET) $(PREFIX)$(DESTDIR)
+	@strip -s $(TARGET)
+	@mkdir -p $(PREFIX)
+	@chown $(USER):$(GROUP) $(TARGET)
+	@chmod 0755 $(TARGET)
+	@cp -fp $(TARGET) $(PREFIX)$(DESTDIR)
 	@rm -f $(TARGET)
-	@printf "\n\nRun $(PREFIX)$(DESTDIR)$(TARGET) -h for usage information"
+	@printf "\n\n"
+	$(PREFIX)$(DESTDIR)$(TARGET) -h
 
 uninstall:
 	@rm -f $(PREFIX)$(DESTDIR)$(TARGET)
@@ -35,4 +36,4 @@ uninstall:
 rebuild: uninstall install 
 
 run:
-	@$(PREFIX)$(DESTDIR)$(TARGET)
+	$(PREFIX)$(DESTDIR)$(TARGET)

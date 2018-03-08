@@ -70,6 +70,7 @@ main(int argc, char **argv) {
 				strncpy(envvar,optarg,65535);
 				break;
 			case 'h':
+				flags ^= 0x0010;
 				run_help();
 				break;
 			case 's':
@@ -97,9 +98,12 @@ main(int argc, char **argv) {
 
 int
 nxenv(uint8_t flags) {
-	if(flags == 0) {
+	/* useful for verifying the value set in the bitmap flags
+	fprintf(stderr,"flags =\t%X\n",flags); 
+	*/
+	if(flags & 0x0000) {
 		for(int i = 0; environ[i] != NULL; i++) {
-			fprintf(stdout,"%p\t%s\n",environ[i],environ[i]);
+			fprintf(stdout,"%p\t%s\n",&environ[i],environ[i]);
 		}
 	}
 	return(0);
