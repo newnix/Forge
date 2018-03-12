@@ -35,85 +35,61 @@
 #include <string.h>
 #include <unistd.h>
 
+#define SEP_IS_NULL 0
+#define SEP_IS_NEWL 10
+
 extern char **environ;
 extern char *__progname;
 
-int nxenv(uint8_t flags);
-void run_help(void);
+static void nxenv(char envsep);
+int process(uint8_t flags, char *envvar, char *value);
+static void run_help(void);
 
 int
 main(int argc, char **argv) {
-	char *envvar, *value;
 	int ch;
-	/* simple bitmaps for args */
-	uint8_t flags;
+	char envsep;
+	char *envp;
 
-	/* variable initialization */
-	ch = flags = 0;
-	envvar = 0;
-	value = 0;
-	
-	/* create a buffer to hold up to INT_MAX chars for a new env var */
-	if((envvar = calloc((size_t) 1, (size_t) 65535)) == NULL) {
-		fprintf(stderr,"Could not allocate memory for temp buffer!\n");
-		return(1);
-	}
-	if((value = calloc((size_t) 1, (size_t) 65535)) == NULL) {
-		fprintf(stderr,"Could not allocate memory for temp buffer!\n");
-		return(1);
-	}
+	ch = 0;
+	envsep = SEP_IS_NEWL;
 
-	while((ch = getopt(argc, argv, "d:hs:v:0")) != -1) {
+	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
-			case 'd':
-				flags ^= 0x0001;
-				strncpy(envvar,optarg,65535);
-				break;
 			case 'h':
-				flags ^= 0x0010;
 				run_help();
-				break;
-			case 's':
-				strncpy(envvar,optarg,65535);
-				flags ^= 0x0002;
-				break;
-			case 'v':
-				strncpy(value,optarg,65535);
-				flags ^= 0x0004;
+				return(0);
+			case 'i': 
+				/* not implemented yet */
+				/* clear *environ before calling exec */
 				break;
 			case '0':
-				flags ^= 0x0008;
-				break;
+				envsep = SEP_IS_NULL;
 			default:
 				break;
 		}
 	}
-
-	nxenv(flags);
-	/* release the memory before we exit */
-	free(envvar);
-	free(value);
-	return(0);
-}
-
-int
-nxenv(uint8_t flags) {
-	/* useful for verifying the value set in the bitmap flags
-	fprintf(stderr,"flags =\t%X\n",flags); 
-	*/
-	if(flags & 0x0000) {
-		for(int i = 0; environ[i] != NULL; i++) {
-			fprintf(stdout,"%p\t%s\n",&environ[i],environ[i]);
-		}
+	/* attempt to see if we're just adding more environmental vars */
+	for (optind; (envp = strstr(argv[optind], (const char *)'=') != NULL); optind++) {
+		/* should be calling setenv(3) */
+		putenv(argv[optind]);
+		return(0);
 	}
+	nxenv(envsep);
 	return(0);
 }
 
-void
+static void
+nxenv(char envsep) {
+	for(int i = 0; environ[i] != NULL; i++) {
+		fprintf(stdout,"%s%c",environ[i],envsep);
+	}
+}
+
+static void
 run_help(void) {
 	fprintf(stdout,"%s: New Exile's env(1)\n",__progname);
-	fprintf(stdout,"\t-d\tDelete an environmental variable\n");
 	fprintf(stdout,"\t-h\tThis help text\n");
-	fprintf(stdout,"\t-s\tSet the value of an environmental variable\n");
-	fprintf(stdout,"\t-v\tValue of the environmental variable to be set\n");
+	fprintf(stdout,"\t-i\tDiscard the environment for a new process\n");
+	fprintf(stdout,"\t-0\tUse NULL for separation, instead of newline\n");
 }
