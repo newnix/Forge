@@ -41,13 +41,14 @@
 extern char **environ;
 extern char *__progname;
 
+static int abandon_env(char **argv);
 static void nxenv(char envsep);
 int process(uint8_t flags, char *envvar, char *value);
 static void run_help(void);
 
 int
 main(int argc, char **argv) {
-	int ch;
+	int ch, ret;
 	char envsep;
 	char *envp;
 
@@ -61,7 +62,7 @@ main(int argc, char **argv) {
 				return(0);
 			case 'i': 
 				/* not implemented yet */
-				/* clear *environ before calling exec */
+				abandon_env(argv);
 				break;
 			case '0':
 				envsep = SEP_IS_NULL;
@@ -70,12 +71,22 @@ main(int argc, char **argv) {
 		}
 	}
 	/* attempt to see if we're just adding more environmental vars */
-	for (optind; (envp = strstr(argv[optind], (const char *)'=') != NULL); optind++) {
-		/* should be calling setenv(3) */
-		putenv(argv[optind]);
-		return(0);
+	for (ch = 1; (argv[ch] != NULL) && ((envp = strchr(argv[ch], '='))!= NULL); ch++) {
+		/* we have a new env var, add it to **environ */
+		if (envp != NULL) { 
+			ret = putenv(argv[ch]);
+			if (ret < 0) { fprintf(stderr,"Something went wrong in putenv()\n"); }
+		}
 	}
 	nxenv(envsep);
+	return(0);
+}
+
+static int
+abandon_env(char **argv) {
+	/* 
+	 * going to need to clear **environ, then fork() & execve() the given command
+	 */
 	return(0);
 }
 
