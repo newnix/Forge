@@ -43,7 +43,6 @@ extern char *__progname;
 
 static int abandon_env(char **argv);
 static void nxenv(char envsep);
-int process(uint8_t flags, char *envvar, char *value);
 static void run_help(void);
 
 int
@@ -66,16 +65,26 @@ main(int argc, char **argv) {
 				break;
 			case '0':
 				envsep = SEP_IS_NULL;
+				break;
 			default:
 				break;
 		}
 	}
-	/* attempt to see if we're just adding more environmental vars */
-	for (ch = 1; (argv[ch] != NULL) && ((envp = strchr(argv[ch], '='))!= NULL); ch++) {
+	/* 
+	 * need to convert this to use optind to determine where options end
+	 * Ideally also move to a separate function
+	 */
+	for (ch = optind; argv[ch] != NULL; ch++) {
 		/* we have a new env var, add it to **environ */
-		if (envp != NULL) { 
-			ret = putenv(argv[ch]);
-			if (ret < 0) { fprintf(stderr,"Something went wrong in putenv()\n"); }
+		envp = strchr(argv[ch],'=');
+		if (envp != NULL) {
+			putenv(argv[ch]);
+		} else {
+			/* 
+			 * does not work right now
+			execve(argv[ch],NULL,environ);
+			 */
+			;
 		}
 	}
 	nxenv(envsep);
@@ -87,6 +96,8 @@ abandon_env(char **argv) {
 	/* 
 	 * going to need to clear **environ, then fork() & execve() the given command
 	 */
+	memset(environ, 0, sizeof(*environ));
+	/* scan_args(**argv); */
 	return(0);
 }
 
