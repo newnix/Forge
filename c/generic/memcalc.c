@@ -37,12 +37,12 @@
 #include <unistd.h>
 
 /* simple utility to calculate human-friendly memory size from the pagesize */
-uint64_t memsize(uint64_t pagesize, uint64_t pages);
-uint64_t mem_gb(uint64_t memsize);
-uint64_t mem_kb(uint64_t memsize);
-uint64_t mem_mb(uint64_t memsize);
-void print_meminfo(uint64_t memsize);
-void print_shminfo(uint64_t total, uint64_t pagesize);
+double memsize(double pagesize, double pages);
+double mem_gb(double memsize);
+double mem_kb(double memsize);
+double mem_mb(double memsize);
+void print_meminfo(double memsize);
+void print_shminfo(double total, double pagesize);
 void run_help(void);
 
 extern const char *__progname;
@@ -50,7 +50,7 @@ extern const char *__progname;
 int
 main(int argc, char **argv) {
 	int opt;
-	uint64_t pagesize, pages, total;
+	double pagesize, pages, total;
 
 	opt = 0;
 	pagesize = pages = 0;
@@ -81,37 +81,37 @@ main(int argc, char **argv) {
 	return(0);
 }
 
-uint64_t
-memsize(uint64_t pagesize, uint64_t pages) {
+double
+memsize(double pagesize, double pages) {
 	return(pagesize * pages);
 }
 
-uint64_t
-mem_gb(uint64_t memsize) { 
+double
+mem_gb(double memsize) { 
 	/* divide by 1024^3 */
 	return(memsize/1073741824);
 }
 
-uint64_t
-mem_kb(uint64_t memsize) { 
+double
+mem_kb(double memsize) { 
 	return(memsize/1024);
 }
 
-uint64_t
-mem_mb(uint64_t memsize) {
+double
+mem_mb(double memsize) {
 	return(memsize/1048576);
 }
 
 void
-print_meminfo(uint64_t memsize) {
-	fprintf(stdout,"%lu bytes is:\n",memsize);
-	fprintf(stdout,"\t%lu KiB\n\t%lu MiB\n\t%lu GiB\n",mem_kb(memsize), mem_mb(memsize), mem_gb(memsize));
+print_meminfo(double memsize) {
+	fprintf(stdout,"%.3F bytes is:\n",memsize);
+	fprintf(stdout,"\t%.3F KiB\n\t%.3F MiB\n\t%.3F GiB\n",mem_kb(memsize), mem_mb(memsize), mem_gb(memsize));
 }
 
 void
-print_shminfo(uint64_t memsize, uint64_t pagesize) { 
-	fprintf(stdout,"Target of %luGiB:\n",memsize);
-	fprintf(stdout,"\t%lu MiB\n\t%lu KiB\n\t%lu B\n",(memsize * 1024), (memsize * 1048576), (memsize * 1073741824));
+print_shminfo(double memsize, double pagesize) { 
+	fprintf(stdout,"Target of %.3FGiB:\n",memsize);
+	fprintf(stdout,"\t%.3F MiB\n\t%.3F KiB\n\t%.3F B\n",(memsize * 1024), (memsize * 1048576), (memsize * 1073741824));
 }
 
 void

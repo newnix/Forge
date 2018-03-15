@@ -30,6 +30,7 @@
  * DAMAGE.
  */
 
+#include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -78,7 +79,10 @@ main(int argc, char **argv) {
 		/* we have a new env var, add it to **environ */
 		envp = strchr(argv[ch],'=');
 		if (envp != NULL) {
-			putenv(argv[ch]);
+			ret = putenv(argv[ch]);
+			if (ret != 0) { 
+				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
+			}
 		} else {
 			/* 
 			 * does not work right now
@@ -87,6 +91,7 @@ main(int argc, char **argv) {
 			;
 		}
 	}
+	fprintf(stderr,"sizeof(argv): %lu\n",sizeof(argv));
 	nxenv(envsep);
 	return(0);
 }
