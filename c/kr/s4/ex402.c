@@ -101,7 +101,7 @@ setpow(char *power, int index, int powsize) {
 		/* get the integer representation of whatever value is being passed */
 		/* but ensure we don't try doing anything supid like trying to parse a non-digit char */
 		rpow=pow(10,powsize-j);
-		curpow += isdigit(power[i]) ? ((power[i] - 48) * rpow) : 0; /* if we have a digit, add it to the power value */
+		curpow += isdigit(power[j]) ? ((power[j] - 48) * rpow) : 0; /* if we have a digit, add it to the power value */
 	}
 	return curpow;
 }

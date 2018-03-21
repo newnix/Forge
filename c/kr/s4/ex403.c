@@ -1,9 +1,10 @@
 /*
- * Exercise 4-3 
+ * Exercise 4-3
+ * from K&R's "The [ANSI] C Programming Language, 2nd Edition"
  * Extend rpolish.c to handle the modulus operator (%)
- * and accept negative numbers. 
+ * and handle negative numbers.
  *
- * This is found on page 79
+ * This exercise is found on page 76.
  */
 
 #include <ctype.h>
@@ -14,6 +15,7 @@
 #define MAXOP 100 /* max size of operand or operator */
 #define MAXVAL 100 /* max depth of the value stack */
 #define NUMBER 0 /* signal that a number was found */
+#define NEGATIVENUM 50 /* signal we have a negative number */
 
 char buf[BUFSIZE]; /* buffer for ungetch() */
 int bufp = 0; /* next free position in buf */
@@ -23,49 +25,30 @@ double pop(void);
 void push(double);
 void ungetch(int);
 
-int negative;
 int sp = 0;
 double val[MAXVAL];
 
 /* reverse polish calculator portion */
 int 
-main(void) {
+main(int argc, char **argv) {
 	int type;
-	double op1, op2;
+	double op2;
 	char s[MAXOP];
 
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
-			case NUMBER: /* this should also apply to negative numbers */
-				if (negative == 1) {
-					push(-1 * atof(s));
-					/* reset negative */
-					negative ^= negative;
-				} else {
-					push(atof(s));
-				}
+			case NUMBER: 
+				push(atof(s));
 				break;
 			case '+':
 				push(pop() + pop());
 				break;
 			case '*':
-				push(pop() * pop());
+				push(pop() + pop());
 				break;
 			case '-':
-					if (negative == 1) {
-						break;
-					} else {
-						op2 = pop();
-						push(pop() - op2);
-					}
-					break;
-			case '%':
-				/* this operation can never result in a negative number */
 				op2 = pop();
-				op1 = pop();
-				if (op1 < 0) { op1 *= -1; } /* essentially abs() */
-				if (op2 < 0) { op2 *= -1; } 
-				push((int)op1 % (int)op2);
+				push(pop() - op2);
 				break;
 			case '/':
 				op2 = pop();
@@ -74,6 +57,10 @@ main(void) {
 				} else {
 					printf("ERR: divide by zero\n");
 				}
+				break;
+			case '%':
+				op2 = pop();
+				push((int)pop() % (int)op2);
 				break;
 			case '\n':
 				printf("\t%.8g\n", pop());
@@ -110,76 +97,38 @@ pop(void) {
 /* getop: get next operator or numeric operand */
 int
 getop(char s[]) {
-	/*
-	 * TODO: Handle detection of negative numbers
-	 * 	since this is the only part of the program
-	 * 	where we actually classify the numbers, 
-	 * 	if we encounter a `-`, we need to determine
-	 * 	if it's an operator or a modifier
-	 * 	e.g. 2 - 1 vs -2 + 1
-	 * 	to do this, we should scan two characters 
-	 * 	ahead of `i`, and test the values accordingly.
-	 */
-	int i, c, sign, space;
-
-	i = c = sign = space = 0;
+	int i, c;
 	
-	/* do not process spaces or tabs */
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
-	s[1] = 0; /* set a NULL terminator */
-	/* we may have a negative number, but we need to be sure */
+
+	/* hopefully catches negative number entry before the '-' operator */
 	if (c == '-') {
-		negative = 1;
-		if (isdigit(s[i] = c = getch())) {
-		/* 
-		 * s[] is an array, so we can't just multiply by a negative number here 
-		 * this, of course, is only temporary, as it only handles a single digit after '-' 
-		 */
-			while (isdigit(s[++i] = c = getch()))
-				;
-			if (c == '.') { /* collect the fractional portion */
-				while(isdigit(s[++i] = c = getch()))
-					;
-			}
-			s[i] = 0;
-			return(NUMBER);
-		} else {
-			/* ensure non-numeric operands reset negative ( negative ^ negative == 0 ) */
-			negative ^= negative;
-			return(c);
-		}
-	} 
-
-	if (!isdigit(c) && c != 32) {
-		if (negative == 1) {
-			negative ^= negative;
-		} 
-		return(c); /* not a number */
-	}
-
-	/* 
-	 * Important note: 
-	 * Because this function is passed a full string, 
-	 * but only processes them a character at a time
-	 * through the use of getchar(), the negative number 
-	 * handling has to accomodate this as well. 
-	 * only getting a new character from the string with
-	 * a call to getch(). 
-	 * s[++i] = c = getch();
-	 */
-		i = 0;
-		/* continue adding operands to the array */
-		if (isdigit(c)) /* collect integer part */
-			while (isdigit(s[++i] = c = getch()))
-				;
-		if (c == '.') /* collect the fractional portion */
-			while(isdigit(s[++i] = c = getch()))
-				;
+		while(isdigit(s[++i] = c = getch()))
+			;
 		s[i] = 0;
-		if (c != EOF)
-				ungetch(c);
-		return NUMBER;
+	}
+	if(c != EOF) 
+		ungetch(c);
+
+	return NEGATIVENUM;
+	/* pasted before this point */
+	s[1] = 0;
+	if (!isdigit(c) && c != 32)
+		return c; /* not a number */
+	
+	i = 0;
+	if (isdigit(c)) /* collect integer part */
+		while (isdigit(s[++i] = c = getch()))
+			;
+	if (c == '.') /* collect the fractional portion */
+		while(isdigit(s[++i] = c = getch()))
+			;
+	s[i] = 0;
+	if (c != EOF)
+			ungetch(c);
+	return NUMBER;
+
 }
 
 /* get a (possibly pushed back) character */
