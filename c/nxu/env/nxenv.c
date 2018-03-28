@@ -84,14 +84,9 @@ main(int argc, char **argv) {
 				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
 			}
 		} else {
-			/* 
-			 * does not work right now
-			execve(argv[ch],NULL,environ);
-			 */
-			;
+			execve(argv[ch],*argv,environ);
 		}
 	}
-	fprintf(stderr,"sizeof(argv): %lu\n",sizeof(argv));
 	nxenv(envsep);
 	return(0);
 }
