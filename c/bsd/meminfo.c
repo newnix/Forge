@@ -55,22 +55,22 @@ main(int argc, char **argv) {
 
 	units = 0;
 
-	while ((getopt(argc,argv,"hkmgt")) != -1) {
+	while ((opt = getopt(argc,argv,"hkmgt")) != -1) {
 		switch(opt) {
 			case 'h':
-				run_help();
-				return(0);
+				units ^= units;
+				break;
 			case 'k': /* display KiB */
-				units ^= 0x0001;
+				units ^= 1;
 				break;
 			case 'm': /* display MiB */
-				units ^= 0x0002;
+				units ^= 2;
 				break;
 			case 'g': /* display GiB */
-				units ^= 0x0004;
+				units ^= 4;
 				break;
 			case 't': /* display TiB */
-				units ^= 0x0008;
+				units ^= 8;
 				break;
 			default: /* Print usage info */
 				break;
@@ -108,11 +108,16 @@ totalmem(uint8_t units) {
 	size_t len;
 	void *memory;
 
-	sysctlnametomib("hw.physmem",mib,&len);
+	i = sysctlnametomib("hw.physmem",mib,&len);
+	if (i == 0) { 
+		fprintf(stderr,"&mib: %p\nmib[0]: %d\nmib[1]: %d\nmib[2]: %d\nmib[3]: %d\n", mib, mib[0], mib[1], mib[2], mib[3]);
+	} else { 
+		perror("sysctl"); 
+	}
 	if (sysctl(mib, 4, memory, &len, NULL, 0) == -1) { 
 		perror("sysctl");
 	} else { 
-		printf("Total Memory: %d\n",(int)memory);
+		printf("Total Memory: %p\n",memory);
 	}
 	return(0);
 }
