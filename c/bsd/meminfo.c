@@ -39,53 +39,62 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int meminfo(uint8_t UNITS);
+int meminfo(uint8_t units);
 void run_help(void);
+double totalmem(uint8_t units);
 
 extern char *__progname;
+
 /* 
  * this should act similar to free(1) on Linux systems
  */
 int
 main(int argc, char **argv) {
-	uint8_t UNITS;
+	uint8_t units;
 	char opt;
 
 	units = 0;
 
-	while ((getopt(argc,argv,"kmgt")) != -1) {
+	while ((getopt(argc,argv,"hkmgt")) != -1) {
 		switch(opt) {
+			case 'h':
+				run_help();
+				return(0);
 			case 'k': /* display KiB */
-				UNITS ^= 0x00000001;
+				units ^= 0x0001;
 				break;
 			case 'm': /* display MiB */
-				UNITS ^= 0x00000010;
+				units ^= 0x0002;
 				break;
 			case 'g': /* display GiB */
-				UNITS ^= 0x00000100;
+				units ^= 0x0004;
 				break;
 			case 't': /* display TiB */
-				UNITS ^= 0x00001000;
+				units ^= 0x0008;
 				break;
-			default: /* assume GiB, because it should be the most common need */
+			default: /* Print usage info */
 				break;
 		}
-	if (UNITS & 0) { 
+	}
+	fprintf(stderr,"units:\t%d\n",units);
+	if (units == 0) { 
 		run_help();
+		return(0);
 	} else { 
-		meminfo(UNITS);
+		meminfo(units);
 	}
 	return(0);
 }
 
 int
-meminfo(uint8_t UNITS) {
+meminfo(uint8_t units) {
+	totalmem(units);
 	return(0);
 }
 
 void
 run_help(void) {
-	fprintf(stdout,"%s: Print memory usage\n",__programe);
+	fprintf(stdout,"%s: Print memory usage\n",__progname);
 	fprintf(stdout,"\t-h\tThis text\n");
 	fprintf(stdout,"\t-k\tUse Kilobytes for output\n");
 	fprintf(stdout,"\t-m\tUse Megabytes for output\n");
@@ -93,3 +102,17 @@ run_help(void) {
 	fprintf(stdout,"\t-t\tUse Terabytes for output\n");
 }
 
+double
+totalmem(uint8_t units) { 
+	int i, mib[4];
+	size_t len;
+	void *memory;
+
+	sysctlnametomib("hw.physmem",mib,&len);
+	if (sysctl(mib, 4, memory, &len, NULL, 0) == -1) { 
+		perror("sysctl");
+	} else { 
+		printf("Total Memory: %d\n",(int)memory);
+	}
+	return(0);
+}
