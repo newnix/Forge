@@ -47,7 +47,7 @@ main(int argc, char **argv) {
 				push(pop() + pop());
 				break;
 			case '*':
-				push(pop() + pop());
+				push(pop() * pop());
 				break;
 			case '-':
 				op2 = pop();
@@ -105,19 +105,21 @@ getop(char s[]) {
 	while ((s[0] = c = getch()) == 32 ||  c == '\t') 
 		;
 
+	s[1] = 0;
 	/* hopefully catches negative number entry before the '-' operator */
 	if (c == '-') {
 		while(isdigit(s[++i] = c = getch())) {
 				;
 		}
 		s[i] = 0;
+		if (s[0] == '-' && s[1] == 32)
+			return '-';
 		if(c != EOF) 
 			ungetch(c);
 
 		return NEGATIVENUM;
 	}
 	/* pasted before this point */
-	s[1] = 0;
 	if (!isdigit(c) && c != 32)
 		return c; /* not a number */
 	
