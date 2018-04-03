@@ -40,6 +40,9 @@ main(int argc, char **argv) {
 			case NUMBER: 
 				push(atof(s));
 				break;
+			case NEGATIVENUM:
+				push(atof(s));
+				break;
 			case '+':
 				push(pop() + pop());
 				break;
@@ -104,14 +107,15 @@ getop(char s[]) {
 
 	/* hopefully catches negative number entry before the '-' operator */
 	if (c == '-') {
-		while(isdigit(s[++i] = c = getch()))
-			;
+		while(isdigit(s[++i] = c = getch())) {
+				;
+		}
 		s[i] = 0;
-	}
-	if(c != EOF) 
-		ungetch(c);
+		if(c != EOF) 
+			ungetch(c);
 
-	return NEGATIVENUM;
+		return NEGATIVENUM;
+	}
 	/* pasted before this point */
 	s[1] = 0;
 	if (!isdigit(c) && c != 32)
