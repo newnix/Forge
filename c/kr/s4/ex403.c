@@ -113,7 +113,7 @@ getop(char s[]) {
 		}
 		s[i] = 0;
 		if (s[0] == '-' && s[1] == 32)
-			return '-';
+			return '-'; /* there's a problem around here somewhere */
 		if(c != EOF) 
 			ungetch(c);
 
