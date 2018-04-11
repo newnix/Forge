@@ -61,7 +61,6 @@ main(int argc, char **argv) {
 				run_help();
 				return(0);
 			case 'i': 
-				/* not implemented yet */
 				abandon_env(argv);
 				break;
 			case '0':
@@ -84,7 +83,8 @@ main(int argc, char **argv) {
 				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
 			}
 		} else {
-			execve(argv[ch],*argv,environ);
+			fork();
+			execve(argv[ch],argv,environ);
 		}
 	}
 	nxenv(envsep);
