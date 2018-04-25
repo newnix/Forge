@@ -38,6 +38,7 @@
 
 #define SEP_IS_NULL 0
 #define SEP_IS_NEWL 10
+#define ARGV_MAX 1024
 
 extern char **environ;
 extern char *__progname;
@@ -48,12 +49,17 @@ static void run_help(void);
 
 int
 main(int argc, char **argv) {
-	int ch, ret;
+	int ch, i, ret;
+	char *cargv[ARGV_MAX];
 	char envsep;
 	char *envp;
 
-	ch = 0;
+	ch = i = 0;
 	envsep = SEP_IS_NEWL;
+
+	if ((*cargv = calloc(ARGV_MAX, ARGV_MAX)) == 0) {
+		fprintf(stderr,"calloc: Cannot allocate space for **cargv!\n");
+	}
 
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
@@ -83,9 +89,14 @@ main(int argc, char **argv) {
 				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
 			}
 		} else {
-			fork();
-			execve(argv[ch],argv,environ);
+			strlcpy(cargv[i], argv[ch], 1024);
 		}
+		i++;
+	}
+	if (i > 0) {
+		fork(); 
+		execve(argv[ch], cargv, environ);
+		return(0);
 	}
 	nxenv(envsep);
 	return(0);
