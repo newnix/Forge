@@ -1,0 +1,207 @@
+#!/bin/sh 
+
+# Copyright (c) 2017-2018, Exile Heavy Industries
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted (subject to the limitations in the disclaimer
+# below) provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# 
+# * Neither the name of the copyright holder nor the names of its contributors may be used
+#   to endorse or promote products derived from this software without specific
+#   prior written permission.
+# 
+# NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+# LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+# OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE.
+
+## This is a simple shell script to install any given patches 
+## detected as being avalable through syspatch(8), the primary reason
+## for this script is that as an added security measure, most of the
+## filesystems containing binaries and libraries that could be patched are also
+## mounted read-only during normal operations. 
+
+carpdev=carp0
+cut=/usr/bin/cut
+grep=/usr/bin/grep
+ifconfig=/sbin/ifconfig
+isroot=1
+mount=/sbin/mount
+noif=1
+nofs=1
+syspatch=/usr/sbin/syspatch
+
+filesystems="/usr /usr/X11R6 /usr/local /usr/obj /usr/src"
+
+carpup() { 
+	if [ $noif -eq 0 ]
+	then
+		:
+	else
+		## Restore this device to the cluster so another host can be updated
+		${ifconfig} ${carpdev} up
+	fi
+}
+
+check_only() { 
+	checkuid
+	if [ $isroot -eq 0 ]
+	then 
+		printf "The following patches are available for %s:\n" "$(uname -srm)"
+		${syspatch} -c 
+	else
+		printf "You must be root to do that!\n"
+		exit 2 
+	fi
+}
+
+checkuid() { 
+	if [ $(id -u) -eq 0 ] 
+	then
+		isroot=0
+	else
+		printf "ERROR: You must be root to use this tool!\n"
+		isroot=1
+	fi
+}
+
+dropcarp() { 
+	if [ $isroot -eq 0 ]
+	then
+		if [ $noif ]
+		then
+			warn_drop
+			${ifconfig} ${carpdev} down
+				if [ $? ] 
+				then
+					return 0
+				else
+					printf "Something went wrong!\nBailing out...\n"
+					exit 1 
+				fi
+		fi
+	fi
+}
+
+installpatches() { 
+	if [ $nofs -eq 0 ]
+	then
+		:
+	else 
+		remountrw
+	fi
+	${syspatch} || printf "Something's gone wrong, remounting filesystems read-only!\n"
+	## It's important that the filesystem returns to mostly ro
+	if [ $? ]
+	then 
+		printf "Patches installed successfully, reboot when ready\nRemounting filesystems read-only\n\n"
+	fi
+	if [ $nofs ]
+	then
+		:
+	else
+		remountro
+	fi
+}
+	
+getpatches() { 
+	if [ -x ${syspatch} ] 
+	then 
+		printf "This tool will install the following patches for: %s\nHit Control-C in the next 5 seconds to abort!\n" "$(uname -srm)"
+		${syspatch} -c
+		sleep 5
+	else
+		printf "ERROR: %s is missing or non-executable!\nYour install is most likely broken!\n" ${syspatch}
+		exit 2
+	fi
+}
+
+remountro() { 
+	IFS=" "
+	for fs in ${filesystems}
+	do
+		${mount} -u -o ro ${fs} || exit 2
+	done
+}
+
+remountrw() { 
+	IFS=" "
+	for fs in ${filesystems}
+	do
+		${mount} -u -o rw ${fs} || exit 2
+	done
+}
+
+run_help() { 
+	printf "This script simplifies the use of syspatch(8) on systems with read-only filesystems.\n"
+	printf "It pulls in the patches available for %s after disabling a CARP interface, if it exists\n" "$(uname -srm)"
+	printf "remounts the filesystems specified as read-write, to allow the patches to be installed\n"
+	printf "installs the patches, and then remounts the filesystems read-only and reenables CARP\n"
+	printf "\n\n\t-h\tThis help text"
+	printf "\n\t-c\tOnly display the patches available"
+	printf "\n\t-i\tSpecify the interface to disable (default %s)" ${carpdev}
+	printf "\n\t-f\tSpecify the filesystems to remount (default %s)" "${filesystems}"
+	printf "\n\t-I\tDon't disable any interfaces during the procedure"
+	printf "\n\t-F\tDon't remount any filesystems\n"
+}
+
+warn_drop() {
+	printf "WARNING: Using this script WILL disable the ${carpdev} interface!\n"
+	printf "This WILL drop your ssh connection if you connected using %s!\n"
+	printf "Ensure that the other firewall is operational to prevent an outage!" $(${ifconfig} ${carpdev} | ${grep} inet | ${cut} -d ' ' -f2)
+
+	printf "\n\nHit Control-C in the next 5 seconds to cancel this operation!\n\n"
+	sleep 5
+}
+
+while getopts ":chi:f:IF" opt
+do
+	case $opt in
+		h)
+			run_help
+			exit 0
+		;;
+		c)
+			check_only
+			exit 0
+		;;
+		i)
+			carpdev="$OPTARG"
+		;;
+		f)
+			filesystems="$OPTARG"
+		;;
+		I)
+			noif=0
+		;;
+		F)
+			nofs=0
+		;;
+		\?)
+			run_help
+			exit 0
+		;;
+	esac
+done
+
+checkuid
+dropcarp
+getpatches
+installpatches
+carpup

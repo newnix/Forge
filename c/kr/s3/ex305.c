@@ -26,11 +26,11 @@ int main(void){
 
 	/* allocate some space for the characters */
 	/* currently assumes there's enough space in RAM */
-	output = (char *) malloc (128 * sizeof(char)); /* should be more than enough for any int */
-	again = (char *) malloc (2 * sizeof(char));
+	output = (char *) calloc (128, sizeof(char)); /* should be more than enough for any int */
+	again = (char *) calloc (2, sizeof(char));
 	/* and now the numeric inputs */
 	input = (int *) malloc (sizeof(int));
-	base = (int *) malloc (sizeof(int));
+	base = (unsigned int *) malloc (sizeof(int));
 	
 	/* set up a loop to keep going until the user exits */
 	printf("This will convert a number into another base.\n");
@@ -54,7 +54,7 @@ int main(void){
 		itob(*input, output, *base); /* convert the things */
 		printf("%d converted to base %d is: %s\n", *input, *base, output);
 		/* according to malloc(3)'s man page, we may need to bzero() the string */
-		bzero(output,sizeof(output));
+		memset(output, 0, (size_t)128);
 		printf("\nWould you like to convert another integer? [Y/N] ");
 		/* 
 		 * Since scanf() returns an int with the number of 
@@ -62,7 +62,6 @@ int main(void){
 		 * whether or not the loop should run again. 
 		 */
 		scanf(" %1c",again);
-		printf("*again = %s\n", again);
 	} while (upperc(*again) == 'Y');
 	/* free the memory to avoid leaks */
 	free(input);

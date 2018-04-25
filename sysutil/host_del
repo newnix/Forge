@@ -1,0 +1,132 @@
+#!/bin/sh
+
+# Copyright (c) 2017-2018, Exile Heavy Industries
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted (subject to the limitations in the disclaimer
+# below) provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# 
+# * Neither the name of the copyright holder nor the names of its contributors may be used
+#   to endorse or promote products derived from this software without specific
+#   prior written permission.
+# 
+# NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+# LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+# OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE.
+
+host=0
+table=0
+tabledir="/etc/tables"
+killall=0
+
+run_help() {
+	## Usage ##
+	echo -e "Delete a host from a pf table"
+	echo -e "\t-a\tAddress block to delete"
+	echo -e "\t-h\tThis text"
+	echo -e "\t-k\tKill all entries in the table"
+	echo -e "\t-t\tTable to manipulate"
+	exit 0
+}
+
+verify() {
+	## confirm we have valid input ## 
+	if [[ `whoami` != "root" ]]
+	then 
+		echo "You must be root to run this script"
+		exit 3
+	fi
+
+	if [[ $host != 0 ]]
+	then
+		case $table in 
+			allowed)
+				volitile_kill
+			;;
+			enforcers)
+				nonvol_kill
+			;;
+			admins)
+				nonvol_kill
+			;;
+			customers)
+				nonvol_kill
+			;;
+			0)
+				echo "You must specify a table"
+				exit 2
+			;;
+			\?)
+				echo "Invalid table selected"
+				exit 2
+			;;
+		esac
+	else
+		echo "You must specify a host"
+		exit 2
+	fi
+}
+
+nonvol_kill() {
+	## remove the entry from a nonvolitile table ## 
+	if [ -z $killall ]
+	then
+		/usr/bin/sed -i.bak /$host/d $tabledir/$table
+		/sbin/pfctl -f /etc/pf.conf
+	else
+		:>$tabledir/$table
+		/sbin/pfctl -f /etc/pf.conf
+	fi
+}
+
+volitile_kill() {
+	## remove the entry from a table stored in RAM ##
+	if [ -z $killall ]
+	then
+		/sbin/pfctl -t $table -T delete $host
+	else
+		/sbin/pfctl -t $table -T flush
+	fi
+}
+
+while getopts ":hkt:a:" opt
+do
+	case $opt in 
+		h)
+			run_help
+		;;
+		a)
+			host="${OPTARG}"
+		;;
+		t)
+			table="${OPTARG}"
+		;;
+		k)
+			killall=1
+			## Easy workaround, garbage host data ## 
+			host="255.255.255.255"
+		;;
+		\?)
+			run_help
+		;;
+	esac
+done
+
+verify

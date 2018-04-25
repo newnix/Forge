@@ -61,16 +61,16 @@ main(int argc, char **argv) {
 				units ^= units;
 				break;
 			case 'k': /* display KiB */
-				units ^= 1;
+				units ^= 0x01;
 				break;
 			case 'm': /* display MiB */
-				units ^= 2;
+				units ^= 0x02;
 				break;
 			case 'g': /* display GiB */
-				units ^= 4;
+				units ^= 0x04;
 				break;
 			case 't': /* display TiB */
-				units ^= 8;
+				units ^= 0x08;
 				break;
 			default: /* Print usage info */
 				break;
