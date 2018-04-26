@@ -169,7 +169,6 @@ cook(uint8_t flags, int optind, char **argv) {
 			ip = buildaddr(argv[optind], addrclass);
 		}
 
-		fprintf(stderr,"flags = %u\n", flags);
 		switch(flags & 255) { 
 			/* at this point, we're only deciding which functions we're running */
 			case 0:
@@ -239,6 +238,21 @@ cook(uint8_t flags, int optind, char **argv) {
 
 int
 decmask(uint8_t *addr) { 
+	/* we need to check for an ip6 address first, and if that fails, use the ip4 location */
+	int i,netclass;
+	uint8_t maskbits;
+	uint8_t mask[17];
+
+	*mask = maskbits = netclass = 0;
+
+	maskbits = (addr[16] == 0) ? addr[4] : addr[16];
+
+	/* use another array? probably a better way to do this */
+	for (i = 0; i < (maskbits / 8); i++) {
+		mask[i] = 0xff;
+	}
+	mask[i] = 0;
+	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",mask[0],mask[1],mask[2],mask[3]);
 	return(0);
 }
 
