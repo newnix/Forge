@@ -51,7 +51,7 @@ char *__progname;
 int brdcast(uint8_t *addr);
 uint8_t * buildaddr(char *arg, int addrclass);
 int cook(uint8_t flags, int optind, char **argv);
-int decmask(uint8_t *addr);
+int netmask(uint8_t *addr);
 int hexmask(uint8_t *addr);
 int hostaddrs(uint8_t *addr, int list);
 int netwkaddr(uint8_t *addr);
@@ -100,6 +100,7 @@ main(int argc, char **argv) {
 
 int
 brdcast (uint8_t *addr) {	
+/* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
 	return(0);
 }
 
@@ -176,7 +177,7 @@ cook(uint8_t flags, int optind, char **argv) {
 				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
-				decmask(ip);
+				netmask(ip);
 				octmask(ip);
 				hexmask(ip);
 				break;
@@ -184,7 +185,7 @@ cook(uint8_t flags, int optind, char **argv) {
 				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
-				decmask(ip);
+				netmask(ip);
 				break;
 			case HEXMASK:
 				hostaddrs(ip,list);
@@ -205,7 +206,7 @@ cook(uint8_t flags, int optind, char **argv) {
 				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
-				decmask(ip);
+				netmask(ip);
 				list = 1;
 				break;
 			case HEXMASK|LISTHOSTS:
@@ -226,7 +227,7 @@ cook(uint8_t flags, int optind, char **argv) {
 				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
-				decmask(ip);
+				netmask(ip);
 				octmask(ip);
 				hexmask(ip);
 				break;
@@ -236,8 +237,9 @@ cook(uint8_t flags, int optind, char **argv) {
 	return(0);
 }
 
+/* honestly, the base used for output should be determined via flags passed here, not separate functions */
 int
-decmask(uint8_t *addr) { 
+netmask(uint8_t *addr) { 
 	/* we need to check for an ip6 address first, and if that fails, use the ip4 location */
 	int i,netclass;
 	uint8_t maskbits;
@@ -252,15 +254,8 @@ decmask(uint8_t *addr) {
 	 * that can be recycled per "word" in each address field.
 	 */
 
+	/* this ternary operation should be used to determine what format string we're using */
 	maskbits = (addr[16] == 0) ? addr[4] : addr[16];
-	/*
-	 * Assuming an ip4 address, the mask would be 4*8b, or 32bits,
-	 * one uint on most architectures.While an ip6 address would be 16*8 or 128b
-	 * which is probably a unsigned long long on most architectures
-	 * so if I can ignore the top 96 bits of a uint128_t, then we can just use that
-	 * or stick with the uint8_t and do a shift on the remainder bits
-	 * for our last octet mask.
-	 */
 	for (i = 0; i < (maskbits / 8); i++) { 
 		mask[i] = ~0;
 	}
@@ -286,6 +281,7 @@ hostaddrs(uint8_t *addr, int list) {
 
 int
 netwkaddr(uint8_t *addr) { 
+	/* this is when all the host bits are 0, so it should be the same as the CIDR address */
 	return(0);
 }
 
