@@ -244,13 +244,31 @@ decmask(uint8_t *addr) {
 	uint8_t mask[17];
 
 	*mask = maskbits = netclass = 0;
+	/* 
+	 * The netmask has to be between 32 and 128 bytes total, depending
+	 * on which protocol this is. 
+	 *
+	 * The most efficient way to get this is by having a literal bitmask 
+	 * that can be recycled per "word" in each address field.
+	 */
 
 	maskbits = (addr[16] == 0) ? addr[4] : addr[16];
-
-	/* use another array? probably a better way to do this */
-	for (i = 0; i < (maskbits / 8); i++) {
-		mask[i] = 0xff;
+	/*
+	 * Assuming an ip4 address, the mask would be 4*8b, or 32bits,
+	 * one uint on most architectures.While an ip6 address would be 16*8 or 128b
+	 * which is probably a unsigned long long on most architectures
+	 * so if I can ignore the top 96 bits of a uint128_t, then we can just use that
+	 * or stick with the uint8_t and do a shift on the remainder bits
+	 * for our last octet mask.
+	 */
+	for (i = 0; i < (maskbits / 8); i++) { 
+		mask[i] = ~0;
 	}
+	if ((maskbits % 8) > 0 ) { 
+		mask[i] = ((~0 >> ( 8 - (maskbits % 8))) << (8 - (maskbits % 8)));
+		i++;
+	}
+
 	mask[i] = 0;
 	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",mask[0],mask[1],mask[2],mask[3]);
 	return(0);
