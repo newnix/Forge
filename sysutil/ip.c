@@ -48,13 +48,13 @@
 
 char *__progname;
 
-int brdcast(uint8_t *addr);
+int brdcast(uint8_t *addr, uint8_t *mask);
 uint8_t * buildaddr(char *arg, int addrclass);
 int cook(uint8_t flags, int optind, char **argv);
-int netmask(uint8_t *addr);
+static uint8_t * netmask(uint8_t *addr);
 int hexmask(uint8_t *addr);
-int hostaddrs(uint8_t *addr, int list);
-int netwkaddr(uint8_t *addr);
+int hostaddrs(uint8_t *addr, int list, uint8_t *mask);
+int netwkaddr(uint8_t *addr, uint8_t *mask);
 int octmask(uint8_t *addr);
 void usage(void);
 
@@ -99,14 +99,14 @@ main(int argc, char **argv) {
 }
 
 int
-brdcast (uint8_t *addr) {	
+brdcast (uint8_t *addr, uint8_t *mask) {	
 /* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
 	return(0);
 }
 
 uint8_t *
 buildaddr(char *arg, int addrclass) { 
-	static uint8_t addr[17];
+	static uint8_t addr[18];
 	int i,j,k;
 	char buf[5];
 
@@ -118,6 +118,7 @@ buildaddr(char *arg, int addrclass) {
 				buf[j] = arg[i];
 				j++;
 			} else if (arg[i] == '.') { 
+				addr[17] = 4;
 				buf[j++] = 0;
 				j ^= j;
 				addr[k] = (uint8_t)atoi(buf); 
@@ -148,7 +149,7 @@ int
 cook(uint8_t flags, int optind, char **argv) { 
 	/* Additional entry in the array is for the mask bits */
 	int addrclass, list;
-	uint8_t *ip;
+	uint8_t *ip, *mask;
 
 	addrclass = list = 0;
 	if ((ip = calloc(17, sizeof(uint8_t))) == NULL) { 
@@ -174,60 +175,60 @@ cook(uint8_t flags, int optind, char **argv) {
 			/* at this point, we're only deciding which functions we're running */
 			case 0:
 				/* this should be the same as the default case, run all functions */
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
-				netmask(ip);
+				mask = netmask(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				octmask(ip);
 				hexmask(ip);
 				break;
 			case DECMASK:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				netmask(ip);
 				break;
 			case HEXMASK:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				hexmask(ip);
 				break;
 			case LISTHOSTS:
 				list = 1;
 				break;
 			case OCTMASK:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				octmask(ip);
 				break;
 			case DECMASK|LISTHOSTS:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				netmask(ip);
 				list = 1;
 				break;
 			case HEXMASK|LISTHOSTS:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				hexmask(ip);
 				list = 1;
 				break;
 			case OCTMASK|LISTHOSTS:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
+				hostaddrs(ip,list,mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				octmask(ip);
 				list = 1;
 				break;
 			default:
-				hostaddrs(ip,list);
-				brdcast(ip);
-				netwkaddr(ip);
-				netmask(ip);
+				mask = netmask(ip);
+				hostaddrs(ip,list, mask);
+				brdcast(ip,mask);
+				netwkaddr(ip,mask);
 				octmask(ip);
 				hexmask(ip);
 				break;
@@ -238,14 +239,14 @@ cook(uint8_t flags, int optind, char **argv) {
 }
 
 /* honestly, the base used for output should be determined via flags passed here, not separate functions */
-int
+static uint8_t *
 netmask(uint8_t *addr) { 
 	/* we need to check for an ip6 address first, and if that fails, use the ip4 location */
-	int i,netclass;
+	int i;
 	uint8_t maskbits;
-	uint8_t mask[17];
+	static uint8_t mask[17];
 
-	*mask = maskbits = netclass = 0;
+	*mask = maskbits = 0;
 	/* 
 	 * The netmask has to be between 32 and 128 bytes total, depending
 	 * on which protocol this is. 
@@ -255,7 +256,7 @@ netmask(uint8_t *addr) {
 	 */
 
 	/* this ternary operation should be used to determine what format string we're using */
-	maskbits = (addr[16] == 0) ? addr[4] : addr[16];
+	maskbits = (addr[17] == 4) ? addr[4] : addr[16];
 	for (i = 0; i < (maskbits / 8); i++) { 
 		mask[i] = ~0;
 	}
@@ -266,7 +267,7 @@ netmask(uint8_t *addr) {
 
 	mask[i] = 0;
 	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",mask[0],mask[1],mask[2],mask[3]);
-	return(0);
+	return(mask);
 }
 
 int
@@ -275,13 +276,24 @@ hexmask(uint8_t *addr) {
 }
 
 int
-hostaddrs(uint8_t *addr, int list) { 
+hostaddrs(uint8_t *addr, int list, uint8_t *mask) { 
 	return(0);
 }
 
 int
-netwkaddr(uint8_t *addr) { 
+netwkaddr(uint8_t *addr, uint8_t *mask) { 
 	/* this is when all the host bits are 0, so it should be the same as the CIDR address */
+	/* should pass in the netmask generated in netmask(), so it should be a simple bitwise operation */
+	int i; 
+
+	i = 0;
+
+	if (addr[17] == 4) {
+		for (i = 0; i < addr[17]; i++) { 
+			fprintf(stderr,"%d.",addr[i] & mask[i]);
+		}
+	}
+	fprintf(stderr,"\n");
 	return(0);
 }
 
