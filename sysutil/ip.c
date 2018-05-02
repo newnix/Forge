@@ -36,8 +36,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#define IP4 0x0020
-#define IP6 0x0040
 #define DECMASK 0x0001
 #define HELP 0x0002
 #define HEXMASK 0x0004
@@ -48,39 +46,33 @@
 
 char *__progname;
 
-int brdcast(uint8_t *addr, uint8_t *mask);
-uint8_t * buildaddr(char *arg, int addrclass);
-int cook(uint8_t flags, int optind, char **argv);
-static uint8_t * netmask(uint8_t *addr);
-int hexmask(uint8_t *addr);
-int hostaddrs(uint8_t *addr, int list, uint8_t *mask);
-int netwkaddr(uint8_t *addr, uint8_t *mask);
-int octmask(uint8_t *addr);
-void usage(void);
+/*
+ * single, 34 Byte struct to more efficiently pass 
+ * information around, also removes the need to copy local variables
+ */
+typedef struct addrinfo { 
+		uint8_t addr[16];
+		uint8_t mask[16];
+		uint8_t maskbits;
+		uint8_t class;
+} addr;
+
+static int brdcast(addr *addr);
+static int buildaddr(char *arg, addr *ip);
+static int cook(uint8_t flags, int optind, char **argv);
+static int netmask(addr *addr);
+static int hostaddrs(addr *addr, int list);
+static int netwkaddr(addr *addr);
+static void usage(void);
 
 int 
 main(int argc, char **argv) { 
 	uint8_t flags;
 	int ch;
 
-	/* 
-	 * this struct likely needs to be placed elsewhere, but 
-	 * should provide all the allocation space necessary without 
-	 * copying variables around, instead just passing either the struct 
-	 * pointer or pointers to members to the necessary functions.
-	 * Additionally, this simplifies the printing process, as each function only 
-	 * updates the contents of the struct and at the end the contents are printed
-	 */
-	struct addrinfo { 
-		uint8_t addr[16];
-		uint8_t mask[16];
-		uint8_t maskbits;
-		uint8_t class;
-	};
-
 	ch = flags = 0; 
 
-	while ((ch = getopt(argc, argv, "46dhlox")) != -1) { 
+	while ((ch = getopt(argc, argv, "dhlox")) != -1) { 
 		/* *mask flags are mutually exclusive */
 		switch(ch) { 
 			case 'd':
@@ -113,61 +105,56 @@ main(int argc, char **argv) {
 	return(cook(flags, optind, argv));
 }
 
-int
-brdcast (uint8_t *addr, uint8_t *mask) {	
+static int
+brdcast (addr *addr) {	
 /* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
 	return(0);
 }
 
-uint8_t *
-buildaddr(char *arg, int addrclass) { 
-	static uint8_t addr[18];
+static int
+buildaddr(char *arg, addr *ip) { 
 	int i,j,k;
 	char buf[5];
 
-	*addr = *buf = k = 0;
+	*buf = k = 0;
 
-	if (addrclass == IP4) { 
-		for (i = 0,j = 0; arg[i] != 0; i++) { 
-			if (arg[i] <= 57 && arg[i] >= 48) { 
-				buf[j] = arg[i];
-				j++;
-			} else if (arg[i] == '.') { 
-				addr[17] = 4;
-				buf[j++] = 0;
-				j ^= j;
-				addr[k] = (uint8_t)atoi(buf); 
-				k++;
-				memset(buf, 0, sizeof(buf));
-			} else if (arg[i] == '/') { 
-				/* this is where the subnet mask is set */
-				buf[j++] = 0;
-				addr[k] = atoi(buf);
-				j ^= j; /* reset j */
-				k++;
-				memset(buf, 0, sizeof(buf));
-				buf[0] = arg[i+1];
-				buf[1] = arg[i+2];
-				buf[3] = 0;
-				addr[k] = (uint8_t)atoi(buf);
-			}
+	for (i = 0,j = 0; arg[i] != 0; i++) { 
+		if (arg[i] <= 57 && arg[i] >= 48) { 
+			buf[j] = arg[i];
+			j++;
+		} else if (arg[i] == '.') { 
+			ip->class = 4;
+			buf[j++] = 0;
+			j ^= j;
+			ip->addr[k] = (uint8_t)atoi(buf); 
+			k++;
+			memset(buf, 0, sizeof(buf));
+		} else if (arg[i] == '/') { 
+			/* this is where the subnet mask is set */
+			buf[j++] = 0;
+			ip->addr[k] = atoi(buf); /* write the last octet to ip->addr */
+			j ^= j; /* reset j */
+			k++;
+			memset(buf, 0, sizeof(buf));
+			/* get and write the subnet mask bits */
+			buf[0] = arg[i+1];
+			buf[1] = arg[i+2];
+			buf[3] = 0;
+			ip->maskbits = (uint8_t)atoi(buf);
 		}
-		fprintf(stderr,"%u.%u.%u.%u/%d\n",addr[0],addr[1],addr[2],addr[3],addr[4]);
-		return(addr);
-	} else if (addrclass == IP6) { 
-		return(addr);
 	}
-	return((uint8_t *) 1);
+	fprintf(stderr,"%u.%u.%u.%u/%d\n",ip->addr[0],ip->addr[1],ip->addr[2],ip->addr[3],ip->maskbits);
+	return(0);
 }
 
-int 
+static int 
 cook(uint8_t flags, int optind, char **argv) { 
 	/* Additional entry in the array is for the mask bits */
-	int addrclass, list;
-	uint8_t *ip, *mask;
+	int list;
+	addr *ip;
 
-	addrclass = list = 0;
-	if ((ip = calloc(17, sizeof(uint8_t))) == NULL) { 
+	list = 0;
+	if ((ip = calloc(1, sizeof(ip))) == NULL) { 
 		fprintf(stderr,"ERR: Failed to allocate memory!\n");
 		return(1);
 	}
@@ -182,28 +169,23 @@ cook(uint8_t flags, int optind, char **argv) {
 			free(ip);
 			return(1);
 		} else { 
-			addrclass = ((strchr(argv[optind], IP4SEP) != NULL)) ? IP4 : IP6 ;
-			ip = buildaddr(argv[optind], addrclass);
+			buildaddr(argv[optind], ip);
 		}
 
 		switch(flags & 255) { 
 			/* at this point, we're only deciding which functions we're running */
 			case 0:
 				/* this should be the same as the default case, run all functions */
-				mask = netmask(ip);
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				octmask(ip);
-				hexmask(ip);
+				netmask(ip);
+				hostaddrs(ip,list);
+				brdcast(ip);
+				netwkaddr(ip);
 				break;
 			default:
-				mask = netmask(ip);
-				hostaddrs(ip,list, mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				octmask(ip);
-				hexmask(ip);
+				netmask(ip);
+				hostaddrs(ip,list);
+				brdcast(ip);
+				netwkaddr(ip);
 				break;
 		}
 	}
@@ -212,51 +194,41 @@ cook(uint8_t flags, int optind, char **argv) {
 }
 
 /* honestly, the base used for output should be determined via flags passed here, not separate functions */
-static uint8_t *
-netmask(uint8_t *addr) { 
+static int
+netmask(addr *addr) { 
 	/* we need to check for an ip6 address first, and if that fails, use the ip4 location */
 	int i;
-	uint8_t maskbits;
-	static uint8_t mask[17];
 
-	*mask = maskbits = 0;
-	/* this ternary operation should be used to determine what format string we're using */
-	maskbits = (addr[17] == 4) ? addr[4] : addr[16];
-	for (i = 0; i < (maskbits / 8); i++) { 
-		mask[i] = ~0;
+	for (i = 0; i < (addr->maskbits / 8); i++) { 
+		addr->mask[i] = ~0;
 	}
-	if ((maskbits % 8) > 0 ) { 
-		mask[i] = ((~0 >> ( 8 - (maskbits % 8))) << (8 - (maskbits % 8)));
+	if ((addr->maskbits % 8) > 0 ) { 
+		addr->mask[i] = ((~0 >> ( 8 - (addr->maskbits % 8))) << (8 - (addr->maskbits % 8)));
 		i++;
 	}
 
-	mask[i] = 0;
-	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",mask[0],mask[1],mask[2],mask[3]);
-	return(mask);
-}
-
-int
-hexmask(uint8_t *addr) { 
+	addr->mask[i] = 0;
+	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3]);
 	return(0);
 }
 
-int
-hostaddrs(uint8_t *addr, int list, uint8_t *mask) { 
+static int
+hostaddrs(addr *addr, int list) { 
 	return(0);
 }
 
-int
-netwkaddr(uint8_t *addr, uint8_t *mask) { 
+static int
+netwkaddr(addr *addr) { 
 	/* this is when all the host bits are 0, so it should be the same as the CIDR address */
 	/* should pass in the netmask generated in netmask(), so it should be a simple bitwise operation */
 	int i; 
 
 	i = 0;
 
-	if (addr[17] == 4) {
-		for (i = 0; i < addr[17]; i++) { 
-			fprintf(stderr,"%d",addr[i] & mask[i]);
-			if ( i < addr[17] - 1 ) { 
+	if (addr->class == 4) {
+		for (i = 0; i < addr->class; i++) { 
+			fprintf(stderr,"%d",addr->addr[i] & addr->mask[i]);
+			if ( i < addr->class - 1 ) { 
 				fprintf(stderr,".");
 			}
 		}
@@ -265,12 +237,7 @@ netwkaddr(uint8_t *addr, uint8_t *mask) {
 	return(0);
 }
 
-int
-octmask(uint8_t *addr) { 
-	return(0);
-}
-
-void
+static void
 usage(void) { 
 	fprintf(stdout,"%s: Simple IP address and netmask calculator\n",__progname);
 	fprintf(stdout,"\t-d\tOnly show the decimal representation of the netmask\n"

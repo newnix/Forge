@@ -101,14 +101,14 @@ run_help() {
 
 verify() {
 	## verify that this is a valid use of the script
-	if [ $table != 0 ]
+	if [ "$table" != 0 ]
 	then
-			if [ $(id -u) -ne 0 ]
+			if [ "$(id -u)" -ne 0 ]
 			then
 				echo "You must be root to run this script"
 				exit 1	
 			fi
-			if [ $direct_edit -eq 0 ]
+			if [ "$direct_edit" -eq 0 ]
 			then
 				edit_mode
 			else 
@@ -143,9 +143,9 @@ verify() {
 
 nonvol_update() {
 	## update the nonvolitile files ## 
-	if [ "$host" -ne 0 ] 
+	if [ ${host} != 0 ] 
 	then 
-		echo "$host" >> $tabledir/$table
+		echo ${host} >> $tabledir/$table
 		/sbin/pfctl -f /etc/pf.conf
 	else
 		echo "No host specified"
@@ -155,7 +155,7 @@ nonvol_update() {
 
 live_update() {
 	## update tables stored solely within RAM ## 
-	if [ "$host" -ne 0 ]
+	if [ ${host} != 0 ]
 	then
 		/sbin/pfctl -t ${table} -T add ${host}
 	else
