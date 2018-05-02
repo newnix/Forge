@@ -63,6 +63,21 @@ main(int argc, char **argv) {
 	uint8_t flags;
 	int ch;
 
+	/* 
+	 * this struct likely needs to be placed elsewhere, but 
+	 * should provide all the allocation space necessary without 
+	 * copying variables around, instead just passing either the struct 
+	 * pointer or pointers to members to the necessary functions.
+	 * Additionally, this simplifies the printing process, as each function only 
+	 * updates the contents of the struct and at the end the contents are printed
+	 */
+	struct addrinfo { 
+		uint8_t addr[16];
+		uint8_t mask[16];
+		uint8_t maskbits;
+		uint8_t class;
+	};
+
 	ch = flags = 0; 
 
 	while ((ch = getopt(argc, argv, "46dhlox")) != -1) { 
@@ -182,48 +197,6 @@ cook(uint8_t flags, int optind, char **argv) {
 				octmask(ip);
 				hexmask(ip);
 				break;
-			case DECMASK:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				netmask(ip);
-				break;
-			case HEXMASK:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				hexmask(ip);
-				break;
-			case LISTHOSTS:
-				list = 1;
-				break;
-			case OCTMASK:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				octmask(ip);
-				break;
-			case DECMASK|LISTHOSTS:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				netmask(ip);
-				list = 1;
-				break;
-			case HEXMASK|LISTHOSTS:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				hexmask(ip);
-				list = 1;
-				break;
-			case OCTMASK|LISTHOSTS:
-				hostaddrs(ip,list,mask);
-				brdcast(ip,mask);
-				netwkaddr(ip,mask);
-				octmask(ip);
-				list = 1;
-				break;
 			default:
 				mask = netmask(ip);
 				hostaddrs(ip,list, mask);
@@ -247,14 +220,6 @@ netmask(uint8_t *addr) {
 	static uint8_t mask[17];
 
 	*mask = maskbits = 0;
-	/* 
-	 * The netmask has to be between 32 and 128 bytes total, depending
-	 * on which protocol this is. 
-	 *
-	 * The most efficient way to get this is by having a literal bitmask 
-	 * that can be recycled per "word" in each address field.
-	 */
-
 	/* this ternary operation should be used to determine what format string we're using */
 	maskbits = (addr[17] == 4) ? addr[4] : addr[16];
 	for (i = 0; i < (maskbits / 8); i++) { 
@@ -290,7 +255,10 @@ netwkaddr(uint8_t *addr, uint8_t *mask) {
 
 	if (addr[17] == 4) {
 		for (i = 0; i < addr[17]; i++) { 
-			fprintf(stderr,"%d.",addr[i] & mask[i]);
+			fprintf(stderr,"%d",addr[i] & mask[i]);
+			if ( i < addr[17] - 1 ) { 
+				fprintf(stderr,".");
+			}
 		}
 	}
 	fprintf(stderr,"\n");
