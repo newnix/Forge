@@ -63,9 +63,10 @@ typedef struct addrinfo {
 static int brdcast(addr *addr);
 static int buildaddr(char *arg, addr *ip);
 static int cook(uint8_t flags, int optind, char **argv);
+static int hostaddrs(addr *addr);
 static int netmask(addr *addr);
-static int hostaddrs(addr *addr, int list);
 static int netwkaddr(addr *addr);
+static int printinfo(addr *addr);
 static void usage(void);
 
 int 
@@ -112,19 +113,12 @@ static int
 brdcast (addr *addr) {	
 	int i; 
 
-	fprintf(stderr,"Broadcast: ");
 	/* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
 	for (i = 0; i < addr->class; i++) { 
 		addr->mask[i] = ~addr->mask[i];
-		/* for whatever reason, | ~addr->mask[i] wasn't working as intended */
 		addr->bdst[i] = (addr->addr[i] | addr->mask[i]); 
-		fprintf(stderr,"%u",addr->bdst[i]);
-		if (i < addr->class -1 ) { 
-			fprintf(stderr,".");
-		}
 		addr->mask[i] = ~addr->mask[i];
 	}
-	fprintf(stderr,"\n");
 	return(0);
 }
 
@@ -160,16 +154,13 @@ buildaddr(char *arg, addr *ip) {
 			ip->maskbits = (uint8_t)atoi(buf);
 		}
 	}
-	fprintf(stderr,"%u.%u.%u.%u/%u\n",ip->addr[0],ip->addr[1],ip->addr[2],ip->addr[3],ip->maskbits);
 	return(0);
 }
 
 static int 
 cook(uint8_t flags, int optind, char **argv) { 
-	int list;
 	addr *ip;
 
-	list = ((flags & LISTHOSTS) > 0) ? 1 : 0 ;
 	if ((ip = calloc(1, sizeof(ip))) == NULL) { 
 		fprintf(stderr,"ERR: Failed to allocate memory!\n");
 		return(1);
@@ -192,21 +183,21 @@ cook(uint8_t flags, int optind, char **argv) {
 			case 0:
 				/* this should be the same as the default case, run all functions */
 				netmask(ip);
-				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
+				printinfo(ip);
 				break;
 			case LISTHOSTS:
 				netmask(ip);
 				brdcast(ip);
 				netwkaddr(ip);
-				hostaddrs(ip,list);
+				hostaddrs(ip);
 			break;
 			default:
 				netmask(ip);
-				hostaddrs(ip,list);
 				brdcast(ip);
 				netwkaddr(ip);
+				hostaddrs(ip);
 				break;
 		}
 	}
@@ -215,10 +206,16 @@ cook(uint8_t flags, int optind, char **argv) {
 }
 
 static int
-netmask(addr *addr) { 
+hostaddrs(addr *addr) {
 	/*
-	 * generate the netmask for use in later operations
+	 * If list is nonzero, we're going to print out every address in the range
+	 * otherwise, just print the summary, first host and last host
 	 */
+	return(0);
+}
+
+static int
+netmask(addr *addr) { 
 	int i;
 
 	for (i = 0; i < (addr->maskbits / 8); i++) { 
@@ -229,23 +226,6 @@ netmask(addr *addr) {
 		i++;
 	}
 	addr->mask[i] = 0;
-	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3]);
-	return(0);
-}
-
-static int
-hostaddrs(addr *addr, int list) { 
-	/*
-	 * If list is nonzero, we're going to print out every address in the range
-	 * otherwise, just print the summary, first host and last host
-	 */
-	/* this only serves to quelch clang warnings right now */
-	fprintf(stderr,"%u.%u.%u.%u/%u\tlist:%d\n",addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->maskbits,list);
-	if (list > 0) { 
-		/* -l was used, print all addresses */
-	} else { 
-		/* just print the range */
-	}
 	return(0);
 }
 
@@ -256,15 +236,33 @@ netwkaddr(addr *addr) {
 
 	i = 0;
 
-	fprintf(stderr,"Network: ");
 	for (i = 0; i < addr->class; i++) { 
 		addr->ntwk[i] = (addr->addr[i] & addr->mask[i]);
-		fprintf(stderr,"%u",addr->ntwk[i]);
-		if ( i < addr->class - 1 ) { 
-			fprintf(stderr,".");
-		}
 	}
-	fprintf(stderr,"\n");
+	return(0);
+}
+
+static int
+printinfo(addr *addr) { 
+	if (addr->class == 4) { 
+		fprintf(stdout,
+				"Address:\t%u.%u.%u.%u\n"
+				"Netmask:\t%u.%u.%u.%u\n"
+				"Hexmask:\t0x%X%X%X%X\n"
+				"Octmask:\t0%o%o%o%o\n"
+				"Network:\t%u.%u.%u.%u\n"
+				"Broadcast:\t%u.%u.%u.%u\n"
+				"IP Range:\t%u.%u.%u.%u - %u.%u.%u.%u\n",
+				addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],
+				addr->mask[0],addr->addr[1],addr->addr[2],addr->addr[3],
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3], 
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],(addr->ntwk[3] + 1),
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],(addr->bdst[3] - 1));
+	}
+
 	return(0);
 }
 
