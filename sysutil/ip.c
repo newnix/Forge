@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2017-2018, Exile Heavy Industries
+ *	Copyright (c) 2018, Exile Heavy Industries
  *	All rights reserved.
  *
  *	Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h> /* ensure uint8_t and similar are available */
 #include <string.h>
 #include <unistd.h>
 
@@ -107,7 +108,20 @@ main(int argc, char **argv) {
 
 static int
 brdcast (addr *addr) {	
-/* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
+	int i; 
+
+	fprintf(stderr,"Broadcast: ");
+	/* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
+	for (i = 0; i < addr->class; i++) { 
+		addr->mask[i] = ~addr->mask[i];
+		/* for whatever reason, | ~addr->mask[i] wasn't working as intended */
+		fprintf(stderr,"%u",(addr->addr[i] | addr->mask[i]));
+		if (i < addr->class -1 ) { 
+			fprintf(stderr,".");
+		}
+		addr->mask[i] = ~addr->mask[i];
+	}
+	fprintf(stderr,"\n");
 	return(0);
 }
 
@@ -143,17 +157,16 @@ buildaddr(char *arg, addr *ip) {
 			ip->maskbits = (uint8_t)atoi(buf);
 		}
 	}
-	fprintf(stderr,"%u.%u.%u.%u/%d\n",ip->addr[0],ip->addr[1],ip->addr[2],ip->addr[3],ip->maskbits);
+	fprintf(stderr,"%u.%u.%u.%u/%u\n",ip->addr[0],ip->addr[1],ip->addr[2],ip->addr[3],ip->maskbits);
 	return(0);
 }
 
 static int 
 cook(uint8_t flags, int optind, char **argv) { 
-	/* Additional entry in the array is for the mask bits */
 	int list;
 	addr *ip;
 
-	list = 0;
+	list = ((flags & LISTHOSTS) > 0) ? 1 : 0 ;
 	if ((ip = calloc(1, sizeof(ip))) == NULL) { 
 		fprintf(stderr,"ERR: Failed to allocate memory!\n");
 		return(1);
@@ -173,7 +186,6 @@ cook(uint8_t flags, int optind, char **argv) {
 		}
 
 		switch(flags & 255) { 
-			/* at this point, we're only deciding which functions we're running */
 			case 0:
 				/* this should be the same as the default case, run all functions */
 				netmask(ip);
@@ -181,6 +193,12 @@ cook(uint8_t flags, int optind, char **argv) {
 				brdcast(ip);
 				netwkaddr(ip);
 				break;
+			case LISTHOSTS:
+				netmask(ip);
+				brdcast(ip);
+				netwkaddr(ip);
+				hostaddrs(ip,list);
+			break;
 			default:
 				netmask(ip);
 				hostaddrs(ip,list);
@@ -189,14 +207,15 @@ cook(uint8_t flags, int optind, char **argv) {
 				break;
 		}
 	}
-	/* free(ip); Not sure at the moment what happened, but this was causing an assertion failure */
+	free(ip);
 	return(0);
 }
 
-/* honestly, the base used for output should be determined via flags passed here, not separate functions */
 static int
 netmask(addr *addr) { 
-	/* we need to check for an ip6 address first, and if that fails, use the ip4 location */
+	/*
+	 * generate the netmask for use in later operations
+	 */
 	int i;
 
 	for (i = 0; i < (addr->maskbits / 8); i++) { 
@@ -214,23 +233,26 @@ netmask(addr *addr) {
 
 static int
 hostaddrs(addr *addr, int list) { 
+	/*
+	 * If list is nonzero, we're going to print out every address in the range
+	 * otherwise, just print the summary, first host and last host
+	 */
+	fprintf(stderr,"%u.%u.%u.%u/%u\tlist:%d\n",addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->maskbits,list);
 	return(0);
 }
 
 static int
 netwkaddr(addr *addr) { 
-	/* this is when all the host bits are 0, so it should be the same as the CIDR address */
 	/* should pass in the netmask generated in netmask(), so it should be a simple bitwise operation */
 	int i; 
 
 	i = 0;
 
-	if (addr->class == 4) {
-		for (i = 0; i < addr->class; i++) { 
-			fprintf(stderr,"%d",addr->addr[i] & addr->mask[i]);
-			if ( i < addr->class - 1 ) { 
-				fprintf(stderr,".");
-			}
+	fprintf(stderr,"Network: ");
+	for (i = 0; i < addr->class; i++) { 
+		fprintf(stderr,"%u",addr->addr[i] & addr->mask[i]);
+		if ( i < addr->class - 1 ) { 
+			fprintf(stderr,".");
 		}
 	}
 	fprintf(stderr,"\n");
