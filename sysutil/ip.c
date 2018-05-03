@@ -48,12 +48,14 @@
 char *__progname;
 
 /*
- * single, 34 Byte struct to more efficiently pass 
+ * single, 66 Byte struct to more efficiently pass 
  * information around, also removes the need to copy local variables
  */
 typedef struct addrinfo { 
 		uint8_t addr[16];
 		uint8_t mask[16];
+		uint8_t ntwk[16];
+		uint8_t bdst[16];
 		uint8_t maskbits;
 		uint8_t class;
 } addr;
@@ -115,7 +117,8 @@ brdcast (addr *addr) {
 	for (i = 0; i < addr->class; i++) { 
 		addr->mask[i] = ~addr->mask[i];
 		/* for whatever reason, | ~addr->mask[i] wasn't working as intended */
-		fprintf(stderr,"%u",(addr->addr[i] | addr->mask[i]));
+		addr->bdst[i] = (addr->addr[i] | addr->mask[i]); 
+		fprintf(stderr,"%u",addr->bdst[i]);
 		if (i < addr->class -1 ) { 
 			fprintf(stderr,".");
 		}
@@ -225,7 +228,6 @@ netmask(addr *addr) {
 		addr->mask[i] = ((~0 >> ( 8 - (addr->maskbits % 8))) << (8 - (addr->maskbits % 8)));
 		i++;
 	}
-
 	addr->mask[i] = 0;
 	fprintf(stderr,"Netmask (decimal): %u.%u.%u.%u\n",addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3]);
 	return(0);
@@ -237,7 +239,13 @@ hostaddrs(addr *addr, int list) {
 	 * If list is nonzero, we're going to print out every address in the range
 	 * otherwise, just print the summary, first host and last host
 	 */
+	/* this only serves to quelch clang warnings right now */
 	fprintf(stderr,"%u.%u.%u.%u/%u\tlist:%d\n",addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->maskbits,list);
+	if (list > 0) { 
+		/* -l was used, print all addresses */
+	} else { 
+		/* just print the range */
+	}
 	return(0);
 }
 
@@ -250,7 +258,8 @@ netwkaddr(addr *addr) {
 
 	fprintf(stderr,"Network: ");
 	for (i = 0; i < addr->class; i++) { 
-		fprintf(stderr,"%u",addr->addr[i] & addr->mask[i]);
+		addr->ntwk[i] = (addr->addr[i] & addr->mask[i]);
+		fprintf(stderr,"%u",addr->ntwk[i]);
 		if ( i < addr->class - 1 ) { 
 			fprintf(stderr,".");
 		}
