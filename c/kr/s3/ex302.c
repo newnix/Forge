@@ -26,9 +26,11 @@ int main()
   char trstr[tmax]; /* should be 4x the size of instr, jic it's all tabs */
 
   len = get_line(instr,MAX); /* capture a line of input, though it looks like this could be replaced with scanf() */
-  printf("Captured:\n%s\n",instr);
-  escape(trstr,instr); /*essentially transpose the string into the other */
-  printf("Transposed:\n%s\n",trstr); /* if this doesn't work properly, it'll likely just be printing garbage */
+	if (len > 0) { 
+		printf("Captured:\n%s\n",instr);
+		escape(trstr,instr); /*essentially transpose the string into the other */
+		printf("Transposed:\n%s\n",trstr); /* if this doesn't work properly, it'll likely just be printing garbage */
+	}
 
   return 0;
 }

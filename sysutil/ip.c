@@ -37,11 +37,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#define DECMASK 0x0001
 #define HELP 0x0002
-#define HEXMASK 0x0004
 #define LISTHOSTS 0x0008
-#define OCTMASK 0x0010
 #define IP4SEP '.'
 #define IP6SEP ':'
 
@@ -76,13 +73,8 @@ main(int argc, char **argv) {
 
 	ch = flags = 0; 
 
-	while ((ch = getopt(argc, argv, "dhlox")) != -1) { 
-		/* *mask flags are to be mutually exclusive */
+	while ((ch = getopt(argc, argv, "hl")) != -1) { 
 		switch(ch) { 
-			case 'd':
-				/* 0000 0001 */
-				flags ^= DECMASK;
-				break;
 			case 'h':
 				/* 0000 0010 */
 				flags ^= HELP;
@@ -90,14 +82,6 @@ main(int argc, char **argv) {
 			case 'l':
 				/* 0100 0100 */
 				flags ^= LISTHOSTS;
-				break;
-			case 'o':
-				/* 0000 1000 */
-				flags ^= OCTMASK;
-				break;
-			case 'x':
-				/* 0001 0000 */
-				flags ^= HEXMASK;
 				break;
 			default:
 				flags ^= flags;
@@ -126,37 +110,148 @@ static int
 buildaddr(char *arg, addr *ip) { 
 	int i,j,k;
 	char buf[5];
+	uint8_t hexval[4];
 
-	*buf = k = 0;
+	*buf = *hexval = k = 0;
 
-	for (i = 0,j = 0; arg[i] != 0; i++) { 
-		if (arg[i] <= 57 && arg[i] >= 48) { 
-			buf[j] = arg[i];
-			j++;
-		} else if (arg[i] == IP4SEP) { 
-			buf[j++] = 0;
-			j ^= j;
-			ip->addr[k] = (uint8_t)atoi(buf); 
-			k++;
-			memset(buf, 0, sizeof(buf));
-		} 
-		if (arg[i] == '/') { 
-			/* this is where the subnet mask is set */
-			buf[j++] = 0;
-			ip->addr[k] = (uint8_t)atoi(buf); /* write the last octet to ip->addr */
-			j ^= j; /* reset j */
-			k++;
-			memset(buf, 0, sizeof(buf));
-			/* get and write the subnet mask bits */
-			buf[0] = arg[i+1];
-			buf[1] = arg[i+2];
-			buf[3] = 0;
-			ip->maskbits = (uint8_t)atoi(buf);
-			memset(buf, 0, sizeof(buf));
-		} 
+	if (ip->class == 4) {
+		for (i = 0,j = 0; arg[i] != 0; i++) { 
+			if (arg[i] <= 57 && arg[i] >= 48) { 
+				buf[j] = arg[i];
+				j++;
+			} else if (arg[i] == IP4SEP) { 
+				buf[j++] = 0;
+				j ^= j;
+				ip->addr[k] = (uint8_t)atoi(buf); 
+				k++;
+				memset(buf, 0, sizeof(buf));
+			} 
+			if (arg[i] == '/') { 
+				/* this is where the subnet mask is set */
+				buf[j++] = 0;
+				ip->addr[k] = (uint8_t)atoi(buf); /* write the last octet to ip->addr */
+				j ^= j; /* reset j */
+				k++;
+				memset(buf, 0, sizeof(buf));
+				/* get and write the subnet mask bits */
+				buf[0] = arg[i+1];
+				buf[1] = arg[i+2];
+				buf[3] = 0;
+				ip->maskbits = (uint8_t)atoi(buf);
+				memset(buf, 0, sizeof(buf));
+			} 
 			/* if no / was encountered, make sure we flush *buf to the struct */
-		if (atoi(buf) > 0) { 
-			ip->addr[k] = (uint8_t)atoi(buf);
+			if (atoi(buf) > 0) { 
+				ip->addr[k] = (uint8_t)atoi(buf);
+			}
+		}
+	}
+	if (ip->class == 16) {
+		for (i = 0,j = 0; arg[i] != 0; i++) {
+			if (arg[i] <= 57 && arg[i] >= 48) {
+				buf[j] = arg[i]; 
+				j++;
+			} else if (arg[i] >= 'a' && arg[i] <= 'f') {
+				buf[j] = arg[i]; 
+				j++;
+			} else if (arg[i] >= 'A' && arg[i] <= 'F') { 
+				buf[j] = arg[i]; 
+				j++;
+			}
+			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
+			if (arg[i] == IP6SEP) { 
+				buf[j++] = 0;
+				j ^= j; /* reset the segment counter */
+				/* 
+				 * since ipv6 has 16-bit segments, we can't do direct conversion and 
+				 * assignment like with ipv4. we need to convert and assign ip->addr
+				 * entries as buf[0],buf[1] then next entry is buf[2],buf[3]
+				 *
+				 * this can almost certainly be done more efficiently, but I'm not sure 
+				 * exactly how at this time
+				 */
+				for (j = 0; j < 4; j++) { 
+					switch (buf[j]) { 
+						case 'a':
+							hexval[i] = 10;
+							break;
+						case 'b':
+							hexval[i] = 11;
+							break;
+						case 'c':
+							hexval[i] = 12;
+							break;
+						case 'd':
+							hexval[i] = 13;
+							break;
+						case 'e':
+							hexval[i] = 14;
+							break;
+						case 'f':
+							hexval[i] = 15;
+							break;
+						case 'A':
+							hexval[i] = 10;
+							break;
+						case 'B':
+							hexval[i] = 11;
+							break;
+						case 'C':
+							hexval[i] = 12;
+							break;
+						case 'D':
+							hexval[i] = 13;
+							break;
+						case 'E':
+							hexval[i] = 14;
+							break;
+						case 'F':
+							hexval[i] = 15;
+							break;
+						case '0':
+							hexval[i] = 0;
+							break;
+						case '1':
+							hexval[i] = 1;
+							break;
+						case '2':
+							hexval[i] = 2;
+							break;
+						case '3':
+							hexval[i] = 3;
+							break;
+						case '4':
+							hexval[i] = 4;
+							break;
+						case '5':
+							hexval[i] = 5;
+							break;
+						case '6':
+							hexval[i] = 6;
+							break;
+						case '7':
+							hexval[i] = 7;
+							break;
+						case '8':
+							hexval[i] = 8;
+							break;
+						case '9':
+							hexval[i] = 9;
+							break;
+						default:
+							break;
+					}
+				}
+				ip->addr[k] = (hexval[1] + (hexval[0] * 16));
+				k++;
+				ip->addr[k] = (hexval[3] + (hexval[2] * 16));
+				k++;
+				j ^= j;
+				memset(buf,0,sizeof(buf));
+				fprintf(stderr,"ip->addr[--k] %02X:ip->addr[k] %02X\n",ip->addr[--k],ip->addr[k]);
+			}
+			if (arg[i] == '/') {
+			}
 		}
 	}
 	return(0);
@@ -287,11 +382,8 @@ printinfo(addr *addr) {
 static void
 usage(void) { 
 	fprintf(stdout,"%s: Simple IP address and netmask calculator\n",__progname);
-	fprintf(stdout,"\t-d\tOnly show the decimal representation of the netmask\n"
-								 "\t-h\tThis help message\n"
+	fprintf(stdout,"\t-h\tThis help message\n"
 								 "\t-l\tList all possible host addresses, not just the range\n"
-								 "\t-o\tOnly show the octal representation of the netmask\n"
-								 "\t-x\tOnly show the hexadecimal representation of the netmask\n"
 								 "\n\tEx: ip 192.168.0.0/24\n"
 								 "\t    ip fe80::6a05:caff:fe3f:a9da/64\n");
 }
