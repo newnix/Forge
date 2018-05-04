@@ -248,13 +248,13 @@ printinfo(addr *addr) {
 		fprintf(stdout,
 				"Address:\t%u.%u.%u.%u\n"
 				"Netmask:\t%u.%u.%u.%u\n"
-				"Hexmask:\t0x%X%X%X%X\n"
-				"Octmask:\t0%o%o%o%o\n"
+				"Hexmask:\t0x%02X%02X%02X%02X\n"
+				"Octmask:\t0%03o%03o%03o%03o\n"
 				"Network:\t%u.%u.%u.%u\n"
 				"Broadcast:\t%u.%u.%u.%u\n"
 				"IP Range:\t%u.%u.%u.%u - %u.%u.%u.%u\n",
 				addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],
-				addr->mask[0],addr->addr[1],addr->addr[2],addr->addr[3],
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3], 
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],
