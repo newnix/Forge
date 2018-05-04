@@ -133,8 +133,7 @@ buildaddr(char *arg, addr *ip) {
 		if (arg[i] <= 57 && arg[i] >= 48) { 
 			buf[j] = arg[i];
 			j++;
-		} else if (arg[i] == '.') { 
-			ip->class = 4;
+		} else if (arg[i] == IP4SEP) { 
 			buf[j++] = 0;
 			j ^= j;
 			ip->addr[k] = (uint8_t)atoi(buf); 
@@ -192,12 +191,12 @@ cook(uint8_t flags, int optind, char **argv) {
 				brdcast(ip);
 				netwkaddr(ip);
 				hostaddrs(ip);
-			break;
+				break;
 			default:
 				netmask(ip);
 				brdcast(ip);
 				netwkaddr(ip);
-				hostaddrs(ip);
+				printinfo(ip);
 				break;
 		}
 	}
@@ -217,6 +216,11 @@ hostaddrs(addr *addr) {
 static int
 netmask(addr *addr) { 
 	int i;
+
+	/* assume a mask of all 1's if none was given */
+	if (addr->maskbits == 0) {
+		addr->maskbits = (addr->class == 4) ? 32 : 128;
+	}
 
 	for (i = 0; i < (addr->maskbits / 8); i++) { 
 		addr->mask[i] = ~0;
@@ -274,6 +278,6 @@ usage(void) {
 								 "\t-l\tList all possible host addresses, not just the range\n"
 								 "\t-o\tOnly show the octal representation of the netmask\n"
 								 "\t-x\tOnly show the hexadecimal representation of the netmask\n"
-								 "\n\tEx: ip 192.168.0.0/4\n"
+								 "\n\tEx: ip 192.168.0.0/24\n"
 								 "\t    ip fe80::6a05:caff:fe3f:a9da/64\n");
 }
