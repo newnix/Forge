@@ -112,7 +112,8 @@ buildaddr(char *arg, addr *ip) {
 	char buf[5];
 	uint8_t hexval[4];
 
-	*buf = *hexval = k = 0;
+	memset(hexval,0,sizeof(hexval));
+	*buf = k = 0;
 
 	if (ip->class == 4) {
 		for (i = 0,j = 0; arg[i] != 0; i++) { 
@@ -145,8 +146,7 @@ buildaddr(char *arg, addr *ip) {
 				ip->addr[k] = (uint8_t)atoi(buf);
 			}
 		}
-	}
-	if (ip->class == 16) {
+	} else if (ip->class == 16) {
 		for (i = 0,j = 0; arg[i] != 0; i++) {
 			if (arg[i] <= 57 && arg[i] >= 48) {
 				buf[j] = arg[i]; 
@@ -159,7 +159,7 @@ buildaddr(char *arg, addr *ip) {
 				j++;
 			}
 			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
-			if (arg[i] == IP6SEP) { 
+			if (arg[i] == IP6SEP || j == 3) { 
 				buf[j++] = 0;
 				j ^= j; /* reset the segment counter */
 				/* 
@@ -170,7 +170,7 @@ buildaddr(char *arg, addr *ip) {
 				 * this can almost certainly be done more efficiently, but I'm not sure 
 				 * exactly how at this time
 				 */
-				for (j = 0; j < 4; j++) { 
+				for (j = 0; buf[j] != 0; j++) { 
 					switch (buf[j]) { 
 						case 'a':
 							hexval[i] = 10;
@@ -248,7 +248,8 @@ buildaddr(char *arg, addr *ip) {
 				k++;
 				j ^= j;
 				memset(buf,0,sizeof(buf));
-				fprintf(stderr,"ip->addr[--k] %02X:ip->addr[k] %02X\n",ip->addr[--k],ip->addr[k]);
+				memset(hexval,0,sizeof(hexval));
+				fprintf(stderr,"ip->addr[--k] %02X:ip->addr[k] %02X\n",ip->addr[k - 1],ip->addr[k]);
 			}
 			if (arg[i] == '/') {
 			}
@@ -277,9 +278,9 @@ cook(uint8_t flags, int optind, char **argv) {
 			free(ip);
 			return(1);
 		} 
-		if (strchr(argv[optind], IP4SEP)) { 
+		if (strchr(argv[optind], IP4SEP) != NULL) { 
 			ip->class = 4; 
-		} else if (strchr(argv[optind], IP6SEP)) { 
+		} else if (strchr(argv[optind], IP6SEP) != NULL) { 
 			ip->class = 16;
 		}
 
