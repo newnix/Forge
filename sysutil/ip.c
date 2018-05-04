@@ -31,6 +31,7 @@
  *	DAMAGE.
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h> /* ensure uint8_t and similar are available */
@@ -134,13 +135,13 @@ buildaddr(char *arg, addr *ip) {
 			buf[j] = arg[i];
 			j++;
 		} else if (arg[i] == IP4SEP) { 
-			ip->class = 4;
 			buf[j++] = 0;
 			j ^= j;
 			ip->addr[k] = (uint8_t)atoi(buf); 
 			k++;
 			memset(buf, 0, sizeof(buf));
-		} else if (arg[i] == '/') { 
+		} 
+		if (arg[i] == '/') { 
 			/* this is where the subnet mask is set */
 			buf[j++] = 0;
 			ip->addr[k] = (uint8_t)atoi(buf); /* write the last octet to ip->addr */
@@ -152,6 +153,11 @@ buildaddr(char *arg, addr *ip) {
 			buf[1] = arg[i+2];
 			buf[3] = 0;
 			ip->maskbits = (uint8_t)atoi(buf);
+			memset(buf, 0, sizeof(buf));
+		} 
+			/* if no / was encountered, make sure we flush *buf to the struct */
+		if (atoi(buf) > 0) { 
+			ip->addr[k] = (uint8_t)atoi(buf);
 		}
 	}
 	return(0);
@@ -177,6 +183,11 @@ cook(uint8_t flags, int optind, char **argv) {
 			free(ip);
 			return(1);
 		} 
+		if (strchr(argv[optind], IP4SEP)) { 
+			ip->class = 4; 
+		} else if (strchr(argv[optind], IP6SEP)) { 
+			ip->class = 16;
+		}
 
 		buildaddr(argv[optind], ip);
 
@@ -265,8 +276,8 @@ printinfo(addr *addr) {
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],
-				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],(addr->ntwk[3] + 1),
-				addr->bdst[0],addr->bdst[1],addr->bdst[2],(addr->bdst[3] - 1));
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->ntwk[3] + 1)),
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->bdst[3] - 1))); 
 	} else if (addr->class == 16) { 
 		printf("IPv6 is not currently implemented\n");
 	} 
