@@ -134,6 +134,7 @@ buildaddr(char *arg, addr *ip) {
 			buf[j] = arg[i];
 			j++;
 		} else if (arg[i] == IP4SEP) { 
+			ip->class = 4;
 			buf[j++] = 0;
 			j ^= j;
 			ip->addr[k] = (uint8_t)atoi(buf); 
@@ -142,7 +143,7 @@ buildaddr(char *arg, addr *ip) {
 		} else if (arg[i] == '/') { 
 			/* this is where the subnet mask is set */
 			buf[j++] = 0;
-			ip->addr[k] = atoi(buf); /* write the last octet to ip->addr */
+			ip->addr[k] = (uint8_t)atoi(buf); /* write the last octet to ip->addr */
 			j ^= j; /* reset j */
 			k++;
 			memset(buf, 0, sizeof(buf));
@@ -168,15 +169,16 @@ cook(uint8_t flags, int optind, char **argv) {
 	if (flags == HELP || argv[1] == 0) { 
 		usage();
 		free(ip);
+		/* show the contents of the addr struct */
 		return(0);
 	} else { 
 		if (strchr(argv[optind], IP4SEP) == NULL && strchr(argv[optind], IP6SEP) == NULL) { 
 			fprintf(stderr,"%s: invalid IP address!\n",argv[optind]);
 			free(ip);
 			return(1);
-		} else { 
-			buildaddr(argv[optind], ip);
-		}
+		} 
+
+		buildaddr(argv[optind], ip);
 
 		switch(flags & 255) { 
 			case 0:
@@ -265,7 +267,9 @@ printinfo(addr *addr) {
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],(addr->ntwk[3] + 1),
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],(addr->bdst[3] - 1));
-	}
+	} else if (addr->class == 16) { 
+		printf("IPv6 is not currently implemented\n");
+	} 
 
 	return(0);
 }
