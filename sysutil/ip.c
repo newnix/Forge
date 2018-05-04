@@ -31,7 +31,6 @@
  *	DAMAGE.
  */
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h> /* ensure uint8_t and similar are available */
@@ -78,7 +77,7 @@ main(int argc, char **argv) {
 	ch = flags = 0; 
 
 	while ((ch = getopt(argc, argv, "dhlox")) != -1) { 
-		/* *mask flags are mutually exclusive */
+		/* *mask flags are to be mutually exclusive */
 		switch(ch) { 
 			case 'd':
 				/* 0000 0001 */
