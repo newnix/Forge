@@ -59,7 +59,7 @@ typedef struct addrinfo {
 
 static int brdcast(addr *addr);
 static int buildaddr(char *arg, addr *ip);
-static int cook(uint8_t flags, int optind, char **argv);
+static int cook(uint8_t flags, char *args);
 static int hostaddrs(addr *addr);
 static int netmask(addr *addr);
 static int netwkaddr(addr *addr);
@@ -90,7 +90,7 @@ main(int argc, char **argv) {
 	}
 
 	/* Parse the arguments */
-	return(cook(flags, optind, argv));
+	return(cook(flags, argv[optind]));
 }
 
 static int
@@ -159,7 +159,7 @@ buildaddr(char *arg, addr *ip) {
 				j++;
 			}
 			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
-			if (arg[i] == IP6SEP || j == 4) {  
+			if (arg[i] == IP6SEP && arg[i] != '/') {  
 				/* 
 				 * since ipv6 has 16-bit segments, we can't do direct conversion and 
 				 * assignment like with ipv4. we need to convert and assign ip->addr
@@ -169,6 +169,7 @@ buildaddr(char *arg, addr *ip) {
 				 * exactly how at this time
 				 */
 				for (j = 0; j < 5; j++) { 
+					fprintf(stderr,"buf[%d]:\t%c\n",j,buf[j]);
 					switch (buf[j]) { 
 						/* should only have capitalized hex values */
 						case 'A':
@@ -247,7 +248,7 @@ buildaddr(char *arg, addr *ip) {
 }
 
 static int 
-cook(uint8_t flags, int optind, char **argv) { 
+cook(uint8_t flags, char *args) { 
 	addr *ip;
 
 	if ((ip = calloc(1, sizeof(ip))) == NULL) { 
@@ -255,24 +256,24 @@ cook(uint8_t flags, int optind, char **argv) {
 		return(1);
 	}
 
-	if (flags == HELP || argv[1] == 0) { 
+	if (flags == HELP || *args == 0) { 
 		usage();
 		free(ip);
 		/* show the contents of the addr struct */
 		return(0);
 	} else { 
-		if (strchr(argv[optind], IP4SEP) == NULL && strchr(argv[optind], IP6SEP) == NULL) { 
-			fprintf(stderr,"%s: invalid IP address!\n",argv[optind]);
+		if (strchr(args, IP4SEP) == NULL && strchr(args, IP6SEP) == NULL) { 
+			fprintf(stderr,"%s: invalid IP address!\n",args);
 			free(ip);
 			return(1);
 		} 
-		if (strchr(argv[optind], IP4SEP) != NULL) { 
+		if (strchr(args, IP4SEP) != NULL) { 
 			ip->class = 4; 
-		} else if (strchr(argv[optind], IP6SEP) != NULL) { 
+		} else if (strchr(args, IP6SEP) != NULL) { 
 			ip->class = 16;
 		}
 
-		buildaddr(argv[optind], ip);
+		buildaddr(args, ip);
 
 		switch(flags & 255) { 
 			case 0:
@@ -362,7 +363,17 @@ printinfo(addr *addr) {
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->ntwk[3] + 1)),
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->bdst[3] - 1))); 
 	} else if (addr->class == 16) { 
-		printf("IPv6 is not currently implemented\n");
+		printf("*addrinfo struct:\n"
+				"Address:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"Netmask:\t\n"
+				"Hexmask:\t\n"
+				"Octmask:\t\n"
+				"Network:\t\n"
+				"Broadcast:\t\n"
+				"IP Range:\t\n",
+				addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->addr[4],addr->addr[5],addr->addr[6],addr->addr[7],
+				addr->addr[8],addr->addr[9],addr->addr[10],addr->addr[11],addr->addr[12],addr->addr[13],addr->addr[14],addr->addr[15]
+				);
 	} 
 
 	return(0);
