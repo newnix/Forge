@@ -151,15 +151,15 @@ buildaddr(char *arg, addr *ip) {
 			if (arg[i] <= 57 && arg[i] >= 48) {
 				buf[j] = arg[i]; 
 				j++;
-			} else if (arg[i] >= 'a' && arg[i] <= 'f') {
-				buf[j] = (arg[i] + 32); 
+			} else if (arg[i] >= 97 && arg[i] <= 102) {
+				buf[j] = (arg[i] - 32); 
 				j++;
-			} else if (arg[i] >= 'A' && arg[i] <= 'F') { 
+			} else if (arg[i] >= 65 && arg[i] <= 70) { 
 				buf[j] = arg[i]; 
 				j++;
 			}
 			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
-			if (arg[i] == IP6SEP && arg[i] != '/') {  
+			if (arg[i] == IP6SEP || arg[i + 1] == '/') {  
 				/* 
 				 * since ipv6 has 16-bit segments, we can't do direct conversion and 
 				 * assignment like with ipv4. we need to convert and assign ip->addr
@@ -343,6 +343,7 @@ netwkaddr(addr *addr) {
 	return(0);
 }
 
+/* must find a better means of presenting this information */
 static int
 printinfo(addr *addr) { 
 	if (addr->class == 4) { 
@@ -365,14 +366,39 @@ printinfo(addr *addr) {
 	} else if (addr->class == 16) { 
 		printf("*addrinfo struct:\n"
 				"Address:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
-				"Netmask:\t\n"
-				"Hexmask:\t\n"
-				"Octmask:\t\n"
-				"Network:\t\n"
-				"Broadcast:\t\n"
-				"IP Range:\t\n",
+				"Netmask:\t%u%u:%u%u:%u%u:%u%u:%u%u:%u%u:%u%u:%u%u\n"
+				"Hexmask:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"Octmask:\t%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o\n"
+				"Network:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"Broadcast:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"IP Range:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X - %02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"addr->class:\t%u\n"
+				"addr->maskbits:\t%u\n",
 				addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->addr[4],addr->addr[5],addr->addr[6],addr->addr[7],
-				addr->addr[8],addr->addr[9],addr->addr[10],addr->addr[11],addr->addr[12],addr->addr[13],addr->addr[14],addr->addr[15]
+				addr->addr[8],addr->addr[9],addr->addr[10],addr->addr[11],addr->addr[12],addr->addr[13],addr->addr[14],addr->addr[15],
+				/* netmask */
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
+				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
+				/* conversions */
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
+				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
+				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
+				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
+				/* network */
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],addr->ntwk[4],addr->ntwk[5],addr->ntwk[6],addr->ntwk[7],
+				addr->ntwk[8],addr->ntwk[9],addr->ntwk[10],addr->ntwk[11],addr->ntwk[12],addr->ntwk[13],addr->ntwk[14],addr->ntwk[15],
+				/* broadcast */
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],addr->bdst[4],addr->bdst[5],addr->bdst[6],addr->bdst[7],
+				addr->bdst[8],addr->bdst[9],addr->bdst[10],addr->bdst[11],addr->bdst[12],addr->bdst[13],addr->bdst[14],addr->bdst[15],
+				/* range */
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],addr->ntwk[4],addr->ntwk[5],addr->ntwk[6],addr->ntwk[7],
+				addr->ntwk[8],addr->ntwk[9],addr->ntwk[10],addr->ntwk[11],addr->ntwk[12],addr->ntwk[13],addr->ntwk[14],((addr->maskbits == 128) ? addr->addr[15] : (addr->ntwk[15] + 1)),
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],addr->bdst[4],addr->bdst[5],addr->bdst[6],addr->bdst[7],
+				addr->bdst[8],addr->bdst[9],addr->bdst[10],addr->bdst[11],addr->bdst[12],addr->bdst[13],addr->bdst[14],((addr->maskbits == 128) ? addr->addr[15] : (addr->bdst[15] - 1)),
+				/* class */
+				addr->class,
+				/* maskbits */
+				addr->maskbits
 				);
 	} 
 
