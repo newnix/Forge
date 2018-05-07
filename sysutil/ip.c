@@ -47,6 +47,9 @@ char *__progname;
 /*
  * single, 66 Byte struct to more efficiently pass 
  * information around, also removes the need to copy local variables
+ * should be converted to using uint16_t for arrays so the ip6 info
+ * is better preserved and presented, currently bit values are displayed
+ * accurately, but values are misleading in decimal
  */
 typedef struct addrinfo { 
 		uint8_t addr[16];
@@ -169,7 +172,6 @@ buildaddr(char *arg, addr *ip) {
 				 * exactly how at this time
 				 */
 				for (j = 0; j < 5; j++) { 
-					fprintf(stderr,"buf[%d]:\t%c\n",j,buf[j]);
 					switch (buf[j]) { 
 						/* should only have capitalized hex values */
 						case 'A':
@@ -231,7 +233,6 @@ buildaddr(char *arg, addr *ip) {
 				j ^= j;
 				memset(buf,0,sizeof(buf));
 				memset(hexval,0,sizeof(hexval));
-				fprintf(stderr,"ip->addr[%02X] %02X|ip->addr[%02X] %02X\n",(k - 2),ip->addr[k - 2],(k - 1),ip->addr[k - 1]);
 			}
 			if (arg[i] == '/') {
 				for (j = 0,i += 1; arg[i] != 0; i++) { 
@@ -239,7 +240,6 @@ buildaddr(char *arg, addr *ip) {
 					j++;
 				}
 				ip->maskbits = (uint8_t)atoi(buf);
-				fprintf(stderr,"ip->maskbits:\t%u\n",ip->maskbits);
 				break;
 			}
 		}
