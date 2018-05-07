@@ -152,16 +152,14 @@ buildaddr(char *arg, addr *ip) {
 				buf[j] = arg[i]; 
 				j++;
 			} else if (arg[i] >= 'a' && arg[i] <= 'f') {
-				buf[j] = arg[i]; 
+				buf[j] = (arg[i] + 32); 
 				j++;
 			} else if (arg[i] >= 'A' && arg[i] <= 'F') { 
 				buf[j] = arg[i]; 
 				j++;
 			}
 			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
-			if (arg[i] == IP6SEP || j == 3) { 
-				buf[j++] = 0;
-				j ^= j; /* reset the segment counter */
+			if (arg[i] == IP6SEP || j == 4) {  
 				/* 
 				 * since ipv6 has 16-bit segments, we can't do direct conversion and 
 				 * assignment like with ipv4. we need to convert and assign ip->addr
@@ -170,73 +168,56 @@ buildaddr(char *arg, addr *ip) {
 				 * this can almost certainly be done more efficiently, but I'm not sure 
 				 * exactly how at this time
 				 */
-				for (j = 0; buf[j] != 0; j++) { 
+				for (j = 0; j < 5; j++) { 
 					switch (buf[j]) { 
-						case 'a':
-							hexval[i] = 10;
-							break;
-						case 'b':
-							hexval[i] = 11;
-							break;
-						case 'c':
-							hexval[i] = 12;
-							break;
-						case 'd':
-							hexval[i] = 13;
-							break;
-						case 'e':
-							hexval[i] = 14;
-							break;
-						case 'f':
-							hexval[i] = 15;
-							break;
+						/* should only have capitalized hex values */
 						case 'A':
-							hexval[i] = 10;
+							hexval[j] = 10;
 							break;
 						case 'B':
-							hexval[i] = 11;
+							hexval[j] = 11;
 							break;
 						case 'C':
-							hexval[i] = 12;
+							hexval[j] = 12;
 							break;
 						case 'D':
-							hexval[i] = 13;
+							hexval[j] = 13;
 							break;
 						case 'E':
-							hexval[i] = 14;
+							hexval[j] = 14;
 							break;
 						case 'F':
-							hexval[i] = 15;
+							hexval[j] = 15;
 							break;
 						case '0':
-							hexval[i] = 0;
+							hexval[j] = 0;
 							break;
 						case '1':
-							hexval[i] = 1;
+							hexval[j] = 1;
 							break;
 						case '2':
-							hexval[i] = 2;
+							hexval[j] = 2;
 							break;
 						case '3':
-							hexval[i] = 3;
+							hexval[j] = 3;
 							break;
 						case '4':
-							hexval[i] = 4;
+							hexval[j] = 4;
 							break;
 						case '5':
-							hexval[i] = 5;
+							hexval[j] = 5;
 							break;
 						case '6':
-							hexval[i] = 6;
+							hexval[j] = 6;
 							break;
 						case '7':
-							hexval[i] = 7;
+							hexval[j] = 7;
 							break;
 						case '8':
-							hexval[i] = 8;
+							hexval[j] = 8;
 							break;
 						case '9':
-							hexval[i] = 9;
+							hexval[j] = 9;
 							break;
 						default:
 							break;
@@ -249,9 +230,16 @@ buildaddr(char *arg, addr *ip) {
 				j ^= j;
 				memset(buf,0,sizeof(buf));
 				memset(hexval,0,sizeof(hexval));
-				fprintf(stderr,"ip->addr[--k] %02X:ip->addr[k] %02X\n",ip->addr[k - 1],ip->addr[k]);
+				fprintf(stderr,"ip->addr[%02X] %02X|ip->addr[%02X] %02X\n",(k - 2),ip->addr[k - 2],(k - 1),ip->addr[k - 1]);
 			}
 			if (arg[i] == '/') {
+				for (j = 0,i += 1; arg[i] != 0; i++) { 
+					buf[j] = arg[i]; 
+					j++;
+				}
+				ip->maskbits = (uint8_t)atoi(buf);
+				fprintf(stderr,"ip->maskbits:\t%u\n",ip->maskbits);
+				break;
 			}
 		}
 	}
