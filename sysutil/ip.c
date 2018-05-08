@@ -52,10 +52,10 @@ char *__progname;
  * accurately, but values are misleading in decimal
  */
 typedef struct addrinfo { 
-		uint8_t addr[16];
-		uint8_t mask[16];
-		uint8_t ntwk[16];
-		uint8_t bdst[16];
+		uint16_t addr[8];
+		uint16_t mask[8];
+		uint16_t ntwk[8];
+		uint16_t bdst[8];
 		uint8_t maskbits;
 		uint8_t class;
 } addr;
@@ -103,7 +103,7 @@ brdcast (addr *addr) {
 	/* this is when all the host bits are set, so we should be able to just twiddle any leftover octets to get this working */
 	for (i = 0; i < addr->class; i++) { 
 		addr->mask[i] = ~addr->mask[i];
-		addr->bdst[i] = (addr->addr[i] | addr->mask[i]); 
+		addr->bdst[i] = (addr->class == 4) ? (addr->addr[i] | (addr->mask[i] ^ 0xFF00)) : (addr->addr[i] | addr->mask[i]); 
 		addr->mask[i] = ~addr->mask[i];
 	}
 	return(0);
@@ -163,14 +163,6 @@ buildaddr(char *arg, addr *ip) {
 			}
 			/* this gets tricky, since ipv6 allows for "::" to compress a run of 0's */
 			if (arg[i] == IP6SEP || arg[i + 1] == '/') {  
-				/* 
-				 * since ipv6 has 16-bit segments, we can't do direct conversion and 
-				 * assignment like with ipv4. we need to convert and assign ip->addr
-				 * entries as buf[0],buf[1] then next entry is buf[2],buf[3]
-				 *
-				 * this can almost certainly be done more efficiently, but I'm not sure 
-				 * exactly how at this time
-				 */
 				for (j = 0; j < 5; j++) { 
 					switch (buf[j]) { 
 						/* should only have capitalized hex values */
@@ -226,9 +218,7 @@ buildaddr(char *arg, addr *ip) {
 							break;
 					}
 				}
-				ip->addr[k] = (hexval[1] + (hexval[0] * 16));
-				k++;
-				ip->addr[k] = (hexval[3] + (hexval[2] * 16));
+				ip->addr[k] = (hexval[3] + (hexval[2] * 16) + (hexval[1] * 16 * 16) + (hexval[0] * 16 * 16 * 16));
 				k++;
 				j ^= j;
 				memset(buf,0,sizeof(buf));
@@ -313,20 +303,23 @@ hostaddrs(addr *addr) {
 static int
 netmask(addr *addr) { 
 	int i;
+	uint16_t zero;
 
+	zero = 0;
 	/* assume a mask of all 1's if none was given */
 	if (addr->maskbits == 0) {
 		addr->maskbits = (addr->class == 4) ? 32 : 128;
 	}
 
 	for (i = 0; i < (addr->maskbits / 8); i++) { 
-		addr->mask[i] = ~0;
+		/* XOR out the top 8 bits if we're using ipv4 */
+		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
 	}
 	if ((addr->maskbits % 8) > 0 ) { 
-		addr->mask[i] = ((~0 >> ( 8 - (addr->maskbits % 8))) << (8 - (addr->maskbits % 8)));
+		addr->mask[i] = ((~zero >> ( 8 - (addr->maskbits % 8))) << (8 - (addr->maskbits % 8)));
 		i++;
 	}
-	addr->mask[i] = 0;
+	addr->mask[i] = zero;
 	return(0);
 }
 
@@ -365,36 +358,28 @@ printinfo(addr *addr) {
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->bdst[3] - 1))); 
 	} else if (addr->class == 16) { 
 		printf("*addrinfo struct:\n"
-				"Address:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
-				"Netmask:\t%u%u:%u%u:%u%u:%u%u:%u%u:%u%u:%u%u:%u%u\n"
-				"Hexmask:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
-				"Octmask:\t%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o:%03o%03o\n"
-				"Network:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
-				"Broadcast:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
-				"IP Range:\t%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X - %02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X\n"
+				"Address:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
+				"Netmask:\t%u:%u:%u:%u:%u:%u:%u:%u\n"
+				"Hexmask:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
+				"Octmask:\t%03o:%03o:%03o:%03o:%03o:%03o:%03o:%03o\n"
+				"Network:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
+				"Broadcast:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
+				"IP Range:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X - %04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
 				"addr->class:\t%u\n"
 				"addr->maskbits:\t%u\n",
 				addr->addr[0],addr->addr[1],addr->addr[2],addr->addr[3],addr->addr[4],addr->addr[5],addr->addr[6],addr->addr[7],
-				addr->addr[8],addr->addr[9],addr->addr[10],addr->addr[11],addr->addr[12],addr->addr[13],addr->addr[14],addr->addr[15],
 				/* netmask */
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
-				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
 				/* conversions */
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
-				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
 				addr->mask[0],addr->mask[1],addr->mask[2],addr->mask[3],addr->mask[4],addr->mask[5],addr->mask[6],addr->mask[7],
-				addr->mask[8],addr->mask[9],addr->mask[10],addr->mask[11],addr->mask[12],addr->mask[13],addr->mask[14],addr->mask[15],
 				/* network */
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],addr->ntwk[4],addr->ntwk[5],addr->ntwk[6],addr->ntwk[7],
-				addr->ntwk[8],addr->ntwk[9],addr->ntwk[10],addr->ntwk[11],addr->ntwk[12],addr->ntwk[13],addr->ntwk[14],addr->ntwk[15],
 				/* broadcast */
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],addr->bdst[4],addr->bdst[5],addr->bdst[6],addr->bdst[7],
-				addr->bdst[8],addr->bdst[9],addr->bdst[10],addr->bdst[11],addr->bdst[12],addr->bdst[13],addr->bdst[14],addr->bdst[15],
 				/* range */
-				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],addr->ntwk[4],addr->ntwk[5],addr->ntwk[6],addr->ntwk[7],
-				addr->ntwk[8],addr->ntwk[9],addr->ntwk[10],addr->ntwk[11],addr->ntwk[12],addr->ntwk[13],addr->ntwk[14],((addr->maskbits == 128) ? addr->addr[15] : (addr->ntwk[15] + 1)),
-				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],addr->bdst[4],addr->bdst[5],addr->bdst[6],addr->bdst[7],
-				addr->bdst[8],addr->bdst[9],addr->bdst[10],addr->bdst[11],addr->bdst[12],addr->bdst[13],addr->bdst[14],((addr->maskbits == 128) ? addr->addr[15] : (addr->bdst[15] - 1)),
+				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],addr->ntwk[3],addr->ntwk[4],addr->ntwk[5],addr->ntwk[6],((addr->maskbits == 128) ? addr->addr[7] : (addr->ntwk[7] + 1)),
+				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],addr->bdst[4],addr->bdst[5],addr->bdst[6],((addr->maskbits == 128) ? addr->addr[7] : (addr->bdst[7] - 1)),
 				/* class */
 				addr->class,
 				/* maskbits */
