@@ -126,14 +126,14 @@ buildaddr(char *arg, addr *ip) {
 			} else if (arg[i] == IP4SEP) { 
 				buf[j++] = 0;
 				j ^= j;
-				ip->addr[k] = (uint8_t)atoi(buf); 
+				ip->addr[k] = (uint16_t)atoi(buf); 
 				k++;
 				memset(buf, 0, sizeof(buf));
 			} 
 			if (arg[i] == '/') { 
 				/* this is where the subnet mask is set */
 				buf[j++] = 0;
-				ip->addr[k] = (uint8_t)atoi(buf); /* write the last octet to ip->addr */
+				ip->addr[k] = (uint16_t)atoi(buf); /* write the last octet to ip->addr */
 				j ^= j; /* reset j */
 				k++;
 				memset(buf, 0, sizeof(buf));
@@ -141,12 +141,12 @@ buildaddr(char *arg, addr *ip) {
 				buf[0] = arg[i+1];
 				buf[1] = arg[i+2];
 				buf[3] = 0;
-				ip->maskbits = (uint8_t)atoi(buf);
+				ip->maskbits = (uint16_t)atoi(buf);
 				memset(buf, 0, sizeof(buf));
 			} 
 			/* if no / was encountered, make sure we flush *buf to the struct */
 			if (atoi(buf) > 0) { 
-				ip->addr[k] = (uint8_t)atoi(buf);
+				ip->addr[k] = (uint16_t)atoi(buf);
 			}
 		}
 	} else if (ip->class == 16) {
@@ -265,7 +265,7 @@ cook(uint8_t flags, char *args) {
 
 		buildaddr(args, ip);
 
-		switch(flags & 255) { 
+		switch(flags) { 
 			case 0:
 				/* this should be the same as the default case, run all functions */
 				netmask(ip);
@@ -316,7 +316,7 @@ netmask(addr *addr) {
 		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
 	}
 	if ((addr->maskbits % 8) > 0 ) { 
-		addr->mask[i] = ((~zero >> ( 8 - (addr->maskbits % 8))) << (8 - (addr->maskbits % 8)));
+		addr->mask[i] = (addr->class == 4) ? ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16))) & 0x00FF : ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16)));
 		i++;
 	}
 	addr->mask[i] = zero;
