@@ -149,7 +149,7 @@ buildaddr(char *arg, addr *ip) {
 				ip->addr[k] = (uint16_t)atoi(buf);
 			}
 		}
-	} else if (ip->class == 16) {
+	} else if (ip->class == 8) {
 		for (i = 0,j = 0; arg[i] != 0; i++) {
 			if (arg[i] <= 57 && arg[i] >= 48) {
 				buf[j] = arg[i]; 
@@ -260,7 +260,7 @@ cook(uint8_t flags, char *args) {
 		if (strchr(args, IP4SEP) != NULL) { 
 			ip->class = 4; 
 		} else if (strchr(args, IP6SEP) != NULL) { 
-			ip->class = 16;
+			ip->class = 8;
 		}
 
 		buildaddr(args, ip);
@@ -311,7 +311,7 @@ netmask(addr *addr) {
 		addr->maskbits = (addr->class == 4) ? 32 : 128;
 	}
 
-	for (i = 0; i < (addr->maskbits / 8); i++) { 
+	for (i = 0; i < (addr->maskbits / 16); i++) { 
 		/* XOR out the top 8 bits if we're using ipv4 */
 		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
 	}
@@ -356,7 +356,7 @@ printinfo(addr *addr) {
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],addr->bdst[3],
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->ntwk[3] + 1)),
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->bdst[3] - 1))); 
-	} else if (addr->class == 16) { 
+	} else { 
 		printf("*addrinfo struct:\n"
 				"Address:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
 				"Netmask:\t%u:%u:%u:%u:%u:%u:%u:%u\n"
