@@ -311,7 +311,7 @@ netmask(addr *addr) {
 		addr->maskbits = (addr->class == 4) ? 32 : 128;
 	}
 
-	for (i = 0; i < (addr->maskbits / 16); i++) { 
+	for (i = 0; i < (addr->maskbits / 8); i++) { 
 		/* XOR out the top 8 bits if we're using ipv4 */
 		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
 	}
