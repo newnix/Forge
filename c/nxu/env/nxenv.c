@@ -53,7 +53,9 @@ main(int argc, char **argv) {
 	char *cargv[ARGV_MAX];
 	char envsep;
 	char *envp;
+	pid_t child;
 
+	child = 0;
 	ch = i = 0;
 	envsep = SEP_IS_NEWL;
 
@@ -90,13 +92,17 @@ main(int argc, char **argv) {
 			}
 		} else {
 			strlcpy(cargv[i], argv[ch], 1024);
+			i++;
 		}
-		i++;
 	}
 	if (i > 0) {
-		fork(); 
-		execve(argv[ch], cargv, environ);
-		return(0);
+		child = fork(); 
+		if (child > 0) { 
+			/* in the parent process */
+		} else {
+			/* child process */
+			execve(argv[ch], cargv, environ);
+		}
 	}
 	nxenv(envsep);
 	return(0);
