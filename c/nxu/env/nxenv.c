@@ -31,6 +31,7 @@
  */
 
 #include <err.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,14 +44,14 @@
 extern char **environ;
 extern char *__progname;
 
-static int abandon_env(char **argv);
+static int abandon_env(void);
 static void nxenv(char envsep);
 static void run_help(void);
 
 int
 main(int argc, char **argv) {
 	int ch, i, ret;
-	char *cargv[ARGV_MAX];
+	char **cargv;
 	char envsep;
 	char *envp;
 	pid_t child;
@@ -59,8 +60,8 @@ main(int argc, char **argv) {
 	ch = i = 0;
 	envsep = SEP_IS_NEWL;
 
-	if ((*cargv = calloc(ARGV_MAX, ARGV_MAX)) == 0) {
-		fprintf(stderr,"calloc: Cannot allocate space for **cargv!\n");
+	if ((cargv = calloc(1, ARGV_MAX)) == NULL) {
+		err(errno, "calloc: ");
 	}
 
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
@@ -69,7 +70,7 @@ main(int argc, char **argv) {
 				run_help();
 				return(0);
 			case 'i': 
-				abandon_env(argv);
+				abandon_env();
 				break;
 			case '0':
 				envsep = SEP_IS_NULL;
@@ -91,7 +92,8 @@ main(int argc, char **argv) {
 				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
 			}
 		} else {
-			strlcpy(cargv[i], argv[ch], 1024);
+			strlcpy(cargv[i], argv[ch], ARGV_MAX);
+			err(errno, "strlcpy: ");
 			i++;
 		}
 	}
@@ -105,11 +107,12 @@ main(int argc, char **argv) {
 		}
 	}
 	nxenv(envsep);
+	free(cargv);
 	return(0);
 }
 
 static int
-abandon_env(char **argv) {
+abandon_env(void) {
 	/* 
 	 * going to need to clear **environ, then fork() & execve() the given command
 	 */
