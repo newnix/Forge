@@ -30,6 +30,10 @@
  * DAMAGE.
  */
 
+/* for wait() */
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include <err.h>
 #include <errno.h>
 #include <stdio.h>
@@ -37,6 +41,7 @@
 #include <string.h>
 #include <unistd.h>
 
+/* literal ASCII null/newline */
 #define SEP_IS_NULL 0
 #define SEP_IS_NEWL 10
 #define ARGV_MAX 1024
@@ -50,19 +55,19 @@ static void run_help(void);
 
 int
 main(int argc, char **argv) {
-	int ch, i, ret;
+	int ch, i, j, ret;
 	char **cargv;
 	char envsep;
 	char *envp;
 	pid_t child;
 
 	child = 0;
-	ch = i = 0;
+	ch = i = j = 0;
 	envsep = SEP_IS_NEWL;
 
-	if ((cargv = calloc(1, ARGV_MAX)) == NULL) {
+	if ((cargv = calloc(ARGV_MAX, ARGV_MAX)) == NULL) {
 		err(errno, "calloc: ");
-	}
+	} 
 
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
@@ -83,16 +88,15 @@ main(int argc, char **argv) {
 	 * need to convert this to use optind to determine where options end
 	 * Ideally also move to a separate function
 	 */
-	for (ch = optind; argv[ch] != NULL; ch++) {
+	for (ch = optind; ch < argc; ch++) {
 		/* we have a new env var, add it to **environ */
-		envp = strchr(argv[ch],'=');
-		if (envp != NULL) {
-			ret = putenv(argv[ch]);
-			if (ret != 0) { 
+		if ((envp = strchr(argv[ch],'=')) != NULL) { 
+			if ((ret = putenv(argv[ch])) != 0) { 
 				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
 			}
 		} else {
 			strlcpy(cargv[i], argv[ch], ARGV_MAX);
+			if (i == 0) { j = ch; }
 			err(errno, "strlcpy: ");
 			i++;
 		}
@@ -101,12 +105,15 @@ main(int argc, char **argv) {
 		child = fork(); 
 		if (child > 0) { 
 			/* in the parent process */
+			wait(&child);
 		} else {
 			/* child process */
-			execve(argv[ch], cargv, environ);
+			execve(argv[j], cargv, environ);
 		}
 	}
-	nxenv(envsep);
+	if (j == 0) { 
+		nxenv(envsep);
+	}
 	free(cargv);
 	return(0);
 }
