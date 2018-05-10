@@ -31,6 +31,7 @@
  */
 
 /* for wait() */
+#include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -56,7 +57,7 @@ static void run_help(void);
 int
 main(int argc, char **argv) {
 	int ch, i, j, ret;
-	char **cargv;
+	char cargv[ARGV_MAX][ARGV_MAX];
 	char envsep;
 	char *envp;
 	pid_t child;
@@ -64,10 +65,6 @@ main(int argc, char **argv) {
 	child = 0;
 	ch = i = j = 0;
 	envsep = SEP_IS_NEWL;
-
-	if ((cargv = calloc(ARGV_MAX, ARGV_MAX)) == NULL) {
-		err(errno, "calloc: ");
-	} 
 
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
@@ -108,13 +105,12 @@ main(int argc, char **argv) {
 			wait(&child);
 		} else {
 			/* child process */
-			execve(argv[j], cargv, environ);
+			execve(argv[j], *cargv, environ);
 		}
 	}
 	if (j == 0) { 
 		nxenv(envsep);
 	}
-	free(cargv);
 	return(0);
 }
 
