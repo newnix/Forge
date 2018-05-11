@@ -30,13 +30,6 @@
  * DAMAGE.
  */
 
-/* for wait() */
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include <err.h>
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,96 +38,57 @@
 /* literal ASCII null/newline */
 #define SEP_IS_NULL 0
 #define SEP_IS_NEWL 10
-#define ARGV_MAX 1024
 
 extern char **environ;
 extern char *__progname;
 
-static int abandon_env(void);
-static void nxenv(char envsep);
-static void run_help(void);
+static void __attribute__((noreturn)) run_help(void);
 
 int
 main(int argc, char **argv) {
-	int ch, i, j, ret;
-	char cargv[ARGV_MAX][ARGV_MAX];
+	int ch;
 	char envsep;
-	char *envp;
-	pid_t child;
 
-	child = 0;
-	ch = i = j = 0;
+	ch = 0;
 	envsep = SEP_IS_NEWL;
 
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
 			case 'h':
 				run_help();
-				return(0);
 			case 'i': 
-				abandon_env();
+				memset(environ,0,sizeof(*environ));
 				break;
 			case '0':
 				envsep = SEP_IS_NULL;
 				break;
 			default:
-				break;
+				run_help();
 		}
 	}
-	/* 
-	 * need to convert this to use optind to determine where options end
-	 * Ideally also move to a separate function
+	/*
+	 * This part was heavily inspired by OpenBSD's env(1)
 	 */
-	for (ch = optind; ch < argc; ch++) {
-		/* we have a new env var, add it to **environ */
-		if ((envp = strchr(argv[ch],'=')) != NULL) { 
-			if ((ret = putenv(argv[ch])) != 0) { 
-				err(ret, "putenv: "); /* this is almost certainly wrong, needs revisitng */
-			}
-		} else {
-			strlcpy(cargv[i], argv[ch], ARGV_MAX);
-			if (i == 0) { j = ch; }
-			err(errno, "strlcpy: ");
-			i++;
+	argc -= optind;
+	argv += optind;
+	for (; *argv && strchr(*argv, '='); ++argv) {
+		putenv(*argv);
+	}
+	if (*argv) {
+		execvp(*argv,argv);
+	} else { 
+		for (; *environ; environ++) { 
+			fprintf(stdout,"%s%c",*environ,envsep);
 		}
 	}
-	if (i > 0) {
-		child = fork(); 
-		if (child > 0) { 
-			/* in the parent process */
-			wait(&child);
-		} else {
-			/* child process */
-			execve(argv[j], *cargv, environ);
-		}
-	}
-	if (j == 0) { 
-		nxenv(envsep);
-	}
-	return(0);
-}
-
-static int
-abandon_env(void) {
-	/* 
-	 * going to need to clear **environ, then fork() & execve() the given command
-	 */
-	memset(environ, 0, sizeof(*environ));
-	/* scan_args(**argv); */
-	return(0);
-}
-
-static void
-nxenv(char envsep) {
-	for(int i = 0; environ[i] != NULL; i++) {
-		fprintf(stdout,"%s%c",environ[i],envsep);
-	}
+	exit(0);
 }
 
 static void
 run_help(void) {
-	fprintf(stdout,"%s: New Exile's env(1)\n",__progname);
-	fprintf(stdout,"\t-h\tThis help text\n");
-	fprintf(stdout,"\t-i\tDiscard the environment for a new process\n");
-	fprintf(stdout,"\t-0\tUse NULL for separation, instead of newline\n");
+	fprintf(stdout,"%s: New Exile's env(1)\n"
+	"\t-h\tThis help text\n"
+	"\t-i\tDiscard the environment for a new process\n"
+	"\t-0\tUse NULL for separation, instead of newline\n",__progname);
+	exit(0);
 }
