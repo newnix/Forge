@@ -57,7 +57,8 @@ typedef struct addrinfo {
 		uint16_t ntwk[8];
 		uint16_t bdst[8];
 		uint8_t maskbits;
-		uint8_t class;
+		uint8_t class; /* this is indirectly used to determine if it's an ip4 or ip6 address, 
+											by telling us how many segments we should worry about */
 } addr;
 
 static int brdcast(addr *addr);
@@ -311,20 +312,13 @@ netmask(addr *addr) {
 		addr->maskbits = (addr->class == 4) ? 32 : 128;
 	}
 	segsize = (addr->class == 4) ? 8 : 16;
-	fprintf(stderr,"segsize: %u\nfullsegs:%u\n",segsize,addr->maskbits/segsize);
 
 	for (i = 0; i < (addr->maskbits / segsize); i++) { 
 		/* XOR out the top 8 bits if we're using ipv4 */
 		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
-		fprintf(stderr,"addr->mask[%u] = %u\n",i,addr->mask[i]);
 	}
 	if ((addr->maskbits % segsize) > 0 ) { 
-		addr->mask[i] = (addr->class == 4) ? ((~zero << ( 16 - (addr->maskbits % 16))) >> (16 - (addr->maskbits % 16))) & 0x00FF : ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16)));
-		fprintf(stderr,"addr->maskbits %% segsize = %u\n",addr->maskbits %segsize);
-		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) = %u\n",(~zero << ( 16 - (addr->maskbits % 16))));
-		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) >> (16 - (addr->maskbits %% 16))) = %u\n",(~zero << ( 16 - (addr->maskbits % 16)) >> (16 - (addr->maskbits % 16))));
-		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) >> (16 - (addr->maskbits %% 16))) & 0x00FF = %u\n",(~zero << ( 16 - (addr->maskbits % 16)) >> (16 - (addr->maskbits % 16))) & 0x00FF);
-		fprintf(stderr,"addr->mask[%u] = %u\n",i,addr->mask[i]);
+		addr->mask[i] = (addr->class == 4) ? ((~zero << (segsize - (addr->maskbits % segsize))) & 0x00FF) : ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16)));
 		i++;
 	}
 	addr->mask[i] = zero;
