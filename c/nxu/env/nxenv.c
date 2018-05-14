@@ -29,7 +29,10 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-
+#ifdef PRNTERR
+#include <err.h>
+#include <errno.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,7 +60,7 @@ main(int argc, char **argv) {
 			case 'h':
 				run_help();
 			case 'i': 
-				memset(environ,0,sizeof(*environ));
+				environ = NULL;
 				break;
 			case '0':
 				envsep = SEP_IS_NULL;
@@ -72,10 +75,21 @@ main(int argc, char **argv) {
 	argc -= optind;
 	argv += optind;
 	for (; *argv && strchr(*argv, '='); ++argv) {
+#ifndef PRNTERR
 		putenv(*argv);
+#else 
+		if ((putenv(*argv)) != 0) { 
+			fprintf(stderr,"%s: Cannot set %s!\n",__progname,*argv);
+		}
+#endif
 	}
 	if (*argv) {
 		execvp(*argv,argv);
+		exit(1); /* signify that an error has occurred if no reporting is enabled */
+#ifdef PRNTERR
+		fprintf(stderr,"%s: Cannot exec %s!\n",__progname,*argv);
+		exit(1);
+#endif
 	} else { 
 		for (; *environ; environ++) { 
 			fprintf(stdout,"%s%c",*environ,envsep);
