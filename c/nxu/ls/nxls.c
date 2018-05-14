@@ -106,6 +106,12 @@ run_help(void) {
 
 int
 scan_args(char **arglist) {
+	/* 
+	 * this can almost certainly be changed to behave similarly to in nxenv.c
+	 * though the best thing to do is to have default behaviour run nxls() on 
+	 * the current directory in a non-recursive manner, as would be expected of 
+	 * ls(1)
+	 */
 	int i;
 	/*
 	 * We assume that any argument not starting with '-' 
@@ -120,6 +126,8 @@ scan_args(char **arglist) {
 			 * if xls() needs to detect when we change into a new directory and return 
 			 * a nonzero value in that circumstance to prevent the recursive listing
 			 * seen currently 
+			 *
+			 * There should be a way to ensure we don't automatically recurse
 			 */
 			if (nftw(arglist[i], &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
 				perror("nftw");
@@ -136,8 +144,8 @@ xls(const char *target, const struct stat *info, int i, struct FTW *ftw) {
 	/* this should prevent listing recursively by default */
 	if (ftw->level < 2) {
 		fprintf(stdout,"stat(2) struct info for %s:\n",target);
-		fprintf(stdout,"st_ino:\t\t%lu\t\tst_nlink:\t%lu\n",info->st_ino, info->st_nlink);
-		fprintf(stdout,"st_dev:\t\t%lu\tst_mode:\t%o\n",info->st_dev, info->st_mode);
+		fprintf(stdout,"st_ino:\t\t%lu\t\tst_nlink:\t%u\n",info->st_ino, info->st_nlink);
+		fprintf(stdout,"st_dev:\t\t%u\tst_mode:\t%o\n",info->st_dev, info->st_mode);
 		fprintf(stdout,"st_uid:\t\t%d\t\tst_gid:\t\t%d\n",info->st_uid, info->st_gid);
 		fprintf(stdout,"st_size:\t%ld\t\tst_blocks:\t%ld\n",info->st_size, info->st_blocks);
 		fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
