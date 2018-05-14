@@ -42,7 +42,7 @@
 #define IP4SEP '.'
 #define IP6SEP ':'
 
-char *__progname;
+extern char *__progname;
 
 /*
  * single, 66 Byte struct to more efficiently pass 
@@ -141,7 +141,7 @@ buildaddr(char *arg, addr *ip) {
 				buf[0] = arg[i+1];
 				buf[1] = arg[i+2];
 				buf[3] = 0;
-				ip->maskbits = (uint16_t)atoi(buf);
+				ip->maskbits = (uint8_t)atoi(buf);
 				memset(buf, 0, sizeof(buf));
 			} 
 			/* if no / was encountered, make sure we flush *buf to the struct */
@@ -303,20 +303,28 @@ hostaddrs(addr *addr) {
 static int
 netmask(addr *addr) { 
 	int i;
-	uint16_t zero;
+	uint16_t segsize,zero;
 
-	zero = 0;
+	segsize = zero = 0;
 	/* assume a mask of all 1's if none was given */
 	if (addr->maskbits == 0) {
 		addr->maskbits = (addr->class == 4) ? 32 : 128;
 	}
+	segsize = (addr->class == 4) ? 8 : 16;
+	fprintf(stderr,"segsize: %u\nfullsegs:%u\n",segsize,addr->maskbits/segsize);
 
-	for (i = 0; i < (addr->maskbits / 8); i++) { 
+	for (i = 0; i < (addr->maskbits / segsize); i++) { 
 		/* XOR out the top 8 bits if we're using ipv4 */
 		addr->mask[i] = (addr->class == 4) ? ~zero ^ 0xFF00 : ~zero;
+		fprintf(stderr,"addr->mask[%u] = %u\n",i,addr->mask[i]);
 	}
-	if ((addr->maskbits % 8) > 0 ) { 
-		addr->mask[i] = (addr->class == 4) ? ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16))) & 0x00FF : ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16)));
+	if ((addr->maskbits % segsize) > 0 ) { 
+		addr->mask[i] = (addr->class == 4) ? ((~zero << ( 16 - (addr->maskbits % 16))) >> (16 - (addr->maskbits % 16))) & 0x00FF : ((~zero >> ( 16 - (addr->maskbits % 16))) << (16 - (addr->maskbits % 16)));
+		fprintf(stderr,"addr->maskbits %% segsize = %u\n",addr->maskbits %segsize);
+		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) = %u\n",(~zero << ( 16 - (addr->maskbits % 16))));
+		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) >> (16 - (addr->maskbits %% 16))) = %u\n",(~zero << ( 16 - (addr->maskbits % 16)) >> (16 - (addr->maskbits % 16))));
+		fprintf(stderr,"(~zero << (16 - (addr->maskbits %% 16)) >> (16 - (addr->maskbits %% 16))) & 0x00FF = %u\n",(~zero << ( 16 - (addr->maskbits % 16)) >> (16 - (addr->maskbits % 16))) & 0x00FF);
+		fprintf(stderr,"addr->mask[%u] = %u\n",i,addr->mask[i]);
 		i++;
 	}
 	addr->mask[i] = zero;
