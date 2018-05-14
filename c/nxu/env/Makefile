@@ -17,12 +17,10 @@ CFLAGS = -Wall -Wextra -pedantic -std=c99 -Oz -fpic -fpie -fPIE -fPIC \
 				 -pipe 
 TMPDIR = /tmp
 CC = clang-devel
-LD = ld.lld-devel
-AS = llvm-as-devel
 
 help: 
 	@printf "CFLAGS:\t${CFLAGS}\nTARGET:\t${TARGET}\nInstallpath:\t${PREFIX}${DESTIDIR}";
-	@printf "\nCC:\t${CC}\n\n\tUse \`${EDITOR} Makefile\` to change these settigs";
+	@printf "\nCC:\t${CC}\n\n\tUse \`${EDITOR} Makefile\` to change these settigs\n\n";
 
 build: ${SRC}
 	$(CC) -o $(TARGET) $(CFLAGS) $(INCS) $(LIBS) ${SRC}
