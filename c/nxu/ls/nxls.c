@@ -47,13 +47,12 @@
 
 extern char **environ;
 extern char *__progname;
-int dbg;
 
 /* Function prototypes */
-void run_help(void);
-int scan_args(char **arglist);
+static void __attribute__((noreturn)) run_help(void);
+static int scan_args(char **arglist);
 /* apparently this is significantly different than using FTS */
-int xls(const char *target, const struct stat *info, int i, struct FTW *ftw);
+static int xls(const char *target, const struct stat *info, int i, struct FTW *ftw);
 
 int
 main(int argc, char **argv) { 
@@ -69,7 +68,6 @@ main(int argc, char **argv) {
         break; /* not currently implemented */
       case 'h': /* help */
         run_help();
-        return(0);
 			case 'l': /* longer output */
 				break; /* not currently implemented */
 			case 'r': /* recursive */
@@ -86,11 +84,14 @@ main(int argc, char **argv) {
         break;
     }
   }
+
+	argc -= optind;
+	argv += optind;
 	scan_args(argv);
   return(0);
 }
 
-void
+static void
 run_help(void) {
   fprintf(stdout,"%s: New Exile's ls(1)\n",__progname);
 	fprintf(stdout,"\t-a\tinclude dotfiles\n");
@@ -102,46 +103,37 @@ run_help(void) {
 	fprintf(stdout,"\t-H\tHuman friendly file sizes\n");
   fprintf(stdout,"\t-S\tstat(2) struct info\n");
   fprintf(stdout,"\t-1\tOne entry per line\n");
+	exit(0);
 }
 
-int
+static int
 scan_args(char **arglist) {
-	/* 
-	 * this can almost certainly be changed to behave similarly to in nxenv.c
-	 * though the best thing to do is to have default behaviour run nxls() on 
-	 * the current directory in a non-recursive manner, as would be expected of 
-	 * ls(1)
-	 */
-	int i;
-	/*
-	 * We assume that any argument not starting with '-' 
-	 * is a target for us to display
-	 *
-	 * Since argv[0] is always __progname, start counting from 1
-	 */
-	for (i = 1; arglist[i] != NULL; i++) { 
-		if (arglist[i][0] != '-') {
-			/* 
-			 * I'm not sure if there's an argument that needs to be passed here or
-			 * if xls() needs to detect when we change into a new directory and return 
-			 * a nonzero value in that circumstance to prevent the recursive listing
-			 * seen currently 
-			 *
-			 * There should be a way to ensure we don't automatically recurse
-			 */
-			if (nftw(arglist[i], &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
-				perror("nftw");
-			}
-		} else { 
-			break;
+	/* if no arguments were given, list PWD */
+	if (*arglist == NULL) {
+		if (nftw(getenv("PWD"), &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
+			perror("nftw");
+		}
+	}
+	for (; *arglist != NULL; arglist++) {
+		/* 
+		 * I'm not sure if there's an argument that needs to be passed here or
+		 * if xls() needs to detect when we change into a new directory and return 
+		 * a nonzero value in that circumstance to prevent the recursive listing
+		 * seen currently 
+		 *
+		 * There should be a way to ensure we don't automatically recurse
+		 */
+		if (nftw(*arglist, &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
+			perror("nftw");
 		}
 	}
   return(0);
 }
 
-int
+static int
 xls(const char *target, const struct stat *info, int i, struct FTW *ftw) { 
 	/* this should prevent listing recursively by default */
+	fprintf(stdout,"i = %d\t%s\n",i, target);
 	if (ftw->level < 2) {
 		fprintf(stdout,"stat(2) struct info for %s:\n",target);
 		fprintf(stdout,"st_ino:\t\t%lu\t\tst_nlink:\t%u\n",info->st_ino, info->st_nlink);
