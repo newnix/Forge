@@ -37,11 +37,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <dirent.h> /* may not be necessary, not sure yet */
 #include <err.h>
 #include <errno.h>
 #include <ftw.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdint.h> /* so linux can build with uint16_t */
 #include <stdlib.h>
 #include <string.h>
 
@@ -123,7 +125,7 @@ scan_args(char **arglist) {
 		 *
 		 * There should be a way to ensure we don't automatically recurse
 		 */
-		if (nftw(*arglist, &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
+		if (nftw(*arglist, &xls, 10, (FTW_PHYS)) == -1) {
 			perror("nftw");
 		}
 	}
@@ -133,6 +135,7 @@ scan_args(char **arglist) {
 static int
 xls(const char *target, const struct stat *info, int i, struct FTW *ftw) { 
 	/* this should prevent listing recursively by default */
+	if (i == FTW_D) { return(0); } 
 	fprintf(stdout,"i = %d\t%s\n",i, target);
 	if (ftw->level < 2) {
 		fprintf(stdout,"stat(2) struct info for %s:\n",target);
