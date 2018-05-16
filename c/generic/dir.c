@@ -16,20 +16,20 @@ int
 main(int argc, char **argv) {
 	DIR *dirp;
 	struct dirent *entry;
-	struct stat *statent;
+	struct stat *ent;
 
 	dirp = NULL;
 	entry = NULL;
-	if ((statent = calloc(1, sizeof(statent))) == NULL) { 
+	if ((ent = calloc(1, sizeof(ent))) == NULL) { 
 		fprintf(stderr,"Not enough memory for statent!\n");
 	}
 
 	for (; *argv != NULL; argv++) { 
-		fprintf(stderr,"%s\n",*argv);
 		if ((dirp = opendir(*argv)) != NULL) { 
 			while ((entry = readdir(dirp)) != NULL) { 
-				if (stat(entry->d_name,statent) == 0) {
-					printstat(statent);
+				if (lstat(entry->d_name,ent) == 0) {
+					fprintf(stdout,"\n%s:\n",entry->d_name);
+					printstat(ent);
 				} else {
 					fprintf(stderr,"dir: cannot read data for %s!\n",entry->d_name);
 				}
@@ -37,6 +37,8 @@ main(int argc, char **argv) {
 		}
 	}
 
+	closedir(dirp);
+	free(ent);
 	return(0);
 }
 
