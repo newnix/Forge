@@ -51,7 +51,7 @@ extern char *__progname;
 static void __attribute__((noreturn)) usage(void);
 static int targets(char **arglist);
 /* apparently this is significantly different than using FTS */
-static int xls();
+static int xls(struct stat *entry, const char *name);
 
 int
 main(int argc, char **argv) { 
@@ -128,11 +128,17 @@ targets(char **arglist) {
 		 */
 		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
 			while ((entry = readdir(dirp)) != NULL) { 
+				/* 
+				 * there's a few interesting items in the dirent struct, but the only one we can't get 
+				 * through the stat struct is th ename of the file, which feels a bit dumb, but 
+				 * probably has its uses
+				 */
 				if (lstat(entry->d_name,ent) == 0) { 
 					/* this, of course, needs to be handled better */
 					fprintf(stdout,"%s\n",entry->d_name);
+					xls(ent,entry->d_name);
 				} else { 
-					fprintf(stderr,"%s: cannot read %s!\n",__progname,entry->d_name);
+					err(errno,"stat(%s)",entry->d_name);
 				}
 			}
 		} else {
@@ -147,7 +153,7 @@ targets(char **arglist) {
 }
 
 static int
-xls() { 
+xls(struct stat *entry, const char *name) { 
 	/* this should prevent listing recursively by default */
 	return(0);
 }
