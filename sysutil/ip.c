@@ -31,6 +31,11 @@
  *	DAMAGE.
  */
 
+/* 
+ * No makefile yet, but I recommend building with 
+ * -Os/-Oz -march=native -mtune=native -fstack-protector-all -fpic -fpie -fPIC -fPIE -Wl,--gc-sections,--pic-executable -z relro -z combreloc -z now
+ * just so you get the best size/performance ratio for your system
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h> /* ensure uint8_t and similar are available */
@@ -242,7 +247,7 @@ static int
 cook(uint8_t flags, char *args) { 
 	addr *ip;
 
-	if ((ip = calloc(1, sizeof(ip))) == NULL) { 
+	if ((ip = calloc(1, sizeof(*ip))) == NULL) { 
 		fprintf(stderr,"ERR: Failed to allocate memory!\n");
 		return(1);
 	}

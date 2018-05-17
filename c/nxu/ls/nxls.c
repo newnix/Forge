@@ -31,16 +31,13 @@
  * DAMAGE.
  */ 
 
-/* this is necessary for nftw(3) to work on linux for some reason */
-#define _XOPEN_SOURCE 500
-
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/uio.h>
 
-#include <dirent.h> /* may not be necessary, not sure yet */
+#include <dirent.h> 
 #include <err.h>
 #include <errno.h>
-#include <ftw.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h> /* so linux can build with uint16_t */
@@ -51,10 +48,10 @@ extern char **environ;
 extern char *__progname;
 
 /* Function prototypes */
-static void __attribute__((noreturn)) run_help(void);
-static int scan_args(char **arglist);
+static void __attribute__((noreturn)) usage(void);
+static int targets(char **arglist);
 /* apparently this is significantly different than using FTS */
-static int xls(const char *target, const struct stat *info, int i, struct FTW *ftw);
+static int xls();
 
 int
 main(int argc, char **argv) { 
@@ -69,7 +66,7 @@ main(int argc, char **argv) {
       case 'f': /* print full path instead of relative path */
         break; /* not currently implemented */
       case 'h': /* help */
-        run_help();
+        usage();
 			case 'l': /* longer output */
 				break; /* not currently implemented */
 			case 'r': /* recursive */
@@ -89,62 +86,64 @@ main(int argc, char **argv) {
 
 	argc -= optind;
 	argv += optind;
-	scan_args(argv);
+	targets(argv);
   return(0);
 }
 
 static void
-run_help(void) {
-  fprintf(stdout,"%s: New Exile's ls(1)\n",__progname);
-	fprintf(stdout,"\t-a\tinclude dotfiles\n");
-	fprintf(stdout,"\t-f\tPrint absolute path instead of relative path\n");
-  fprintf(stdout,"\t-h\tThis help text\n");
-	fprintf(stdout,"\t-l\tLonger output\n");
-	fprintf(stdout,"\t-r\tRecursive listing\n");
-  fprintf(stdout,"\t-F\tAppend filetype symbols\n");
-	fprintf(stdout,"\t-H\tHuman friendly file sizes\n");
-  fprintf(stdout,"\t-S\tstat(2) struct info\n");
-  fprintf(stdout,"\t-1\tOne entry per line\n");
+usage(void) {
+	/* changed from fprintf() to write(), should save size and perform a bit faster */
+	char *usage = "nxls: New Exile's ls(1)\n\
+	nxls [-aflrFHS1] [file ...]\n\n\
+	-a  Include dotfiles\n\
+	-f  Print absolute paths\n\
+	-h  This message\n\
+	-l  Longer output\n\
+	-r  Recursive listing\n\
+	-F  Append filetype symbols\n\
+	-H  Human friendly sizes\n\
+	-S  Stat struct info\n\
+	-1  One entry per line\n";
+	write(1,usage,strlen(usage));
 	exit(0);
 }
 
 static int
-scan_args(char **arglist) {
-	/* if no arguments were given, list PWD */
-	if (*arglist == NULL) {
-		if (nftw(getenv("PWD"), &xls, 10, (FTW_PHYS | FTW_DEPTH)) == -1) {
-			perror("nftw");
-		}
+targets(char **arglist) {
+	/* allocate space for a stat(2) struct */
+	DIR *dirp;
+	struct dirent *entry;
+	struct stat *ent;
+
+	dirp = NULL;
+	entry = NULL;
+	if ((ent = calloc(1,sizeof(*ent))) == NULL) { 
+			return(1);
 	}
+	/* if no arguments were given, list PWD */
 	for (; *arglist != NULL; arglist++) {
 		/* 
-		 * I'm not sure if there's an argument that needs to be passed here or
-		 * if xls() needs to detect when we change into a new directory and return 
-		 * a nonzero value in that circumstance to prevent the recursive listing
-		 * seen currently 
-		 *
-		 * There should be a way to ensure we don't automatically recurse
+		 * This is going to be reworked for the readdir(3) function
+		 * instead of nftw(3)
 		 */
-		if (nftw(*arglist, &xls, 10, (FTW_PHYS)) == -1) {
-			perror("nftw");
+		if ((dirp = opendir(*arglist)) != NULL) { 
+			chdir(*arglist);
+			while ((entry = readdir(dirp)) != NULL) { 
+				if (lstat(entry->d_name,ent) == 0) { 
+					fprintf(stdout,"%s\n",entry->d_name);
+				} else { 
+					fprintf(stderr,"%s: cannot read %s!\n",__progname,entry->d_name);
+				}
+			}
 		}
 	}
+	closedir(dirp);
+	free(ent);
   return(0);
 }
 
 static int
-xls(const char *target, const struct stat *info, int i, struct FTW *ftw) { 
+xls() { 
 	/* this should prevent listing recursively by default */
-	if (i == FTW_D) { return(0); } 
-	fprintf(stdout,"i = %d\t%s\n",i, target);
-	if (ftw->level < 2) {
-		fprintf(stdout,"stat(2) struct info for %s:\n",target);
-		fprintf(stdout,"st_ino:\t\t%lu\t\tst_nlink:\t%u\n",info->st_ino, info->st_nlink);
-		fprintf(stdout,"st_dev:\t\t%u\tst_mode:\t%o\n",info->st_dev, info->st_mode);
-		fprintf(stdout,"st_uid:\t\t%d\t\tst_gid:\t\t%d\n",info->st_uid, info->st_gid);
-		fprintf(stdout,"st_size:\t%ld\t\tst_blocks:\t%ld\n",info->st_size, info->st_blocks);
-		fprintf(stdout,"st_blksize:\t%u\n",info->st_blksize);
-		fprintf(stdout,"ftw->base:\t%d\t\tftw->level:\t%d\n",ftw->base, ftw->level);
-	}
 	return(0);
 }
