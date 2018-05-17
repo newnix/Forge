@@ -42,7 +42,7 @@
 extern char **environ;
 extern char *__progname;
 
-static void __attribute__((noreturn)) run_help(void);
+static void __attribute__((noreturn)) usage(void);
 
 int
 main(int argc, char **argv) {
@@ -55,7 +55,7 @@ main(int argc, char **argv) {
 	while ((ch = getopt(argc, argv, "hi0")) != -1) {
 		switch(ch) {
 			case 'h':
-				run_help();
+				usage();
 			case 'i': 
 				environ = NULL;
 				break;
@@ -63,7 +63,7 @@ main(int argc, char **argv) {
 				envsep = SEP_IS_NULL;
 				break;
 			default:
-				run_help();
+				usage();
 		}
 	}
 	/*
@@ -96,11 +96,8 @@ main(int argc, char **argv) {
 }
 
 static void
-run_help(void) {
-	static const char *usage = "nxenv: New Exile's env(1)\n\
-  -h This help text\n\
-  -i Discard the environment for a new process\n\
-  -0 Use a null character for separation instead of newline\n";
+usage(void) {
+	static const char *usage = "usage: nxenv [-h] [-i0] [cmd ...]\n";
 	write(1,usage,strlen(usage));
 	exit(0);
 }

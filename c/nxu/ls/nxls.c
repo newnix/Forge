@@ -126,18 +126,22 @@ targets(char **arglist) {
 		 * This is going to be reworked for the readdir(3) function
 		 * instead of nftw(3)
 		 */
-		if ((dirp = opendir(*arglist)) != NULL) { 
-			chdir(*arglist);
+		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
 			while ((entry = readdir(dirp)) != NULL) { 
 				if (lstat(entry->d_name,ent) == 0) { 
+					/* this, of course, needs to be handled better */
 					fprintf(stdout,"%s\n",entry->d_name);
 				} else { 
 					fprintf(stderr,"%s: cannot read %s!\n",__progname,entry->d_name);
 				}
 			}
+		} else {
+			err(errno,"chdir");
 		}
 	}
-	closedir(dirp);
+	if (dirp != NULL) {
+		closedir(dirp);
+	}
 	free(ent);
   return(0);
 }
