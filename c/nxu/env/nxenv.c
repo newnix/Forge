@@ -97,9 +97,10 @@ main(int argc, char **argv) {
 
 static void
 run_help(void) {
-	fprintf(stdout,"%s: New Exile's env(1)\n"
-	"\t-h\tThis help text\n"
-	"\t-i\tDiscard the environment for a new process\n"
-	"\t-0\tUse NULL for separation, instead of newline\n",__progname);
+	static const char *usage = "nxenv: New Exile's env(1)\n\
+  -h This help text\n\
+  -i Discard the environment for a new process\n\
+  -0 Use a null character for separation instead of newline\n";
+	write(1,usage,strlen(usage));
 	exit(0);
 }
