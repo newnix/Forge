@@ -90,24 +90,6 @@ main(int argc, char **argv) {
   return(0);
 }
 
-static void
-usage(void) {
-	/* changed from fprintf() to write(), should save size and perform a bit faster */
-	char *usage = "nxls: New Exile's ls(1)\n\
-	nxls [-aflrFHS1] [file ...]\n\n\
-	-a  Include dotfiles\n\
-	-f  Print absolute paths\n\
-	-h  This message\n\
-	-l  Longer output\n\
-	-r  Recursive listing\n\
-	-F  Append filetype symbols\n\
-	-H  Human friendly sizes\n\
-	-S  Stat struct info\n\
-	-1  One entry per line\n";
-	write(1,usage,strlen(usage));
-	exit(0);
-}
-
 static int
 targets(char **arglist) {
 	/* allocate space for a stat(2) struct */
@@ -150,6 +132,24 @@ targets(char **arglist) {
 	}
 	free(ent);
   return(0);
+}
+
+static void __attribute__((noreturn))
+usage(void) {
+	/* changed from fprintf() to write(), should save size and perform a bit faster */
+	char *usage = "nxls: New Exile's ls(1)\n\
+	nxls [-aflrFHS1] [file ...]\n\n\
+	-a  Include dotfiles\n\
+	-f  Print absolute paths\n\
+	-h  This message\n\
+	-l  Longer output\n\
+	-r  Recursive listing\n\
+	-F  Append filetype symbols\n\
+	-H  Human friendly sizes\n\
+	-S  Stat struct info\n\
+	-1  One entry per line\n";
+	write(1,usage,strlen(usage));
+	exit(0);
 }
 
 static int
