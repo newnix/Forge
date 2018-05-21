@@ -50,7 +50,7 @@ extern char *__progname;
 /* Function prototypes */
 static void __attribute__((noreturn)) usage(void);
 static int targets(char **arglist);
-/* apparently this is significantly different than using FTS */
+/* Perhaps this should build a map of some sort, collecting the entries and stat(2) structure pointers */
 static int xls(struct stat *entry, const char *name);
 
 int
@@ -152,6 +152,11 @@ usage(void) {
 	exit(0);
 }
 
+/* 
+ * add targets to a struct array? 
+ * an arry of structs? perhaps?
+ * linked list?
+ */
 static int
 xls(struct stat *entry, const char *name) { 
 	/* this should prevent listing recursively by default */
