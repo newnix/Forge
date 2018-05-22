@@ -25,10 +25,11 @@ static void printnode(uint8_t id);
 int 
 main(void) { 
 	/* need to do some magic here */
-	char *line;
+	char again,*line;
 	ssize_t captured;
 	size_t linecap;
 
+	again = 'y';
 	captured = 0;
 	line = NULL;
 	linecap = 1024;
@@ -43,7 +44,7 @@ main(void) {
 								 "get [name]:\tshow node info for node with [name]\n\t"
 								 "walk [id]:\tdisplay all nodes, starting from [id] (default 0)\n");
 	fprintf(stdout,"Enter a command: ");
-	while ((captured = getline(&line,&linecap,stdin)) > 0) { 
+	while (((again & 32) != 'Y') && ((captured = getline(&line,&linecap,stdin)) > 0)) { 
 		/* should be a better way, but I'm not terribly interested in performance here */
 		if (strnstr(line,"create",linecap) != NULL) { 
 			parse(line);
@@ -58,9 +59,16 @@ main(void) {
 		}
 		else if (strnstr(line,"walk",linecap) != NULL) {
 			nodewalk(parse(line));
-		}
+		} else if (strnstr(line,"help",linecap) != NULL) { 
+		} 
 		else { 
 			fprintf(stdout,"Invalid command!\nExit? [N/y]\n");
+			again = getchar();
+			fprintf(stderr,"\t%c\n",(again&32));
+			/* 
+			 * A = 65, 0100 0001, 0x41
+			 * a = 97, 0110 0001, 0x61
+			 */
 		}
 	}
 
@@ -68,4 +76,32 @@ main(void) {
 		free(line);
 	}
 	return(0);
+}
+
+static int
+delnode(uint8_t id) { 
+	return(0);
+}
+
+static int
+getnode(char *name) { 
+	return(0);
+}
+
+static int
+mknode(char *name) { 
+	return(0);
+}
+
+static void
+nodewalk(uint8_t id) { 
+}
+
+static int
+parse(char *input) { 
+	return(0);
+}
+
+static void
+printnode(uint8_t id) { 
 }
