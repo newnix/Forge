@@ -25,11 +25,11 @@ static void printnode(uint8_t id);
 int 
 main(void) { 
 	/* need to do some magic here */
-	char again,*line;
+	char stop,*line;
 	ssize_t captured;
 	size_t linecap;
 
-	again = 'y';
+	stop = 'n';
 	captured = 0;
 	line = NULL;
 	linecap = 1024;
@@ -44,7 +44,7 @@ main(void) {
 								 "get [name]:\tshow node info for node with [name]\n\t"
 								 "walk [id]:\tdisplay all nodes, starting from [id] (default 0)\n");
 	fprintf(stdout,"Enter a command: ");
-	while (((again & 32) != 'Y') && ((captured = getline(&line,&linecap,stdin)) > 0)) { 
+	while (((stop & 0x5F) != 'Y') && ((captured = getline(&line,&linecap,stdin)) > 0)) { 
 		/* should be a better way, but I'm not terribly interested in performance here */
 		if (strnstr(line,"create",linecap) != NULL) { 
 			parse(line);
@@ -63,11 +63,14 @@ main(void) {
 		} 
 		else { 
 			fprintf(stdout,"Invalid command!\nExit? [N/y]\n");
-			again = getchar();
-			fprintf(stderr,"\t%c\n",(again&32));
+			stop ^= stop;
+			stop = getchar();
 			/* 
-			 * A = 65, 0100 0001, 0x41
-			 * a = 97, 0110 0001, 0x61
+			 * We're only concerned with values from 65-90
+			 * 0100 0001 - A | 65 | 0x41
+			 * 0101 1010 - Z | 90 | 0x5A
+			 * 
+			 * mask should most likely be 0101 1111
 			 */
 		}
 	}
@@ -90,6 +93,18 @@ getnode(char *name) {
 
 static int
 mknode(char *name) { 
+	static uint8_t id = 0;
+	node *new;
+
+	if ((new = calloc(1,sizeof(*new))) == NULL) {
+		return(-1);
+	}
+
+	/* assign values to the node structure */
+	new->id=id;
+	id++;
+	strlcpy(new->name,name,8);
+
 	return(0);
 }
 
