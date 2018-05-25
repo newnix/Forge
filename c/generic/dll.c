@@ -18,9 +18,9 @@ typedef struct node {
 static int delnode(uint8_t id);
 static int getnode(char *name);
 static int mknode(char *name);
-static void nodewalk(uint8_t id);
+static void nodewalk(uint8_t id, uint8_t clean);
 static int parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
-static void printnode(uint8_t id);
+static void printnode(node *node);
 
 int 
 main(void) { 
@@ -39,6 +39,7 @@ main(void) {
 		return(1);
 	}
 		
+	/* this string should be available to print on demand */
 	fprintf(stdout,"Commands:\n\tcreate [id] [name]:\tcreates node with id and name\n\t"
 	               "del [id]:\tdeletes node with id [id]\n\t"
 								 "get [name]:\tshow node info for node with [name]\n\t"
@@ -58,7 +59,7 @@ main(void) {
 			getnode(line);
 		}
 		else if (strnstr(line,"walk",linecap) != NULL) {
-			nodewalk(parse(line));
+			nodewalk(parse(line),0);
 		} else if (strnstr(line,"help",linecap) != NULL) { 
 		} 
 		else { 
@@ -73,24 +74,44 @@ main(void) {
 			 * mask should most likely be 0101 1111
 			 */
 		}
+		memset(line,0,linecap);
 	}
 
 	if (line != NULL) { 
 		free(line);
 	}
+	nodewalk(0,1);
 	return(0);
 }
 
+/* 
+ * this should delete a node from the list 
+ * and then update the pointers of its neighbors
+ * should also be used to clean up before exiting.
+ */
 static int
 delnode(uint8_t id) { 
 	return(0);
 }
 
+/* 
+ * This will print the node info for the 
+ * node with a given name, else return -1
+ */
 static int
 getnode(char *name) { 
 	return(0);
 }
 
+/* 
+ * This is the function that handles node creation 
+ * and updating the node->next pointer of the previous node
+ *
+ * It may be necessary to tweak this such that it accepts a 
+ * pointer to a node struct, as I'm unsure how exactly 
+ * the best method is for keeping and tracking the items 
+ * in the heap are
+ */
 static int
 mknode(char *name) { 
 	static uint8_t id = 0;
@@ -108,15 +129,30 @@ mknode(char *name) {
 	return(0);
 }
 
+/*
+ * This function simply walks the whole list 
+ * until node->next == NULL, and passes the node 
+ * to the node printing function
+ */
 static void
-nodewalk(uint8_t id) { 
+nodewalk(uint8_t id, uint8_t clean) { 
 }
 
+/*
+ * This will simply take the command from the user
+ * and hand off the name/id to the next function
+ * by modifying the string and returning an id
+ * if found, 0 otherwise, and -1 if an error is encountered
+ */
 static int
 parse(char *input) { 
 	return(0);
 }
 
+/* 
+ * This function simply dumps the contents of the 
+ * node struct for a given node to stdout
+ */
 static void
-printnode(uint8_t id) { 
+printnode(node *node) { 
 }
