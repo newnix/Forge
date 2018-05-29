@@ -34,19 +34,19 @@ print_battery(void){
 	/* pass the required data to the sysctl interface and create a string to print */
 
 	/* using syntax similar from the sysctl man page */
-	unsigned long int i, mib[4], value, mib2;
-	size_t len, len2;
+	int mib[5], value;
+	size_t len;
 
 	/* this should get the mib we want to make the sumsequent calls even faster */
-	len = 4;
-	if ( sysctlnametomib("hw.acpi.battery.life", (int *)mib2, &len) == -1 ) 
+	len = 5;
+	if ( sysctlnametomib("hw.acpi.battery.time", mib, &len) == -1 ) 
 		perror("sysctl");
 
-	if (sysctl((int *)mib2, (size_t)&len, NULL, &len, NULL, 0) == -1) {
+	if (sysctl(mib, len, &value, &len, NULL, 0) == -1) {
 		perror("sysctl");
 		(void)fprintf(stderr,"ERROR: could not retrieve data for OID \"hw.acpi.battery_life\"\n");
 	}
 	else if (len > 0) {
-		(void)fprintf(stdout,"hw.acpi.battery.life = %lu\n", value);
+		(void)fprintf(stdout,"hw.acpi.battery.life = %d\n", value);
 	}
 }
