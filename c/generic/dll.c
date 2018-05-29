@@ -21,6 +21,7 @@ static int mknode(char *name);
 static void nodewalk(uint8_t id, uint8_t clean);
 static int parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
 static void printnode(node *node);
+extern uint16_t *origin = NULL;
 
 int 
 main(void) { 
@@ -49,7 +50,9 @@ main(void) {
 		/* should be a better way, but I'm not terribly interested in performance here */
 		if (strnstr(line,"create",linecap) != NULL) { 
 			parse(line);
-			mknode(line);
+			if (mknode(line) == 0) { 
+				fprintf(stderr,"%s->previous:\t%p\n%s->id:\t%u\n%s->name:\t%s\n%s->next:\t%p\n",line,line->previous,line,line->id,line,line->name,line,line->next);
+			}
 		}
 		else if (strnstr(line,"del",linecap) != NULL) { 
 			delnode(parse(line));
@@ -119,6 +122,11 @@ mknode(char *name) {
 
 	if ((new = calloc(1,sizeof(*new))) == NULL) {
 		return(-1);
+	}
+	if (origin != NULL) { 
+		new->previous = NULL;
+		new->next = &new;
+		origin = &new;
 	}
 
 	/* assign values to the node structure */
