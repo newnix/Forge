@@ -99,6 +99,9 @@ main(int argc, char **argv) {
 	}
 
 	/* Parse the arguments */
+	if (argv[1] == NULL) {
+		return(0);
+	}
 	return(cook(flags, argv[optind]));
 }
 
