@@ -1,6 +1,6 @@
 .POSIX:
 
-.include "../../defaults.mk"
+include ../../defaults.mk
 
 TARGET = ip 
 SRC = ip.c
