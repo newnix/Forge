@@ -60,7 +60,7 @@ uninstall:
 
 rebuild: uninstall debug
 
-reinstall: uninstall reinstall
+reinstall: uninstall install
 
 run:
 	$(PREFIX)$(DESTDIR)$(TARGET)
