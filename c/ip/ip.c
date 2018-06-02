@@ -32,9 +32,8 @@
  */
 
 /* 
- * No makefile yet, but I recommend building with 
- * -Os/-Oz -march=native -mtune=native -fstack-protector-all -fpic -fpie -fPIC -fPIE -Wl,--gc-sections,--pic-executable -z relro -z combreloc -z now
- * just so you get the best size/performance ratio for your system
+ * TODO: add logic to detect and expand '::' in ip6 addresses
+ * TODO: add functionality for -l flag
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,6 +98,9 @@ main(int argc, char **argv) {
 	}
 
 	/* Parse the arguments */
+	if (argv[1] == NULL) {
+		return(0);
+	}
 	return(cook(flags, argv[optind]));
 }
 
