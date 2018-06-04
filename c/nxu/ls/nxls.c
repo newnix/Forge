@@ -51,33 +51,53 @@ extern char *__progname;
 static void __attribute__((noreturn)) usage(void);
 static int targets(char **arglist);
 /* Perhaps this should build a map of some sort, collecting the entries and stat(2) structure pointers */
-static int xls(struct stat *entry, const char *name);
+static int xls(const char *name);
+
+#define ALLFILES 0x01
+#define FULLPATH 0x02
+#define HELPFLAG 0x00
+#define LONGLIST 0x04
+#define RECURSIV 0x08
+#define HUMANSIZ 0x10
+#define FILESYMB 0x20
+#define STATINFO 0x40
+#define ONELINE  0x80
 
 int
 main(int argc, char **argv) { 
   int opt;
+	uint16_t flags;
 
-  opt = 0;
+  flags = opt = 0;
 
   while ((opt = getopt(argc, argv, "afhrFHS1")) != -1) {
     switch(opt) {
 			case 'a': /* include dotfiles */
+				flags ^= ALLFILES;
 				break; /* not currently implemented */
       case 'f': /* print full path instead of relative path */
+				flags ^= FULLPATH;
         break; /* not currently implemented */
       case 'h': /* help */
+				flags &= HELPFLAG;
         usage();
 			case 'l': /* longer output */
+				flags ^= LONGLIST;
 				break; /* not currently implemented */
 			case 'r': /* recursive */
+				flags ^= RECURSIV;
 				break; /* not currently implemented */
 			case 'H': /* human friendly sizes */
+				flags ^= HUMANSIZ;
 				break; /* not currently implemented */
       case 'F': /* append filetype symbols, like in 'ls -F' */
+				flags ^= FILESYMB;
         break; /* not currently implemented */
       case 'S': /* full stat(2) struct info */
+				flags ^= STATINFO;
         break; /* not currently implemented */
       case '1': /* exactly one entry per line */
+				flags &= ONELINE;
         break; /* not currently implemented */
       default:
         break;
@@ -103,25 +123,22 @@ targets(char **arglist) {
 			return(1);
 	}
 	/* if no arguments were given, list PWD */
+	if (*arglist == NULL) { 
+		if ((dirp = opendir(".")) != NULL) {	
+			while ((entry = readdir(dirp)) != NULL) { 
+				xls(entry->d_name);
+			}
+		}
+	}
 	for (; *arglist != NULL; arglist++) {
 		/* 
-		 * This is going to be reworked for the readdir(3) function
-		 * instead of nftw(3)
+		 * So, instead of running through everything, let's just get a map of the entities in 
+		 * a given directory, and pass that to xls(), which in turn will determine if there's any further action 
+		 * needed prior to printing the entries.
 		 */
 		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
 			while ((entry = readdir(dirp)) != NULL) { 
-				/* 
-				 * there's a few interesting items in the dirent struct, but the only one we can't get 
-				 * through the stat struct is th ename of the file, which feels a bit dumb, but 
-				 * probably has its uses
-				 */
-				if (lstat(entry->d_name,ent) == 0) { 
-					/* this, of course, needs to be handled better */
-					fprintf(stdout,"%s\n",entry->d_name);
-					xls(ent,entry->d_name);
-				} else { 
-					err(errno,"stat(%s)",entry->d_name);
-				}
+				xls(entry->d_name);
 			}
 		} else {
 			err(errno,"chdir");
@@ -158,7 +175,8 @@ usage(void) {
  * linked list?
  */
 static int
-xls(struct stat *entry, const char *name) { 
-	/* this should prevent listing recursively by default */
+xls(const char *name) { 
+	/* for the time being, just spit out the dirent names to stdout */
+	fprintf(stdout,"%s\n",name);
 	return(0);
 }
