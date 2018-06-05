@@ -1,0 +1,62 @@
+#!/bin/sh
+
+## Default definitions
+dhclient="/sbin/dhclient"
+ifconfig="/sbin/ifconfig"
+interface="wlan0"
+wpa_supplicant="/usr/local/sbin/wpa_supplicant"
+wpaconf="/etc/wpa_supplicant.conf"
+
+apcon() {
+	wpa_supplicant -i ${interface} -B -c ${wpaconf}
+	dhclient ${interface}
+}
+
+checkenv() {
+	if [ $UID -ne 0 ] 
+	then
+		printf "You must be root to use this tool!\n"
+		exit 1
+	else
+		for tool in ${tools}
+		do
+			if [ ! -x ${tool} ] 
+			then
+				printf "%s not found in \$PATH!\n" "${tool}"
+				exit 2
+			fi
+		done
+	fi
+}
+
+ifup() {
+	ifconfig ${interface} up
+}
+
+usage() {
+	printf "Simplified network connection script:\n\t-h\tThis help text\n\t-i\tSpecify interface (default: %s)\n\t-f\tSpecify config file (default: %s)\n" "${interface}" "${wpaconf}"
+}
+
+while getopts "hi:f:" opt
+do
+	case $opt in
+		h)
+			usage
+			exit 0
+		;;
+		i)
+			interface="${OPTARG}"
+		;;
+		f)
+			wpaconf="${OPTARG}"
+		;;
+		*)
+			usage
+			exit 0
+		;;
+	esac
+done
+
+checkenv
+ifup
+apcon
