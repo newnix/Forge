@@ -13,7 +13,7 @@ apcon() {
 }
 
 checkenv() {
-	if [ $UID -ne 0 ] 
+	if [ $(id -u) -ne 0 ] 
 	then
 		printf "You must be root to use this tool!\n"
 		exit 1
