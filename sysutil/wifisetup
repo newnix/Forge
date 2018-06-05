@@ -31,6 +31,7 @@ checkenv() {
 
 ifup() {
 	ifconfig ${interface} up
+	ifconfig ${interface} powersave
 }
 
 usage() {
