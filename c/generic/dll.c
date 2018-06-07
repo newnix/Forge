@@ -9,19 +9,19 @@
 #include <unistd.h>
 
 typedef struct node {
-	uint16_t *previous;
-	uint16_t *next;
+	struct node *previous;
+	struct node *next;
 	uint8_t id;
 	char name[9];
 } node;
 
 static int delnode(uint8_t id);
 static int getnode(char *name);
-static int mknode(char *name);
+static node * mknode(char *name);
 static void nodewalk(uint8_t id, uint8_t clean);
 static int parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
 static void printnode(node *node);
-extern uint16_t *origin = NULL;
+extern node *origin;
 
 int 
 main(void) { 
@@ -29,6 +29,7 @@ main(void) {
 	char stop,*line;
 	ssize_t captured;
 	size_t linecap;
+	node *curnode;
 
 	stop = 'n';
 	captured = 0;
@@ -50,8 +51,8 @@ main(void) {
 		/* should be a better way, but I'm not terribly interested in performance here */
 		if (strnstr(line,"create",linecap) != NULL) { 
 			parse(line);
-			if (mknode(line) == 0) { 
-				fprintf(stderr,"%s->previous:\t%p\n%s->id:\t%u\n%s->name:\t%s\n%s->next:\t%p\n",line,line->previous,line,line->id,line,line->name,line,line->next);
+			if ((curnode = mknode(line)) == 0) { 
+				fprintf(stderr,"%s->previous:\t%p\n%s->id:\t%u\n%s->name:\t%s\n%s->next:\t%p\n",line,curnode->previous,line,curnode->id,line,curnode->name,line,curnode->next);
 			}
 		}
 		else if (strnstr(line,"del",linecap) != NULL) { 
@@ -115,18 +116,18 @@ getnode(char *name) {
  * the best method is for keeping and tracking the items 
  * in the heap are
  */
-static int
+static node *
 mknode(char *name) { 
 	static uint8_t id = 0;
-	node *new;
+	static node *new;
 
 	if ((new = calloc(1,sizeof(*new))) == NULL) {
-		return(-1);
+		return(NULL);
 	}
 	if (origin != NULL) { 
 		new->previous = NULL;
-		new->next = &new;
-		origin = &new;
+		new->next = new;
+		origin = new;
 	}
 
 	/* assign values to the node structure */
@@ -134,7 +135,7 @@ mknode(char *name) {
 	id++;
 	strlcpy(new->name,name,8);
 
-	return(0);
+	return(new);
 }
 
 /*
