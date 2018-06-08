@@ -33,14 +33,13 @@ extern node *origin = NULL;
 int 
 main(void) { 
 	/* need to do some magic here */
-	char stop,*line;
+	char *line;
 	char *instructions = "Commands:\n\tcreate [name]:\tcreates node with id and name\n\tdel [name]:\tdeletes node with name [name]\n\tget [name]:\tshow node info for node with [name]\n\twalk [id]:\tdisplay all nodes, starting from [id] (default 0)\n";
 
 	ssize_t captured;
 	size_t linecap;
 	node *curnode;
 
-	stop = 'n';
 	captured = 0;
 	line = NULL;
 	linecap = LINECAP;
@@ -53,12 +52,12 @@ main(void) {
 	/* this string should be available to print on demand */
 	fprintf(stdout,"%s",instructions);
 	fprintf(stdout,"Enter a command: ");
-	while (((stop & 0x5F) != 'Y') && ((captured = getline(&line,&linecap,stdin)) > 0)) { 
+	while ((captured = getline(&line,&linecap,stdin)) > 0) { 
 		/* should be a better way, but I'm not terribly interested in performance here */
 		if (strnstr(line,"create",LINECAP) != NULL) { 
 			parse(line);
 			if ((curnode = mknode(line)) != NULL) { 
-				printnode(curnode);
+				fprintf(stdout,"Node %s created\n",curnode->name);
 			}
 		}
 		else if (strnstr(line,"del",LINECAP) != NULL) { 
@@ -73,9 +72,8 @@ main(void) {
 			fprintf(stdout,"%s",instructions);
 		} 
 		else { 
-			fprintf(stdout,"Invalid command!\nExit? [N/y]\n");
-			stop ^= stop;
-			stop = getchar();
+			fprintf(stdout,"Invalid command!\nExititing...\n");
+			/* confirmation loop was not working properly, exit on invalid input */
 			/* 
 			 * We're only concerned with values from 65-90
 			 * 0100 0001 - A | 65 | 0x41
@@ -83,6 +81,8 @@ main(void) {
 			 * 
 			 * mask should most likely be 0101 1111
 			 */
+			nodewalk(0,1);
+			return(-1);
 		}
 		memset(line,0,LINECAP);
 	}
@@ -103,6 +103,8 @@ main(void) {
  */
 static int
 delnode(node *node) { 
+	struct node *unode; /* used for updating node ids */
+	unode = node; /* start off identical, but separate to preserve node value */
 	/* ensure that if node is the first node, we don't try updating a NULL node */
 	if (node->previous != NULL) {
 		node->previous->next = node->next;
@@ -111,6 +113,9 @@ delnode(node *node) {
 	/* prevent updating NULL nodes and update origin if necessary */
 	if (node->next != NULL) {
 		node->next->previous = node->previous;
+		for (; unode->next != NULL; unode = unode->next) {
+			unode->next->id--;
+		}
 	} else {
 		origin = node->previous;
 	}
@@ -161,26 +166,25 @@ getnode(char *name, int action) {
  */
 static node *
 mknode(char *name) { 
-	static uint8_t id = 0;
 	static node *new;
 
 	if ((new = calloc(1,sizeof(*new))) == NULL) {
 		return(NULL);
 	}
 
+	/* assign values to the node structure */
 	if (origin == NULL) { 
 		new->previous = NULL;
 		new->next = new;
+		new->id = 0;
 	} else {
 		new->previous = origin;
 		new->previous->next = new;
+		new->id = origin->id + 1;
 		new->next = NULL;
 	}
 	origin = new;
 
-	/* assign values to the node structure */
-	new->id=id;
-	id++;
 	strlcpy(new->name,name,8);
 
 	return(new);
@@ -254,5 +258,5 @@ parse(char *input) {
  */
 static void
 printnode(node *node) { 
-	fprintf(stdout,"\nnode: %p\nname: %s\nid: %u\nprevious: %p\nnext: %p\n",node,node->name,node->id,node->previous,node->next);
+	fprintf(stdout,"node: %p\nname: %s\nid: %u\nprevious: %p\nnext: %p\n\n",node,node->name,node->id,node->previous,node->next);
 }
