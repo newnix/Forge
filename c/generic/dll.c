@@ -8,6 +8,9 @@
 #include <string.h>
 #include <unistd.h>
 
+/* create mneumonic actions for nodes */
+#define DELETE 0x01
+#define PRINT  0x02
 #define LINECAP 1024
 
 typedef struct node {
@@ -17,19 +20,21 @@ typedef struct node {
 	char name[9];
 } node;
 
-static int delnode(uint8_t id);
-static int getnode(char *name);
+static int delnode(node *node);
+/* use action to determine what to call at this point */
+static int getnode(char *name, int action);
 static node * mknode(char *name);
 static void nodewalk(uint8_t id, uint8_t clean);
-static int parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
+static char * parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
 static void printnode(node *node);
+/* this could probobly be done as a static variable in mknode */
 extern node *origin = NULL;
 
 int 
 main(void) { 
 	/* need to do some magic here */
 	char stop,*line;
-	char *instructions = "Commands:\n\tcreate [name]:\tcreates node with id and name\n\tdel [id]:\tdeletes node with id [id]\n\tget [name]:\tshow node info for node with [name]\n\twalk [id]:\tdisplay all nodes, starting from [id] (default 0)\n";
+	char *instructions = "Commands:\n\tcreate [name]:\tcreates node with id and name\n\tdel [name]:\tdeletes node with name [name]\n\tget [name]:\tshow node info for node with [name]\n\twalk [id]:\tdisplay all nodes, starting from [id] (default 0)\n";
 
 	ssize_t captured;
 	size_t linecap;
@@ -57,14 +62,13 @@ main(void) {
 			}
 		}
 		else if (strnstr(line,"del",LINECAP) != NULL) { 
-			delnode(parse(line));
+			getnode(parse(line),DELETE);
 		}
 		else if (strnstr(line,"get",LINECAP) != NULL) {
-			parse(line);
-			getnode(line);
+			getnode(parse(line),PRINT);
 		}
 		else if (strnstr(line,"walk",LINECAP) != NULL) {
-			nodewalk(parse(line),0);
+			nodewalk(atoi(parse(line)),0);
 		} else if (strnstr(line,"help",LINECAP) != NULL) { 
 			fprintf(stdout,"%s",instructions);
 		} 
@@ -86,7 +90,9 @@ main(void) {
 	if (line != NULL) { 
 		free(line);
 	}
-	nodewalk(0,1);
+	if (origin != NULL) {
+		nodewalk(0,1);
+	}
 	return(0);
 }
 
@@ -96,7 +102,16 @@ main(void) {
  * should also be used to clean up before exiting.
  */
 static int
-delnode(uint8_t id) { 
+delnode(node *node) { 
+	/* this needs to also take the node info and update the adjacent nodes */
+	if (node->previous != NULL) {
+		node->previous->next = node->next;
+	}
+	if (node->next != NULL) {
+		node->next->previous = node->previous;
+	}
+
+	free(node);
 	return(0);
 }
 
@@ -105,14 +120,24 @@ delnode(uint8_t id) {
  * node with a given name, else return -1
  */
 static int
-getnode(char *name) { 
+getnode(char *name, int action) { 
 	node *node;
 
 	node = origin;
 
 	for (; node != NULL; node = node->previous) {
 		if (strnstr(node->name, name, LINECAP) != NULL) {
-			printnode(node);
+			switch (action) {
+				case PRINT:
+					printnode(node);
+					break;
+				case DELETE:
+					delnode(node);
+					break;
+				default:
+					printnode(node);
+					break;
+			}
 			return(0);
 		}
 	}
@@ -166,10 +191,18 @@ nodewalk(uint8_t id, uint8_t clean) {
 
 	node = origin;
 
+	for (; node != NULL && node->id != id; node = node->previous) {
+		;
+	}
 	if (clean == 0) {
-		for (; node != NULL; node = node->previous) {
+		for (; node != NULL; node = node->next) {
 			fprintf(stdout,"Node info for node %d\n",node->id);
 			printnode(node);
+		}
+	} else {
+		for (; node != NULL; node = node->next) {
+			fprintf(stdout,"deleting node %s: %p\n",node->name, node);
+			delnode(node);
 		}
 	}
 }
@@ -180,7 +213,7 @@ nodewalk(uint8_t id, uint8_t clean) {
  * by modifying the string and returning an id
  * if found, 0 otherwise, and -1 if an error is encountered
  */
-static int
+static char *
 parse(char *input) { 
 	int i, j, len, sep;
 	i = j = len = sep = 0;
@@ -204,7 +237,7 @@ parse(char *input) {
 			} while (j < len);
 		}
 	}
-	return(0);
+	return(input);
 }
 
 /* 
