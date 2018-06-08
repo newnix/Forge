@@ -103,12 +103,16 @@ main(void) {
  */
 static int
 delnode(node *node) { 
-	/* this needs to also take the node info and update the adjacent nodes */
+	/* ensure that if node is the first node, we don't try updating a NULL node */
 	if (node->previous != NULL) {
 		node->previous->next = node->next;
-	}
+	} 
+
+	/* prevent updating NULL nodes and update origin if necessary */
 	if (node->next != NULL) {
 		node->next->previous = node->previous;
+	} else {
+		origin = node->previous;
 	}
 
 	free(node);
@@ -139,8 +143,10 @@ getnode(char *name, int action) {
 					break;
 			}
 			return(0);
+		} else {
+			fprintf(stderr,"Node %s not found!\n",name);
 		}
-	}
+	} 
 	return(0);
 }
 
@@ -200,7 +206,8 @@ nodewalk(uint8_t id, uint8_t clean) {
 			printnode(node);
 		}
 	} else {
-		for (; node != NULL; node = node->next) {
+		/* this should allow the cleanup to work regardless of if node->id 0 exists */
+		for (node = origin; node != NULL; node = node->previous) {
 			fprintf(stdout,"deleting node %s: %p\n",node->name, node);
 			delnode(node);
 		}
@@ -215,9 +222,10 @@ nodewalk(uint8_t id, uint8_t clean) {
  */
 static char *
 parse(char *input) { 
-	int i, j, len, sep;
-	i = j = len = sep = 0;
+	int i, sep;
+	size_t j, len;
 
+	i = j = len = sep = 0;
 	len = strlen(input);
 
 	for (i = 0; input[i] != ' '; i++) {
