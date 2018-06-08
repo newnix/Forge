@@ -8,6 +8,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define LINECAP 1024
+
 typedef struct node {
 	struct node *previous;
 	struct node *next;
@@ -21,12 +23,14 @@ static node * mknode(char *name);
 static void nodewalk(uint8_t id, uint8_t clean);
 static int parse(char *input); /* return id if found, 0 if no id found but fine, -1 otherwise */
 static void printnode(node *node);
-extern node *origin;
+extern node *origin = NULL;
 
 int 
 main(void) { 
 	/* need to do some magic here */
 	char stop,*line;
+	char *instructions = "Commands:\n\tcreate [name]:\tcreates node with id and name\n\tdel [id]:\tdeletes node with id [id]\n\tget [name]:\tshow node info for node with [name]\n\twalk [id]:\tdisplay all nodes, starting from [id] (default 0)\n";
+
 	ssize_t captured;
 	size_t linecap;
 	node *curnode;
@@ -34,37 +38,35 @@ main(void) {
 	stop = 'n';
 	captured = 0;
 	line = NULL;
-	linecap = 1024;
+	linecap = LINECAP;
 
-	if ((line = calloc(1,linecap)) == NULL) { 
+	if ((line = calloc(1,LINECAP)) == NULL) { 
 		fprintf(stderr,"Cannot get memory for input!\n");
 		return(1);
 	}
 		
 	/* this string should be available to print on demand */
-	fprintf(stdout,"Commands:\n\tcreate [id] [name]:\tcreates node with id and name\n\t"
-	               "del [id]:\tdeletes node with id [id]\n\t"
-								 "get [name]:\tshow node info for node with [name]\n\t"
-								 "walk [id]:\tdisplay all nodes, starting from [id] (default 0)\n");
+	fprintf(stdout,"%s",instructions);
 	fprintf(stdout,"Enter a command: ");
 	while (((stop & 0x5F) != 'Y') && ((captured = getline(&line,&linecap,stdin)) > 0)) { 
 		/* should be a better way, but I'm not terribly interested in performance here */
-		if (strnstr(line,"create",linecap) != NULL) { 
+		if (strnstr(line,"create",LINECAP) != NULL) { 
 			parse(line);
-			if ((curnode = mknode(line)) == 0) { 
-				fprintf(stderr,"%s->previous:\t%p\n%s->id:\t%u\n%s->name:\t%s\n%s->next:\t%p\n",line,curnode->previous,line,curnode->id,line,curnode->name,line,curnode->next);
+			if ((curnode = mknode(line)) != NULL) { 
+				printnode(curnode);
 			}
 		}
-		else if (strnstr(line,"del",linecap) != NULL) { 
+		else if (strnstr(line,"del",LINECAP) != NULL) { 
 			delnode(parse(line));
 		}
-		else if (strnstr(line,"get",linecap) != NULL) {
+		else if (strnstr(line,"get",LINECAP) != NULL) {
 			parse(line);
 			getnode(line);
 		}
-		else if (strnstr(line,"walk",linecap) != NULL) {
+		else if (strnstr(line,"walk",LINECAP) != NULL) {
 			nodewalk(parse(line),0);
-		} else if (strnstr(line,"help",linecap) != NULL) { 
+		} else if (strnstr(line,"help",LINECAP) != NULL) { 
+			fprintf(stdout,"%s",instructions);
 		} 
 		else { 
 			fprintf(stdout,"Invalid command!\nExit? [N/y]\n");
@@ -78,7 +80,7 @@ main(void) {
 			 * mask should most likely be 0101 1111
 			 */
 		}
-		memset(line,0,linecap);
+		memset(line,0,LINECAP);
 	}
 
 	if (line != NULL) { 
@@ -104,6 +106,16 @@ delnode(uint8_t id) {
  */
 static int
 getnode(char *name) { 
+	node *node;
+
+	node = origin;
+
+	for (; node != NULL; node = node->previous) {
+		if (strnstr(node->name, name, LINECAP) != NULL) {
+			printnode(node);
+			return(0);
+		}
+	}
 	return(0);
 }
 
@@ -124,11 +136,16 @@ mknode(char *name) {
 	if ((new = calloc(1,sizeof(*new))) == NULL) {
 		return(NULL);
 	}
-	if (origin != NULL) { 
+
+	if (origin == NULL) { 
 		new->previous = NULL;
 		new->next = new;
-		origin = new;
+	} else {
+		new->previous = origin;
+		new->previous->next = new;
+		new->next = NULL;
 	}
+	origin = new;
 
 	/* assign values to the node structure */
 	new->id=id;
@@ -145,6 +162,16 @@ mknode(char *name) {
  */
 static void
 nodewalk(uint8_t id, uint8_t clean) { 
+	node *node;
+
+	node = origin;
+
+	if (clean == 0) {
+		for (; node != NULL; node = node->previous) {
+			fprintf(stdout,"Node info for node %d\n",node->id);
+			printnode(node);
+		}
+	}
 }
 
 /*
@@ -155,6 +182,28 @@ nodewalk(uint8_t id, uint8_t clean) {
  */
 static int
 parse(char *input) { 
+	int i, j, len, sep;
+	i = j = len = sep = 0;
+
+	len = strlen(input);
+
+	for (i = 0; input[i] != ' '; i++) {
+		;
+	}
+
+	/* this is the location of the first separator */
+	sep = i;
+
+	for (i++,j = 0; input[j] != 0; i++,j++) {
+		/* this needs to convert the string to something like id\0name */
+		input[j] = input[i]; /* start input[j] at the character after the first separator */
+		if (input[i] == '\n') {
+			do {
+				input[j] = 0;
+				j++;
+			} while (j < len);
+		}
+	}
 	return(0);
 }
 
@@ -164,4 +213,5 @@ parse(char *input) {
  */
 static void
 printnode(node *node) { 
+	fprintf(stdout,"\nnode: %p\nname: %s\nid: %u\nprevious: %p\nnext: %p\n",node,node->name,node->id,node->previous,node->next);
 }
