@@ -42,7 +42,7 @@
 #include <unistd.h>
 
 #define HELP 0x0002
-#define LISTHOSTS 0x0008
+#define LISTHOSTS 0x0001
 #define IP4SEP '.'
 #define IP6SEP ':'
 
@@ -86,10 +86,12 @@ main(int argc, char **argv) {
 			case 'h':
 				/* 0000 0010 */
 				flags ^= HELP;
+				flags &= HELP; /* only allow the one flag to be set */
 				break;
 			case 'l':
-				/* 0100 0100 */
+				/* 0100 0001 */
 				flags ^= LISTHOSTS;
+				flags &= LISTHOSTS;
 				break;
 			default:
 				flags ^= flags;
@@ -285,6 +287,7 @@ cook(uint8_t flags, char *args) {
 				netmask(ip);
 				brdcast(ip);
 				netwkaddr(ip);
+				printinfo(ip);
 				hostaddrs(ip);
 				break;
 			default:
@@ -301,9 +304,48 @@ cook(uint8_t flags, char *args) {
 
 static int
 hostaddrs(addr *addr) {
+	uint8_t i, j, k, l;
+
+	i = j = k = 0;
 	/*
 	 * If list is nonzero, we're going to print out every address in the range
 	 * otherwise, just print the summary, first host and last host
+	 * There's almost certainly a better way to do this, but I'm not sure what it'd be at this time
+	 */
+	if (addr->class == 4) { 
+		for(i = 0; (addr->ntwk[0] + i) <= addr->bdst[0]; i++) {
+			for (j = 0; (addr->ntwk[1] + j) <= addr->bdst[1]; j++) {
+				for (k = 0; (addr->ntwk[2] + k) <= addr->bdst[2]; k++) {
+					for (l = 0; (addr->ntwk[3] + l) <= (addr->bdst[3] - 1); l++) {
+						fprintf(stdout,"%u.%u.%u.%u\n",addr->ntwk[0] + i, addr->ntwk[1] + j, addr->ntwk[2] + k, addr->ntwk[3] + l);
+					}
+				}
+			}
+		}
+	} else if (addr->class == 16) {
+		for (i = 0; (addr->ntwk[0] + i) <= addr->bdst[0]; i++) {
+			for (j = 0; (addr->ntwk[1] + j) <= addr->bdst[1]; j++) {
+				for (k = 0; (addr->ntwk[2] + k) <= addr->bdst[2]; k++) {
+					for (l = 0; (addr->ntwk[3] + l) <= addr->bdst[3]; l++) {
+						for (uint8_t m = 0; (addr->ntwk[4] + m) <= addr->bdst[4]; m++) {
+							for (uint8_t n = 0; (addr->ntwk[5] + n) <= addr->bdst[5]; n++) {
+								for (uint8_t o = 0; (addr->ntwk[6] + o) <= addr->bdst[6]; o++) {
+									for (uint8_t p = 0; (addr->ntwk[7] + p) <= addr->bdst[7] - 1; p++) {
+										fprintf(stdout,"%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n",
+										addr->ntwk[0] + i, addr->ntwk[1] + j, addr->ntwk[2] + k, addr->ntwk[3] + l,
+										addr->ntwk[4] + m, addr->ntwk[5] + n, addr->ntwk[6] + o, addr->ntwk[7] + p);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* 
+	 * need to loop over each field in order to properly display all addresses
 	 */
 	return(0);
 }
@@ -366,7 +408,7 @@ printinfo(addr *addr) {
 				addr->ntwk[0],addr->ntwk[1],addr->ntwk[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->ntwk[3] + 1)),
 				addr->bdst[0],addr->bdst[1],addr->bdst[2],((addr->maskbits == 32) ? addr->addr[3] : (addr->bdst[3] - 1))); 
 	} else { 
-		printf("*addrinfo struct:\n"
+		fprintf(stderr,"*addrinfo struct:\n"
 				"Address:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
 				"Netmask:\t%u:%u:%u:%u:%u:%u:%u:%u\n"
 				"Hexmask:\t%04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n"
