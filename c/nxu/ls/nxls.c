@@ -141,7 +141,7 @@ targets(char **arglist) {
 				xls(entry->d_name);
 			}
 		} else {
-			err(errno,"chdir");
+			err(errno,"%s",*arglist);
 		}
 	}
 	if (dirp != NULL) {
