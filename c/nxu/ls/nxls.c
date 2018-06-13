@@ -31,10 +31,12 @@
  * DAMAGE.
  */ 
 
+/* system incs */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/uio.h>
 
+/* userspace incs */
 #include <dirent.h> 
 #include <err.h>
 #include <errno.h>
@@ -44,15 +46,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __LINUX__ 
+#include <bsd/string.h>
+#endif
+
+/* local incs */
+#include "nxls.h"
+
 extern char **environ;
 extern char *__progname;
 
-/* Function prototypes */
-static void __attribute__((noreturn)) usage(void);
-static int targets(char **arglist);
-/* Perhaps this should build a map of some sort, collecting the entries and stat(2) structure pointers */
-static int xls(const char *name);
-
+/* global constants for flag values */
 #define ALLFILES 0x01
 #define FULLPATH 0x02
 #define HELPFLAG 0x00
@@ -106,77 +110,6 @@ main(int argc, char **argv) {
 
 	argc -= optind;
 	argv += optind;
-	targets(argv);
+	targets(argv, flags);
   return(0);
-}
-
-static int
-targets(char **arglist) {
-	/* allocate space for a stat(2) struct */
-	DIR *dirp;
-	struct dirent *entry;
-	struct stat *ent;
-
-	dirp = NULL;
-	entry = NULL;
-	if ((ent = calloc(1,sizeof(*ent))) == NULL) { 
-			return(1);
-	}
-	/* if no arguments were given, list PWD */
-	if (*arglist == NULL) { 
-		if ((dirp = opendir(".")) != NULL) {	
-			while ((entry = readdir(dirp)) != NULL) { 
-				xls(entry->d_name);
-			}
-		}
-	}
-	for (; *arglist != NULL; arglist++) {
-		/* 
-		 * So, instead of running through everything, let's just get a map of the entities in 
-		 * a given directory, and pass that to xls(), which in turn will determine if there's any further action 
-		 * needed prior to printing the entries.
-		 */
-		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
-			while ((entry = readdir(dirp)) != NULL) { 
-				xls(entry->d_name);
-			}
-		} else {
-			err(errno,"%s",*arglist);
-		}
-	}
-	if (dirp != NULL) {
-		closedir(dirp);
-	}
-	free(ent);
-  return(0);
-}
-
-static void __attribute__((noreturn))
-usage(void) {
-	/* changed from fprintf() to write(), should save size and perform a bit faster */
-	char *usage = "nxls: New Exile's ls(1)\n\
-	nxls [-aflrFHS1] [file ...]\n\n\
-	-a  Include dotfiles\n\
-	-f  Print absolute paths\n\
-	-h  This message\n\
-	-l  Longer output\n\
-	-r  Recursive listing\n\
-	-F  Append filetype symbols\n\
-	-H  Human friendly sizes\n\
-	-S  Stat struct info\n\
-	-1  One entry per line\n";
-	write(1,usage,strlen(usage));
-	exit(0);
-}
-
-/* 
- * add targets to a struct array? 
- * an arry of structs? perhaps?
- * linked list?
- */
-static int
-xls(const char *name) { 
-	/* for the time being, just spit out the dirent names to stdout */
-	fprintf(stdout,"%s\n",name);
-	return(0);
 }
