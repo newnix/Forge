@@ -4,12 +4,20 @@
 
 #ifndef __NXLS_H__
 #define __NXLS_H__
+
+/* ensure we have limits */
+#include <limits.h>
+
+/* enumerated pass-to targets */
+enum passtarget { XLS, ALPHASORT, SIZESORT, DOTSTRIP, STATDATA, FSAPPEND };
+
 /*
  * function signatures
  */
+static int buildlist(struct dirent *entry, enum passtarget passto);
 static int targets(char **arglist, uint16_t flags);
 static void __attribute__((noreturn)) usage(void);
-static int xls(const char *name, uint16_t flags);
+static int xls(char **contents);
 
 /* 
  * define directory symbols 
@@ -18,6 +26,34 @@ static int xls(const char *name, uint16_t flags);
 #define SYMLINK '@'
 #define HARDLINK "->"
 #define EXECUTABLE '*'
+
+/* 
+ * Simple interface, simply add the d_name values to a list per-directory
+ * each new directory should trigger this array being reset
+ * pass the array to xls() if pass == 1
+ */
+static int
+buildlist(struct dirent *entry, enum passtarget passto) {
+	char **contents;
+	static int i = 0;
+
+	if (passto == XLS) { 
+		xls(contents);
+	}
+
+	if ((contents = calloc(PATH_MAX,PATH_MAX)) == NULL) { 
+		return(-1);
+	}
+
+	/* copy the dirent name to the next slot */
+	if (strlcpy(contents[i],entry->d_name,PATH_MAX) != 0) {
+		i++;
+		return(0);
+	} else {
+		return(-1);
+	}
+	xls(contents);
+}
 
 static int
 targets(char **arglist, uint16_t flags) {
@@ -36,7 +72,7 @@ targets(char **arglist, uint16_t flags) {
 	if (*arglist == NULL) { 
 		if ((dirp = opendir(".")) != NULL) {	
 			while ((entry = readdir(dirp)) != NULL) { 
-				xls(entry->d_name,flags);
+				buildlist(entry);
 			}
 		}
 	}
@@ -47,8 +83,8 @@ targets(char **arglist, uint16_t flags) {
 		 * needed prior to printing the entries.
 		 */
 		if (((dirp = opendir(*arglist)) != NULL) && (chdir(*arglist) == 0)) { 
-			while ((entry = readdir(dirp)) != NULL && (xls(entry->d_name,flags)) != 0) { 
-				;
+			while ((entry = readdir(dirp)) != NULL) {
+				buildlist(entry);
 			}
 		} else {
 			err(errno,"%s",*arglist);
@@ -71,7 +107,9 @@ usage(void) {
 	-h  This message\n\
 	-l  Longer output\n\
 	-r  Recursive listing\n\
+	-s  Sort by size\n\
 	-F  Append filetype symbols\n\
+	-A  Alphabetical sort\n\
 	-H  Human friendly sizes\n\
 	-S  Stat struct info\n\
 	-1  One entry per line\n";
@@ -79,15 +117,14 @@ usage(void) {
 	exit(0);
 }
 
-/* 
- * add targets to a struct array? 
- * an arry of structs? perhaps?
- * linked list?
- */
+/* display the entries, pontentially after sorting them */
 static int
-xls(const char *name, uint16_t flags) { 
-	/* for the time being, just spit out the dirent names to stdout */
-	return(buildlist(name));
+xls(char **contents) { 
+	/* this will now only take an object/struct to display */
+	for (; *contents != NULL; *contents++) {
+		fprintf(stdout,"%s\n",*contents);
+	}
+	return(0);
 }
 
 #endif

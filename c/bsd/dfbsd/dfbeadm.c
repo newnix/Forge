@@ -53,10 +53,13 @@ int
 main(int argc, char **argv) { 
 	/* obviously, this is where we get some basic data from the user */
 	int ch;
-	while((ch = getopt(argc,argv,"a:d:hlr:s:R:S:")) != -1) { 
+	while((ch = getopt(argc,argv,"a:c:d:hlr:s:R:")) != -1) { 
 		switch(ch) { 
 			case 'a': 
 				activate(optarg);
+				break;
+			case 'c':
+				create(optarg);
 				break;
 			case 'd':
 				deactivate(optarg);
@@ -74,9 +77,6 @@ main(int argc, char **argv) {
 				break;
 			case 's':
 				snapfs(optarg);
-				break;
-			case 'S':
-				snap(optarg);
 				break;
 			default:
 				usage();
