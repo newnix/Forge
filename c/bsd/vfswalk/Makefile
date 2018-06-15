@@ -2,5 +2,8 @@
 
 include ../../../defaults.mk
 
-SRCS = vfswalk.c
+SRC = vfswalk.c
 TARGET = vfswalk
+HELP = help
+
+CFLAGS = -Oz -g${DBG} -fuse-ld=${LD}

@@ -9,27 +9,30 @@ MODE = 0755
 
 # Ensure all sources and libs are available
 INCS = -I. -I/usr/include -I/usr/local/include
-LIBS = -L. -L/usr/include -L/usr/local/include
+LIBS = -L. -L/usr/lib -L/usr/local/lib
 
 # Flags shared between C and C++
 DBG = gdb
 BFLAGS = -Wall -Wextra -pedantic -std=c99 -Oz -fpic -fpie -fPIE -fPIC \
-				 -march=native -mtune=native -z relro -z now -z combreloc -fvisibility=hidden \
+				 -march=native -mtune=native -z relro -z now -z combreloc \
 				 -Wl,-pie,--gc-sections,--pic-executable -pipe -g${DBG}
 CFLAGS = ${BFLAGS}
 CXXFLAGS = ${BFLAGS}
 TMPDIR = /tmp
 # Which compiler and linker to use
 CC = clang-devel
-LD = ld.lld-devel
+LD = lld
 
 # When applicable, use this assembler
 AS = yasm
 
+# The help flag/command
+HELP = -h
+
 help:
 	@printf "Build configuration for ${TARGET}:\n"
-	@printf "\nPREFIX:\t%s\nDIR:\t%s\nINST:\t%s\nOWNER:\t%s\nGROUP:\t%s\nMODE:\t%s\n\nCC:\t%s\nCFLAGS:\t%s\nINCS:\t%s\nLIBS:\t%s\n"\
-		"${PREFIX}" "${DESTDIR}" "${PREFIX}${DESTDIR}${TARGET}" "${MUSER}" "${GROUP}" "${MODE}" "${CC}" "${CFLAGS}" "${INCS}" "${LIBS}"
+	@printf "\nPREFIX:\t%s\nDIR:\t%s\nINST:\t%s\nOWNER:\t%s\nGROUP:\t%s\nMODE:\t%s\n\nCC:\t%s\nLD:\t%s\nCFLAGS:\t%s\nINCS:\t%s\nLIBS:\t%s\n"\
+		"${PREFIX}" "${DESTDIR}" "${PREFIX}${DESTDIR}${TARGET}" "${MUSER}" "${GROUP}" "${MODE}" "${CC}" "${LD}" "${CFLAGS}" "${INCS}" "${LIBS}"
 	@printf "\n\nChange these settings with %s %s\n" ${EDITOR} "defaults.mk"
 	@printf "Valid targets: build, debug, help, install, uninstall, rebuild, reinstall, run\n"
 
@@ -43,7 +46,7 @@ debug: build
 	@cp -fp ${TARGET} ${PREFIX}${DESTDIR}
 	@rm -f ${TARGET}
 	@printf "\n\n"
-	$(PREFIX)$(DESTDIR)$(TARGET) -h
+	$(PREFIX)$(DESTDIR)$(TARGET) $(HELP)
 
 install: build
 	@strip -s ${TARGET}
@@ -53,7 +56,7 @@ install: build
 	@cp -fp ${TARGET} ${PREFIX}${DESTDIR}
 	@rm -f ${TARGET}
 	@printf "\n\n"
-	$(PREFIX)$(DESTDIR)$(TARGET) -h
+	$(PREFIX)$(DESTDIR)$(TARGET) $(HELP)
 
 uninstall: 
 	@rm -f ${PREFIX}${DESTDIR}${TARGET}

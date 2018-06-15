@@ -96,7 +96,7 @@ main(int argc, char **argv) {
 }
 
 static void
-usage(void) {
+__attribute__((noreturn)) usage(void) {
 	static const char *usage = "usage: nxenv [-h] [-i0] [cmd ...]\n";
 	write(1,usage,strlen(usage));
 	exit(0);
