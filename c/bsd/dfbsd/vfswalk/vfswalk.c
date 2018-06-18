@@ -108,6 +108,10 @@ fsprint(struct statfs *fsbuf) {
 							 fsbuf->f_syncreads,fsbuf->f_asyncreads,fsbuf->f_mntfromname);
 }
 
+/*
+ * this function will print the statfs and statvfs struct information 
+ * for a given mountpoint
+ */
 static int
 vfsinfo(char *mountpoint) {
 	struct statvfs *vfsbuf;
@@ -156,6 +160,12 @@ vfsprint(struct statvfs *vfsbuf) {
 							 vfsbuf->f_asyncwrites);
 }
 
+/*
+ * This should, if I'm reading the manual pages properly, return information on
+ * ALL currently mounted filesystems, which will allow me to better investigate 
+ * the struct values, though from the working vfsinfo() function, 
+ * it looks like HAMMER2 filesystems are identified as fsbuf->f_type == 9
+ */
 static int
 vfswalk(void) { 
 	struct statfs *fsbuf;

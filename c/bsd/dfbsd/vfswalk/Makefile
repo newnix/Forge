@@ -1,6 +1,6 @@
 .POSIX:
 
-include ../../../defaults.mk
+include ../../../../defaults.mk
 
 SRC = vfswalk.c
 TARGET = vfswalk

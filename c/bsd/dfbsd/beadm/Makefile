@@ -1,6 +1,6 @@
 .POSIX:
 
-include ../../../defaults.mk
+include ../../../../defaults.mk
 
 TARGET = dfbeadm
 SRC = dfbeadm.c 
