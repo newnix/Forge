@@ -166,6 +166,7 @@ vfsprint(struct statvfs *vfsbuf) {
  * the struct values, though from the working vfsinfo() function, 
  * it looks like HAMMER2 filesystems are identified as fsbuf->f_type == 9
  */
+/* might need to look at getfsent(3) instead for this functionality */
 static int
 vfswalk(void) { 
 	struct statfs *fsbuf;
@@ -174,21 +175,40 @@ vfswalk(void) {
 	int flags, fscount;
 
 	vfsbufsize = 0;
-	flags = fscount = 0;
+	flags = MNT_WAIT;
+	fscount = 0;
+	fsbuf = NULL; /* use this to get the number of filesystems available */
 
-	if (((vfsbuf = calloc(sizeof(vfsbuf),1))) == NULL) { 
-		return(-1);
+	if ((fscount = getfsstat(fsbuf,vfsbufsize,flags)) > 0) {
+		fprintf(stdout,"%d filesystems mounted, allocating space to display stats...\n",fscount);
+		if ((fsbuf = calloc(sizeof(struct statfs *),fscount)) == NULL) {
+			return(-1);
+		}
+		if ((vfsbuf = calloc(sizeof(struct vfsstat *),fscount)) == NULL) { 
+			return(-1);
+		}
+		vfsbufsize = (sizeof(*vfsbuf) * fscount);
+	}
+	
+	if ((fscount = getfsstat(fsbuf,vfsbufsize,flags)) > 0) {
+		fprintf(stdout,"Attempting to print %d mounted filesystems...\n",fscount);
+		for (flags = 0; flags < fscount; flags++) {
+			fsprint(&fsbuf[flags]);
+		}
 	}
 
-	if (((fsbuf = calloc(sizeof(fsbuf),1))) == NULL) { 
-		return(-1);
-	}
+	flags = MNT_WAIT; /* just to be sure */
 
 	if ((fscount = getvfsstat(fsbuf, vfsbuf, vfsbufsize, flags)) != -1) { 
 		fprintf(stdout,"getvfsstat returned %d filesystems\n",fscount);
-		fprintf(stdout,"statfs struct info:\n");
-		fprintf(stdout,"statvfs struct info:\n");
-		vfsprint(vfsbuf);
+		for (flags = 0; flags < fscount; flags++) {
+			fprintf(stdout,"vfsstat struct for %s:\n",fsbuf[flags].f_mntonname);
+			vfsprint(&vfsbuf[flags]);
+			fprintf(stdout,"\nfsstat struct:\n");
+			fsprint(&fsbuf[flags]);
+		}
+	} else {
+		err(errno,"getvfsstat: ");
 	}
 
 	free(fsbuf);
