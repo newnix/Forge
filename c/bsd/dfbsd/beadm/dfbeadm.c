@@ -45,7 +45,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
+
 /* more inclusions are likely to follow, but at least these will be needed */
 #include "dfbeadm.h"
 
