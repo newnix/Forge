@@ -55,7 +55,7 @@ int
 main(int argc, char **argv) { 
 	/* obviously, this is where we get some basic data from the user */
 	int ch;
-	while((ch = getopt(argc,argv,"a:c:d:hlr:s:R:")) != -1) { 
+	while((ch = getopt(argc,argv,"a:c:d:hlnr:")) != -1) { 
 		switch(ch) { 
 			case 'a': 
 				activate(optarg);
@@ -71,14 +71,11 @@ main(int argc, char **argv) {
 			case 'l':
 				list();
 				break;
+			case 'n':
+				/* enforce no-op rules for any flags given */
+				break;
 			case 'r':
 				rmsnap(optarg);
-				break;
-			case 'R':
-				rmenv(optarg);
-				break;
-			case 's':
-				snapfs(optarg);
 				break;
 			default:
 				usage();

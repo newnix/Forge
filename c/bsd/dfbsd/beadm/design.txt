@@ -45,3 +45,13 @@ SWITCHING:
 This is the same process as activation, but with the distinct ability to verify the user
 isn't asking us to switch to the current boot env, in which case, we can exit early.
 Otherwise, this process is the same as activation.
+
+NOOP:
+--------------------------------------------------------------------------------
+The 'n' flag, similar to most OpenBSD utilities and zfs utilities, will be a "no-op"
+guarantee. If this flag is set, no changes will be made to the current boot environments
+and none will be created, instead, we just report to the user on stderr what steps would have 
+been taken. We then print a message to the user that they'll need to run the same commands
+again with sudo/doas/root/pfexec to actually commit the changes.
+There will be a check before continuing to any other functions to verify that using "-n" or "-l"
+doesn't require root access. 

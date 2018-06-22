@@ -2,6 +2,7 @@
 #define __DFBEADM__
 
 #define BESEP '-'
+#define TMAX 18
 
 /* necessary inclusions for filesystem data */
 #include <sys/mount.h>
@@ -31,10 +32,11 @@ create(char *label) {
 	 * /usr/local/bin -> usr.local.bin-20180601, so it's distinct from other 
 	 * snapshots of the same PFS, without potentially stomping on reserved characters
 	 */
-	char befs[MNAMELEN];
+	char befs[MNAMELEN], timestamp[TMAX];
 	long size;
 	int fscount, i;
 	struct statfs *filesystems;
+	time_t tim;
 	/* first we need to get a list of currently mounted HAMMER2 filesystems */
 	fscount = i = 0;
 	size = 0;
@@ -42,6 +44,13 @@ create(char *label) {
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
 		if ((filesystems = calloc(sizeof(struct statfs *), fscount)) == NULL) {
+			return(-1);
+		}
+
+		/* for the time being, I'm only going to be concerned with UTC/C time */
+		tim = time(NULL);
+		if (strftime(timestamp, TMAX, "%Y%m%d%H%MT%Z", localtime(&tim)) == 0) {
+			free(filesystems);
 			return(-1);
 		}
 		size = (sizeof(*filesystems) * fscount);
@@ -54,9 +63,9 @@ create(char *label) {
 			 * will need to look into a more reliable way to determine if I'm 
 			 * working with a HAMMER2 pfs
 			 */
-			if (filesystems[i].f_type == 5) {
-				snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
-				fprintf(stderr,"befs[%d/%ld]: %s\n", i, fscount, befs);
+			if (filesystems[i].f_type >= 0) {
+				snprintf(befs, MNAMELEN, "%s%c%s%c%s", filesystems[i].f_mntfromname, BESEP, label, BESEP, timestamp);
+				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
 				memset(befs, 0, MNAMELEN);
 			}
 		}
@@ -98,24 +107,19 @@ rmsnap(char *pfs) {
 	return(0);
 }
 
-/* 
- * create a pfs snapshot
- */
-static int
-snapfs(char *pfs) { 
-	return(0);
-}
-
 /*
  * tell the user how this program works
  */
 static void __attribute__((noreturn))
 usage(void) { 
 	fprintf(stderr,"%s: Utility to create HAMMER2 boot environments.\n",__progname);
-	fprintf(stderr,"Usage:\n -a Activate the given boot environment\n -d Deactivate the given boot environment"
-	               "\n -h This message\n -l List boot environments\n"
-								 " -r Delete the given snapshot\n -s Create a snapshot with the given label"
-								 "\n -R Delete the given boot environment\n");
+	fprintf(stderr,"Usage:\n"
+			           "  -a  Activate the given boot environment\n"
+								 "  -c  Create a new boot environment with the given label\n"
+								 "  -d  Destroy the given boot environment\n"
+								 "  -h  This help text\n"
+								 "  -l  List existing boot environments\n"
+								 "  -r  Remove the given boot environment\n");
 	exit(0);
 }
 #endif
