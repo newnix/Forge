@@ -191,7 +191,7 @@ vfswalk(void) {
 			}
 		}
 	} else {
-		err(errno,"getvfsstat: ");
+		err(errno,"getfsstat: ");
 	}
 
 	free(fsbuf);

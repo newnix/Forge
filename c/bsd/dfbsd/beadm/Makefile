@@ -6,4 +6,4 @@ TARGET = dfbeadm
 SRC = dfbeadm.c 
 
 DBG = gdb 
-CFLAGS += -g${DBG}
+CFLAGS += -g${DBG} 

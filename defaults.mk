@@ -13,12 +13,19 @@ LIBS = -L. -L/usr/lib -L/usr/local/lib
 
 # Flags shared between C and C++
 DBG = gdb
-BFLAGS = -Wall -Wextra -pedantic -std=c99 -Oz -fpic -fpie -fPIE -fPIC \
+CLANGFLAGS = -Wall -Wextra -Weverything -pedantic -std=c99 -Oz -fpic -fpie -fPIE -fPIC \
 				 -march=native -mtune=native -z relro -z now -z combreloc \
-				 -Wl,-pie,--gc-sections,--pic-executable -pipe -g${DBG}
-CFLAGS = ${BFLAGS}
-CXXFLAGS = ${BFLAGS}
+				 -Wl,${LDFLAGS} -pipe -fstrict-aliasing
+
+GCCFLAGS = -Wall -Wextra -pedantic -std=c99 -Os -fpic -fpie -fPIE -fPIC \
+					 -march=native -mtune=native -z relro -z now -z combreloc \
+					 -Wl,${LDFLAGS} -pipe -fstrict-aliasing
+
+CFLAGS = ${CLANGFLAGS}
+CXXFLAGS = ${CLANGFLAGS}
+LDFLAGS = -pie,--pic-executable,--gc-sections,--icf=all
 TMPDIR = /tmp
+
 # Which compiler and linker to use
 CC = clang-devel
 LD = lld

@@ -1,5 +1,5 @@
-#ifndef __DFBEADM__
-#define __DFBEADM__
+#ifndef DFBEADM
+#define DFBEADM
 
 #define BESEP '-'
 #define TMAX 18
@@ -42,12 +42,21 @@ create(char *label) {
 	size = 0;
 	filesystems = NULL;
 
+	if (strlen(label) >= MNAMELEN) { 
+		trunc(label);
+		fprintf(stderr,"Cannot fit all of %s into boot environment, truncating at %s\n",label,trunc(label));
+	}
+
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
 		if ((filesystems = calloc(sizeof(struct statfs *), fscount)) == NULL) {
 			return(-1);
 		}
 
-		/* for the time being, I'm only going to be concerned with UTC/C time */
+		/*
+		 * for the time being, I'm only going to be concerned with UTC/C time 
+		 * additionally, the timestamp in the name is unlikely to be necessary,
+		 * as HAMMER2 most likely will have timestamps available in the metadata
+		 */
 		tim = time(NULL);
 		if (strftime(timestamp, TMAX, "%Y%m%d%H%MT%Z", localtime(&tim)) == 0) {
 			free(filesystems);
@@ -62,12 +71,12 @@ create(char *label) {
 			 * On my desktop HAMMER2 was f_type 9, but on my laptop it's 5.
 			 * will need to look into a more reliable way to determine if I'm 
 			 * working with a HAMMER2 pfs
+			 * This could be a strncmp() call, but that can't be the most efficient 
+			 * means of doing this. 
 			 */
-			if (filesystems[i].f_type >= 0) {
-				snprintf(befs, MNAMELEN, "%s%c%s%c%s", filesystems[i].f_mntfromname, BESEP, label, BESEP, timestamp);
-				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
-				memset(befs, 0, MNAMELEN);
-			}
+			snprintf(befs, MNAMELEN, "%s%c%s%c%s", filesystems[i].f_mntfromname, BESEP, label, BESEP, timestamp);
+			fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
+			memset(befs, 0, MNAMELEN);
 		}
 	}
 
@@ -105,6 +114,26 @@ rmenv(char *label) {
 static int
 rmsnap(char *pfs) { 
 	return(0);
+}
+
+/* 
+ * This should ideall be a filesystem agnostic function
+ * to create a snapshot with the given label
+ */
+static int
+snapfs(char *fstarget, char *label) { 
+	return(0);
+}
+
+/*
+ * Cut down a string to fit in the boot environment limitations
+ */
+static void
+trunc(char *longstring) { 
+	uint64_t strlength, strdiff;
+
+	strdiff = strlength = 0;
+
 }
 
 /*
