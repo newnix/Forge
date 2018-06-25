@@ -11,6 +11,7 @@
 
 extern char *__progname;
 
+static void trunc(char *longstring);
 /*
  * activate a given boot environment
  */
@@ -32,19 +33,19 @@ create(char *label) {
 	 * /usr/local/bin -> usr.local.bin-20180601, so it's distinct from other 
 	 * snapshots of the same PFS, without potentially stomping on reserved characters
 	 */
-	char befs[MNAMELEN], timestamp[TMAX];
+	char befs[MNAMELEN];
 	long size;
 	int fscount, i;
 	struct statfs *filesystems;
-	time_t tim;
 	/* first we need to get a list of currently mounted HAMMER2 filesystems */
 	fscount = i = 0;
 	size = 0;
 	filesystems = NULL;
 
 	if (strlen(label) >= MNAMELEN) { 
+		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
 		trunc(label);
-		fprintf(stderr,"Cannot fit all of %s into boot environment, truncating at %s\n",label,trunc(label));
+		fprintf(stderr," truncated to %s\n",label);
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
@@ -56,12 +57,11 @@ create(char *label) {
 		 * for the time being, I'm only going to be concerned with UTC/C time 
 		 * additionally, the timestamp in the name is unlikely to be necessary,
 		 * as HAMMER2 most likely will have timestamps available in the metadata
+		 * It looks like the timestamp data I'll need/want is going to exist in the 
+		 * struct hammer2_inode_meta members, though there's likely some pfs-specific 
+		 * values tracked and updated as well that will need to be hunted down so they
+		 * can be accessed and used appropriately.
 		 */
-		tim = time(NULL);
-		if (strftime(timestamp, TMAX, "%Y%m%d%H%MT%Z", localtime(&tim)) == 0) {
-			free(filesystems);
-			return(-1);
-		}
 		size = (sizeof(*filesystems) * fscount);
 	}
 
@@ -74,7 +74,7 @@ create(char *label) {
 			 * This could be a strncmp() call, but that can't be the most efficient 
 			 * means of doing this. 
 			 */
-			snprintf(befs, MNAMELEN, "%s%c%s%c%s", filesystems[i].f_mntfromname, BESEP, label, BESEP, timestamp);
+			snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
 			fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
 			memset(befs, 0, MNAMELEN);
 		}
@@ -130,10 +130,7 @@ snapfs(char *fstarget, char *label) {
  */
 static void
 trunc(char *longstring) { 
-	uint64_t strlength, strdiff;
-
-	strdiff = strlength = 0;
-
+	snprintf(longstring, MNAMELEN, "%s", longstring);
 }
 
 /*
