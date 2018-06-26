@@ -52,7 +52,30 @@
  * assuming there is anything wrong. Otherwise, just a fun tool for people like me
  */
 
+int pfsget(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode);
+void pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode);
+
 int
 main(int argc, char **argv) { 
 	return(0);
+}
+
+/* 
+ * This should get the hammer2 information of a given pfs
+ * at the given mountpoint, which can then be passed on to 
+ * a printing or stats function
+ * Will return a simple status indication of success/fail
+ */
+int
+pfsget(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode) { 
+	return(0);
+}
+
+void
+pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode) { 
+	/*
+	 * This should probably be called by pfsget(), so 
+	 * it needs no logic, simply print the members of the struct 
+	 * it is given, the definitions of which would be in hammer2_disk.h
+	 */
 }
