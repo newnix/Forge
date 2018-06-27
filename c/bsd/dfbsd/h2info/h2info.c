@@ -111,7 +111,7 @@ fsinfo(char **filesystems, bool walk) {
 	if (walk) { 
 		if ((fscount = getfsstat(fs, fsbufsize, flags)) > 0) { 
 			fprintf(stderr,"found %d filesystems\n",fscount);
-			if ((fs = calloc(sizeof(struct statfs *),fscount)) == NULL) { 
+			if ((fs = calloc(sizeof(struct statfs *),(size_t)fscount)) == NULL) { 
 				return(-1);
 			}
 			fsbufsize = (sizeof(*fs) * fscount);
@@ -133,6 +133,25 @@ fsinfo(char **filesystems, bool walk) {
 			free(fs);
 		}
 	} else { 
+		if ((fs = calloc(sizeof(struct statfs *), 1)) == NULL) { 
+			fprintf(stderr,"Out of memory!\n");
+			return(-1);
+		}
+
+		for (; *filesystems != NULL; filesystems++) {
+			if (statfs(*filesystems, fs) == -1) { 
+				return(-1);
+			} else { 
+				if (h2check(fs)) { 
+					if (pfsget(fs->f_mntonname) == -1) { 
+						return(-1);
+					} else { 
+						rptcount++;
+					}
+				}
+			}
+		}
+		free(fs);
 	}
 	return(rptcount);
 }
@@ -159,16 +178,57 @@ h2check(struct statfs *fs) {
  */
 int
 pfsget(char *mountpoint) {
+	hammer2_blockref_t *h2block;
+	hammer2_volconf_t *h2vol;
+	hammer2_inode_meta_t *h2inode;
+
+	h2block = NULL;
+	h2vol = NULL;
+	h2inode = NULL;
+
+
 	return(0);
 }
 
 void
-pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode) { 
+pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, hammer2_inode_meta_t *h2i) { 
 	/*
 	 * This should probably be called by pfsget(), so 
 	 * it needs no logic, simply print the members of the struct 
 	 * it is given, the definitions of which would be in hammer2_disk.h
 	 */
+	fprintf(stdout,"HAMMER2 filesystem information for %s:\n"
+			           "--------------------------------------------------\n"
+								 "type: %hhu\tmethods: %u\tcopyid: %u\tkeybits: %u\n"
+								 "vradix: %u\tflags: %u\tleaf_count: %u\tkey: %lu\n"
+								 "mirror_tid: %lu\tmodify_tid: %lu\tdata_off: %lu\n"
+								 "update_tid: %lu\t",mountpoint,
+								 h2br->type, h2br->methods, h2br->copyid, h2br->keybits,
+								 h2br->vradix, h2br->flags, h2br->leaf_count, h2br->key,
+								 h2br->mirror_tid, h2br->modify_tid, h2br->data_off, h2br->update_tid);
+
+	fprintf(stdout,"copyid: %hhu\tinprog: %hhu\tchain_to: %hhu\tchain_from: %hhu\n"
+			           "flags: %u\terror: %hhu\tpriority: %hhu\tremote_pfs_type: %hhu\n"
+								 "pfs_clid: %s\tlabel: %s\tpath: %s\n",
+								 h2vc->copyid, h2vc->inprog, h2vc->chain_to, h2vc->chain_from,
+								 h2vc->flags, h2vc->error, h2vc->priority, h2vc->remote_pfs_type,
+								 "UUID unsupported", h2vc->label, h2vc->path);
+
+	fprintf(stdout,"version: %u\tpfs_subtype: %hhu\tuflags: %u\trmajor: %u\n"
+			           "rminor: %u\tctime: %lu\tmtime: %lu\tatime: %lu\tbtime: %lu\n"
+								 "uid: NOTIMP\tgid: NOTIMP\ttype: %hhu\top_flags: %hhu\n"
+								 "cap_flags: %u\tmode: %u\tinum: %lu\tsize: %lu\n"
+								 "nlinks: %lu\tiparent: %lu\tname_key: %lu\tname_len: %u\n"
+								 "ncopies: %hhu\tcomp_algo: %hhu\ttarget_type: %hhu\tcheck_algo: %hhu\n"
+								 "pfs_nmasters: %hhu\tpfs_type: %hhu\tpfs_inum: %lu\tpfs_clid: NOTIMP\tpfs_fsid: NOTIMP\n"
+								 "data_quota: %lu\tunusedB8: %lu\tinode_quota: %lu\tunusedC8: %lu\n"
+								 "pfs_lsnap_tid: %lu\n",
+								 h2i->version, h2i->pfs_subtype, h2i->uflags, h2i->rmajor, h2i->rminor, h2i->ctime,
+								 h2i->mtime, h2i->atime, h2i->btime, h2i->type, h2i->op_flags, h2i->cap_flags,
+								 h2i->mode, h2i->inum, h2i->size, h2i->nlinks, h2i->iparent, h2i->name_key, 
+								 h2i->name_len, h2i->ncopies, h2i->comp_algo, h2i->target_type, h2i->check_algo,
+								 h2i->pfs_nmasters, h2i->pfs_type, h2i->pfs_inum, h2i->data_quota, h2i->unusedB8,
+								 h2i->inode_quota, h2i->unusedC8, h2i->pfs_lsnap_tid);
 }
 
 static void
