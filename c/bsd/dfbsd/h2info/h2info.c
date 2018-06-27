@@ -42,7 +42,9 @@
 
 /* other utilities */
 #include <err.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -52,12 +54,101 @@
  * assuming there is anything wrong. Otherwise, just a fun tool for people like me
  */
 
-int pfsget(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode);
+extern char *__progname;
+
+int fsinfo(char **filesystems, bool walk);
+bool h2check(struct statfs *fs);
+int pfsget(char *mountpoint);
 void pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode);
+static void __attribute__((noreturn)) usage(void);
 
 int
 main(int argc, char **argv) { 
+	int ch;
+	bool walk;
+
+	ch = 0;
+	walk = false;
+
+	while ((ch = getopt(argc, argv, "hl")) != -1) { 
+			switch (ch) { 
+				case 'h':
+					usage();
+				case 'l':
+					walk = true;
+					break;
+			}
+	}
+	argc -= optind;
+	argv += optind;
+
+	if (*argv == NULL && !walk) { 
+		usage();
+	} else { 
+		return(fsinfo(argv, walk));
+	}
+	/* should not be reachable */
 	return(0);
+}
+
+/*
+ * This function will return the number of filesystems it was able to query
+ */
+int
+fsinfo(char **filesystems, bool walk) { 
+	struct statfs *fs;
+	long fsbufsize;
+	int flags, fscount, rptcount;
+
+	fscount = fsbufsize = rptcount = 0;
+	fs = NULL;
+
+	flags = MNT_WAIT;
+	/* 
+	 * true = walk everything
+	 * false = use **filesystems
+	 */
+	if (walk) { 
+		if ((fscount = getfsstat(fs, fsbufsize, flags)) > 0) { 
+			fprintf(stderr,"found %d filesystems\n",fscount);
+			if ((fs = calloc(sizeof(struct statfs *),fscount)) == NULL) { 
+				return(-1);
+			}
+			fsbufsize = (sizeof(*fs) * fscount);
+		}
+		if ((fscount = getfsstat(fs, fsbufsize, flags)) <= 0) { 
+			fprintf(stderr,"Something went wrong collecting statfs structs!\n");
+			return(-1);
+		} else { 
+			for (flags = 0; flags < fscount; flags++) { 
+				if (h2check(&fs[flags])) { 
+					if (pfsget(fs[flags].f_mntonname) == -1) { 
+						free(fs);
+						return(-1);
+					} else { 
+						rptcount++;
+					}
+				}
+			}
+			free(fs);
+		}
+	} else { 
+	}
+	return(rptcount);
+}
+
+/* 
+ * h2check verifies that a given filesystem is actually a HAMMER2 volume
+ */
+bool
+h2check(struct statfs *fs) { 
+	if (strncmp(fs->f_fstypename,"hammer2",8) == 0) { 
+		fprintf(stderr,"%s: is a HAMMER2 filesystem, continuing\n", fs->f_mntonname);
+		return(true);
+	} else { 
+		fprintf(stderr,"%s: is not a HAMMER2 filesystem, skipping...\n", fs->f_mntfromname);
+		return(false);
+	}
 }
 
 /* 
@@ -67,7 +158,7 @@ main(int argc, char **argv) {
  * Will return a simple status indication of success/fail
  */
 int
-pfsget(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode) { 
+pfsget(char *mountpoint) {
 	return(0);
 }
 
@@ -78,4 +169,14 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2
 	 * it needs no logic, simply print the members of the struct 
 	 * it is given, the definitions of which would be in hammer2_disk.h
 	 */
+}
+
+static void
+__attribute__((noreturn)) usage(void) { 
+	fprintf(stderr,"%s: Simple utility to pull information from a HAMMER2 PFS\n"
+			           "%s [-hl] PFS ...\n"
+			           "\t-h  This usage information\n"
+								 "\t-l  Walk through ALL HAMMER2 filesystems currently mounted (extremely verbose)\n"
+								 ,__progname,__progname);
+	exit(0);
 }
