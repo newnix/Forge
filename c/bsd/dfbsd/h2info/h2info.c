@@ -32,16 +32,19 @@
  */
 
 /* necessary system includes */
+#include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/user.h>
 
 /* bring in the functions to actually access the HAMMER2 filesystems */
-#include <vfs/hammer2/hammer2_disk.h>
+#include <vfs/hammer2/hammer2_ioctl.h>
 
 /* other utilities */
 #include <err.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,7 +165,6 @@ fsinfo(char **filesystems, bool walk) {
 bool
 h2check(struct statfs *fs) { 
 	if (strncmp(fs->f_fstypename,"hammer2",8) == 0) { 
-		fprintf(stderr,"%s: is a HAMMER2 filesystem, continuing\n", fs->f_mntonname);
 		return(true);
 	} else { 
 		fprintf(stderr,"%s: is not a HAMMER2 filesystem, skipping...\n", fs->f_mntfromname);
@@ -178,15 +180,27 @@ h2check(struct statfs *fs) {
  */
 int
 pfsget(char *mountpoint) {
-	hammer2_blockref_t *h2block;
-	hammer2_volconf_t *h2vol;
-	hammer2_inode_meta_t *h2inode;
+	hammer2_ioc_inode_t h2inode;
+	hammer2_ioc_remote_t h2remote;
+	int fd;
 
-	h2block = NULL;
-	h2vol = NULL;
-	h2inode = NULL;
+	fd = 0;
 
+	if ((fd = open(mountpoint, O_RDONLY)) == 0) {
+		err(errno, "%s", mountpoint);
+		return(-1);
+	}
 
+	if ((ioctl(fd, HAMMER2IOC_INODE_GET, &h2inode) == -1) || (ioctl(fd, HAMMER2IOC_REMOTE_SCAN) == -1)) { 
+		err(errno, "%s",mountpoint);
+		return(-1);
+	} else { 
+		pfsprint(mountpoint, &h2inode.ip_data.u.blockset.blockref[0], &h2remote.copy1, &h2inode.ip_data.meta);
+	}
+	
+	memset(&h2inode, 0, sizeof(h2inode));
+	memset(&h2remote, 0, sizeof(h2remote));
+	close(fd);
 	return(0);
 }
 
@@ -212,7 +226,7 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 								 "pfs_clid: %s\tlabel: %s\tpath: %s\n",
 								 h2vc->copyid, h2vc->inprog, h2vc->chain_to, h2vc->chain_from,
 								 h2vc->flags, h2vc->error, h2vc->priority, h2vc->remote_pfs_type,
-								 "UUID unsupported", h2vc->label, h2vc->path);
+								 "NOTIMP", h2vc->label, h2vc->path);
 
 	fprintf(stdout,"version: %u\tpfs_subtype: %hhu\tuflags: %u\trmajor: %u\n"
 			           "rminor: %u\tctime: %lu\tmtime: %lu\tatime: %lu\tbtime: %lu\n"
@@ -222,7 +236,7 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 								 "ncopies: %hhu\tcomp_algo: %hhu\ttarget_type: %hhu\tcheck_algo: %hhu\n"
 								 "pfs_nmasters: %hhu\tpfs_type: %hhu\tpfs_inum: %lu\tpfs_clid: NOTIMP\tpfs_fsid: NOTIMP\n"
 								 "data_quota: %lu\tunusedB8: %lu\tinode_quota: %lu\tunusedC8: %lu\n"
-								 "pfs_lsnap_tid: %lu\n",
+								 "pfs_lsnap_tid: %lu\n\n",
 								 h2i->version, h2i->pfs_subtype, h2i->uflags, h2i->rmajor, h2i->rminor, h2i->ctime,
 								 h2i->mtime, h2i->atime, h2i->btime, h2i->type, h2i->op_flags, h2i->cap_flags,
 								 h2i->mode, h2i->inum, h2i->size, h2i->nlinks, h2i->iparent, h2i->name_key, 
