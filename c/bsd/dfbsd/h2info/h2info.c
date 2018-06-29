@@ -113,15 +113,13 @@ fsinfo(char **filesystems, bool walk) {
 	 */
 	if (walk) { 
 		if ((fscount = getfsstat(fs, fsbufsize, flags)) > 0) { 
-			fprintf(stderr,"found %d filesystems\n",fscount);
 			if ((fs = calloc(sizeof(struct statfs *),(size_t)fscount)) == NULL) { 
 				return(-1);
 			}
 			fsbufsize = (sizeof(*fs) * fscount);
 		}
 		if ((fscount = getfsstat(fs, fsbufsize, flags)) <= 0) { 
-			fprintf(stderr,"Something went wrong collecting statfs structs!\n");
-			return(-1);
+			err(errno, "getfsstat");
 		} else { 
 			for (flags = 0; flags < fscount; flags++) { 
 				if (h2check(&fs[flags])) { 
@@ -137,8 +135,7 @@ fsinfo(char **filesystems, bool walk) {
 		}
 	} else { 
 		if ((fs = calloc(sizeof(struct statfs *), 1)) == NULL) { 
-			fprintf(stderr,"Out of memory!\n");
-			return(-1);
+			err(errno, "calloc");
 		}
 
 		for (; *filesystems != NULL; filesystems++) {
@@ -167,7 +164,6 @@ h2check(struct statfs *fs) {
 	if (strncmp(fs->f_fstypename,"hammer2",8) == 0) { 
 		return(true);
 	} else { 
-		fprintf(stderr,"%s: is not a HAMMER2 filesystem, skipping...\n", fs->f_mntfromname);
 		return(false);
 	}
 }
@@ -187,15 +183,17 @@ pfsget(char *mountpoint) {
 	fd = 0;
 
 	if ((fd = open(mountpoint, O_RDONLY)) == 0) {
-		err(errno, "%s", mountpoint);
-		return(-1);
+		err(errno, "open(%s)", mountpoint);
 	}
 
-	if ((ioctl(fd, HAMMER2IOC_INODE_GET, &h2inode) == -1) || (ioctl(fd, HAMMER2IOC_REMOTE_SCAN) == -1)) { 
-		err(errno, "%s",mountpoint);
-		return(-1);
+	if (ioctl(fd, HAMMER2IOC_INODE_GET, &h2inode) != -1) {
+		//if (ioctl(fd, HAMMER2IOC_REMOTE_SCAN) != -1) { 
+			pfsprint(mountpoint, &h2inode.ip_data.u.blockset.blockref[0], NULL, &h2inode.ip_data.meta);
+//		} else { 
+//			err(errno,"HAMMER2IOC_REMOTE_SCAN %s", mountpoint);
+//		}
 	} else { 
-		pfsprint(mountpoint, &h2inode.ip_data.u.blockset.blockref[0], &h2remote.copy1, &h2inode.ip_data.meta);
+		err(errno,"HAMMER2IOC_INODE_GET %s", mountpoint);
 	}
 	
 	memset(&h2inode, 0, sizeof(h2inode));
@@ -221,12 +219,13 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 								 h2br->vradix, h2br->flags, h2br->leaf_count, h2br->key,
 								 h2br->mirror_tid, h2br->modify_tid, h2br->data_off, h2br->update_tid);
 
-	fprintf(stdout,"copyid: %hhu\tinprog: %hhu\tchain_to: %hhu\tchain_from: %hhu\n"
+	/* fprintf(stdout,"copyid: %hhu\tinprog: %hhu\tchain_to: %hhu\tchain_from: %hhu\n"
 			           "flags: %u\terror: %hhu\tpriority: %hhu\tremote_pfs_type: %hhu\n"
 								 "pfs_clid: %s\tlabel: %s\tpath: %s\n",
 								 h2vc->copyid, h2vc->inprog, h2vc->chain_to, h2vc->chain_from,
 								 h2vc->flags, h2vc->error, h2vc->priority, h2vc->remote_pfs_type,
 								 "NOTIMP", h2vc->label, h2vc->path);
+	*/
 
 	fprintf(stdout,"version: %u\tpfs_subtype: %hhu\tuflags: %u\trmajor: %u\n"
 			           "rminor: %u\tctime: %lu\tmtime: %lu\tatime: %lu\tbtime: %lu\n"
