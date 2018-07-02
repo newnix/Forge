@@ -90,8 +90,6 @@ main(int argc, char **argv) {
 	} else { 
 		return(fsinfo(argv, walk));
 	}
-	/* should not be reachable */
-	return(0);
 }
 
 /*
@@ -177,7 +175,6 @@ h2check(struct statfs *fs) {
 int
 pfsget(char *mountpoint) {
 	hammer2_ioc_inode_t h2inode;
-	hammer2_ioc_remote_t h2remote;
 	int fd;
 
 	fd = 0;
@@ -197,7 +194,6 @@ pfsget(char *mountpoint) {
 	}
 	
 	memset(&h2inode, 0, sizeof(h2inode));
-	memset(&h2remote, 0, sizeof(h2remote));
 	close(fd);
 	return(0);
 }
@@ -211,7 +207,7 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 	 */
 	fprintf(stdout,"HAMMER2 filesystem information for %s:\n"
 			           "--------------------------------------------------\n"
-								 "type: %hhu\tmethods: %u\tcopyid: %u\tkeybits: %u\n"
+								 "type: %hhu \tmethods: %u\tcopyid: %u\tkeybits: %u\n"
 								 "vradix: %u\tflags: %u\tleaf_count: %u\tkey: %lu\n"
 								 "mirror_tid: %lu\tmodify_tid: %lu\tdata_off: %lu\n"
 								 "update_tid: %lu\t",mountpoint,
@@ -228,6 +224,11 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 	*/
 
 	fprintf(stdout,"version: %u\tpfs_subtype: %hhu\tuflags: %u\trmajor: %u\n"
+								 /* 
+									* These timestamps have oddly high values, likely need to do some transformation on them
+									* to convert back to real times properly
+									* May need to talk to dillon@ to get a better idea of what's going on here
+									*/
 			           "rminor: %u\tctime: %lu\tmtime: %lu\tatime: %lu\tbtime: %lu\n"
 								 "uid: NOTIMP\tgid: NOTIMP\ttype: %hhu\top_flags: %hhu\n"
 								 "cap_flags: %u\tmode: %u\tinum: %lu\tsize: %lu\n"
@@ -250,6 +251,7 @@ __attribute__((noreturn)) usage(void) {
 			           "%s [-hl] PFS ...\n"
 			           "\t-h  This usage information\n"
 								 "\t-l  Walk through ALL HAMMER2 filesystems currently mounted (extremely verbose)\n"
+								 "\tNote: You may need privilege escalation for this tool to work properly!\n"
 								 ,__progname,__progname);
 	exit(0);
 }
