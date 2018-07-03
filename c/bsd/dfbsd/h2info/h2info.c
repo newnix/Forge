@@ -210,7 +210,7 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 								 "type: %hhu \tmethods: %u\tcopyid: %u\tkeybits: %u\n"
 								 "vradix: %u\tflags: %u\tleaf_count: %u\tkey: %lu\n"
 								 "mirror_tid: %lu\tmodify_tid: %lu\tdata_off: %lu\n"
-								 "update_tid: %lu\t",mountpoint,
+								 "update_tid: %lu\n",mountpoint,
 								 h2br->type, h2br->methods, h2br->copyid, h2br->keybits,
 								 h2br->vradix, h2br->flags, h2br->leaf_count, h2br->key,
 								 h2br->mirror_tid, h2br->modify_tid, h2br->data_off, h2br->update_tid);
@@ -225,9 +225,11 @@ pfsprint(char *mountpoint, hammer2_blockref_t *h2br, hammer2_volconf_t *h2vc, ha
 
 	fprintf(stdout,"version: %u\tpfs_subtype: %hhu\tuflags: %u\trmajor: %u\n"
 								 /* 
-									* These timestamps have oddly high values, likely need to do some transformation on them
-									* to convert back to real times properly
-									* May need to talk to dillon@ to get a better idea of what's going on here
+									* Timestamps are generated with getmicrotime(9), which 
+									* populates a timeval struct, which then is used in the following equation:
+									* timestamp = (unsigned long)tv.tv_sec * 1000000 + tv.tv_usec
+									* so a simple divide by 1M should provide the value as seconds in an accurate enough
+									* representation of the actual timestamp.
 									*/
 			           "rminor: %u\tctime: %lu\tmtime: %lu\tatime: %lu\tbtime: %lu\n"
 								 "uid: NOTIMP\tgid: NOTIMP\ttype: %hhu\top_flags: %hhu\n"

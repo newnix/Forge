@@ -13,6 +13,7 @@ LIBS = -L. -L/usr/lib -L/usr/local/lib
 
 # Flags shared between C and C++
 DBG = gdb
+DBGFLAGS = -g${DBG}
 CLANGFLAGS = -Wall -Wextra -Weverything -pedantic -std=c99 -Oz -fpic -fpie -fPIE -fPIC \
 				 -march=native -mtune=native -z relro -z now -z combreloc \
 				 -Wl,${LDFLAGS} -pipe -fstrict-aliasing
@@ -46,7 +47,10 @@ help:
 build: ${SRC}
 	$(CC) -o $(TARGET) $(CFLAGS) $(INCS) $(LIBS) ${SRC}
 
-debug: build
+build-dbg: ${SRC}
+	$(CC) -o $(TARGET) $(DBGFLAGS) $(CFLAGS) $(INCS) $(LIBS) ${SRC}
+
+debug: build-dbg
 	@mkdir -p ${PREFIX}${DESTDIR}
 	@chown ${USER}:${GROUP} ${TARGET}
 	@chmod ${MODE} ${TARGET}
