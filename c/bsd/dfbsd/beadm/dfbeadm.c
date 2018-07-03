@@ -42,6 +42,8 @@
  * make testing new builds almost completely painless
  */
 
+#include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,6 +65,10 @@ main(int argc, char **argv) {
 			case 'c':
 				create(optarg);
 				break;
+			/*
+			 * TODO: Add a config file to read, so users can specify which filesystems they actually want managed
+			 * use either '-f' or '-C'
+			 */
 			case 'd':
 				deactivate(optarg);
 				break;

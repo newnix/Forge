@@ -4,14 +4,18 @@
 #define BESEP '-'
 #define TMAX 18
 
-/* necessary inclusions for filesystem data */
+/* necessary inclusions for vfs layer data */
 #include <sys/mount.h>
 #include <sys/param.h>
 #include <sys/ucred.h>
 
+/* HAMMER2 specific needs */
+#include <vfs/hammer2/hammer2_ioctl.h>
+
 extern char *__progname;
 
 static void trunc(char *longstring);
+static bool ish2(char *mountpoint);
 /*
  * activate a given boot environment
  */
@@ -74,9 +78,11 @@ create(char *label) {
 			 * This could be a strncmp() call, but that can't be the most efficient 
 			 * means of doing this. 
 			 */
-			snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
-			fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
-			memset(befs, 0, MNAMELEN);
+			if (ish2(filesystems[i].f_mntonname)) {
+				snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
+				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
+				memset(befs, 0, MNAMELEN);
+			}
 		}
 	}
 
@@ -89,6 +95,28 @@ create(char *label) {
 static int
 deactivate(char *label) { 
 	return(0);
+}
+
+/*
+ * Determine if the given mountpoint is a HAMMER2 filesystem 
+ */
+static bool
+ish2(char *mountpoint) {
+	int mp;
+	hammer2_ioc_inode_t h2ino;
+
+	mp = 0;
+
+	if ((mp = open(mountpoint, O_RDONLY)) == 0) {
+		return(false);
+	}
+	if (ioctl(mp, HAMMER2IOC_INODE_GET, &h2ino) < 0) {
+		close(mp);
+		return(false);
+	} else {
+		close(mp);
+		return(true);
+	}
 }
 
 /*
@@ -122,6 +150,10 @@ rmsnap(char *pfs) {
  */
 static int
 snapfs(char *fstarget, char *label) { 
+	/* 
+	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
+	 * the hammer2 utility implementation.
+	 */
 	return(0);
 }
 
