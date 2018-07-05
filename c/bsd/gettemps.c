@@ -43,38 +43,49 @@ char *gettemps(int ncpu);
 
 int
 main(int ac, char **av) { 
-	int mib[6] = { 0, 0, 0, 0, 0, 0 };
-	size_t miblen;
+	int ncpu, mib[6] = { 0, 0, 0, 0, 0, 0 };
+	size_t cpusize, miblen;
 
+	cpusize = sizeof(ncpu);
 	miblen = sizeof(mib);
+	ncpu = 0;
+
 	for (++av; *av != NULL; av++) { 
 		sysctlnametomib(*av, mib, &miblen);
 		fprintf(stdout,"%s = %d.%d.%d.%d.%d.%d\n", *av, mib[0], mib[1], mib[2], mib[3], mib[4], mib[5]);
 		memset(mib, 0, miblen);
 	}
-	char *test = gettemps(4);
-	fprintf(stdout, "%s\n", test);
+
+/* 
+ * this part actually tries to get the cpu temp info
+ */
+	mib[0] = 6, mib[1] = 3, mib[2] = 0, mib[3] = 0, mib[4] = 0, mib[5] = 0;
+	sysctl(mib, miblen/2, &ncpu, &cpusize, &ncpu, cpusize);
+	char *test = gettemps(ncpu);
+	fprintf(stdout, "%d cores scanned:\n\t%s\n", ncpu, test);
 	return(0);
 }
 
 char *
 gettemps(int ncpu) { 
-	int cpu, offset;
+	int cpu;
 	int thermalmib[5] = { 6, 278, 0, 256, 0 };
 	size_t mibsize, oldlen, newlen;
 	double oldtemp, newtemp;
 	static char temps[MAXSTR];
+	char buf[32];
 
 	mibsize = sizeof(thermalmib);
 	cpu = 0; 
-	newlen = oldlen = MAXSTR;
+	newlen = oldlen = sizeof(oldtemp);
 
 	for (; cpu < ncpu; cpu++) { 
-		thermalmib[3] = cpu;
+		thermalmib[2] = cpu;
 		sysctl(thermalmib, mibsize, &oldtemp, &oldlen, &newtemp, newlen);
-		fprintf(stdout, "CPU %d: %f | %f\n", cpu, oldtemp, newtemp);
-		offset = snprintf(temps, MAXSTR, "%f | %f ", oldtemp, newtemp);
-		*temps += (offset - 1);
+		fprintf(stdout, "CPU %d: %.2f | %.2f\n", cpu, oldtemp, newtemp);
+		/* unlikely to ever overrun */
+		snprintf(buf, sizeof(buf), "core[%d]: %0.2f ", cpu, newtemp);
+		strlcat(temps, buf, MAXSTR);
 	}
 
 	return(temps);
