@@ -43,48 +43,57 @@ char *gettemps(int ncpu);
 
 int
 main(int ac, char **av) { 
-	int ncpu, mib[6] = { 0, 0, 0, 0, 0, 0 };
+	int  mib[6] = { 0, 0, 0, 0, 0 };
 	size_t cpusize, miblen;
 
-	cpusize = sizeof(ncpu);
 	miblen = sizeof(mib);
-	ncpu = 0;
 
 	for (++av; *av != NULL; av++) { 
-		sysctlnametomib(*av, mib, &miblen);
-		fprintf(stdout,"%s = %d.%d.%d.%d.%d.%d\n", *av, mib[0], mib[1], mib[2], mib[3], mib[4], mib[5]);
+		if (sysctlnametomib(*av, mib, &miblen) == -1) { 
+			fprintf(stderr, "sysctlnametomib(%s) failed!\n", *av);
+			memset(mib, 0, miblen);
+			break;
+		}
+		fprintf(stdout,"%s = %d.%d.%d.%d\n", *av, mib[0], mib[1], mib[2], mib[3]);
 		memset(mib, 0, miblen);
 	}
 
 /* 
  * this part actually tries to get the cpu temp info
  */
-	mib[0] = 6, mib[1] = 3, mib[2] = 0, mib[3] = 0, mib[4] = 0, mib[5] = 0;
-	sysctl(mib, miblen/2, &ncpu, &cpusize, &ncpu, cpusize);
-	char *test = gettemps(ncpu);
-	fprintf(stdout, "%d cores scanned:\n\t%s\n", ncpu, test);
+	int mib2[6] = { CTL_HW, HW_NCPU, 0, 0 };
+	char ncpu[6];
+	miblen = sizeof(mib2);
+	cpusize = sizeof(ncpu);
+
+	sysctl(mib2, miblen, &ncpu, &cpusize, NULL, 0);
+	char *test = gettemps(4);
+	fprintf(stdout, "%s cores scanned:\n\t%s\n", ncpu, test);
 	return(0);
 }
 
 char *
 gettemps(int ncpu) { 
 	int cpu;
-	int thermalmib[5] = { 6, 278, 0, 256, 0 };
-	size_t mibsize, oldlen, newlen;
-	double oldtemp, newtemp;
+	int thermalmib[6] = { 6, 278, 0, 256 };
+	size_t mibsize, oldlen;
+	double oldtemp;
 	static char temps[MAXSTR];
 	char buf[32];
 
-	mibsize = sizeof(thermalmib);
 	cpu = 0; 
-	newlen = oldlen = sizeof(oldtemp);
+	mibsize = sizeof(thermalmib);
+	oldlen = sizeof(oldtemp);
 
 	for (; cpu < ncpu; cpu++) { 
 		thermalmib[2] = cpu;
-		sysctl(thermalmib, mibsize, &oldtemp, &oldlen, &newtemp, newlen);
-		fprintf(stdout, "CPU %d: %.2f | %.2f\n", cpu, oldtemp, newtemp);
+		/* query only requires no newp/newlen */
+		if (sysctl(thermalmib, mibsize, &oldtemp, &oldlen, NULL, 0) == -1) { 
+			fprintf(stderr, "Can't get temp of CPU[%d]!\n", cpu);
+		}
+		fprintf(stdout, "CPU %d: %.2f | \n", cpu, oldtemp);
 		/* unlikely to ever overrun */
-		snprintf(buf, sizeof(buf), "core[%d]: %0.2f ", cpu, newtemp);
+		snprintf(buf, sizeof(buf), "core[%d]: %0.2f | ", cpu, oldtemp);
 		strlcat(temps, buf, MAXSTR);
 	}
 
