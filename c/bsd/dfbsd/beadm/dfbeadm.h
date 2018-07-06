@@ -106,7 +106,12 @@ ish2(char *mountpoint) {
 	hammer2_ioc_inode_t h2ino;
 
 	mp = 0;
-
+	/* 
+	 * additional possible utility is the version info
+	 * HAMMER2IOC_VERSION_GET, that wouuld return a 
+	 * hammer2_ioc_version_t version.version integer
+	 * if successful
+	 */
 	if ((mp = open(mountpoint, O_RDONLY)) == 0) {
 		return(false);
 	}
@@ -153,8 +158,29 @@ snapfs(char *fstarget, char *label) {
 	/* 
 	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
 	 * the hammer2 utility implementation.
+	 * TODO: Turn this function into an abstraction for any CoW filesystem, selected at compile-time
+	 * then if I'm able, possibly even available at runtime should multiple CoW filesystems be available
+	 * though this could be expanded to any filesystem with the same functionality of snapshots. Possibly 
+	 * including both HAMMER and UFS in later versions
 	 */
-	return(0);
+	hammer2_ioc_pfs_t pfs;
+	int fd, e;
+	time_t time;
+
+	e = fd = 0;
+	memset(&pfs, 0, sizeof(pfs));
+
+	if (label != NULL) { 
+		snprintf(pfs.name, sizeof(pfs.name), "%s-%s", fstarget, label);
+		fprintf(stderr, "%s\n", pfs.name);
+		/* We use the following ioctl() to actually create a snapshot */
+		//if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
+			e = 0;
+		//}
+	} else {
+		e = 1;
+	}
+	return(e);
 }
 
 /*
@@ -172,12 +198,12 @@ static void __attribute__((noreturn))
 usage(void) { 
 	fprintf(stderr,"%s: Utility to create HAMMER2 boot environments.\n",__progname);
 	fprintf(stderr,"Usage:\n"
-			           "  -a  Activate the given boot environment\n"
-								 "  -c  Create a new boot environment with the given label\n"
-								 "  -d  Destroy the given boot environment\n"
-								 "  -h  This help text\n"
-								 "  -l  List existing boot environments\n"
-								 "  -r  Remove the given boot environment\n");
+	               "  -a  Activate the given boot environment\n"
+	               "  -c  Create a new boot environment with the given label\n"
+	               "  -d  Destroy the given boot environment\n"
+	               "  -h  This help text\n"
+	               "  -l  List existing boot environments\n"
+	               "  -r  Remove the given boot environment\n");
 	exit(0);
 }
 #endif
