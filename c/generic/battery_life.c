@@ -18,14 +18,15 @@
  * int sysctlnametomib(const char *name, int *mibp, size_t *sizep);
  */
 
-void
-print_battery(void);
+void print_battery(void);
+void dwmstatus(void);
 
 int
 main(void){
 	/* This is where the magic happens */
 	(void)fprintf(stdout,"Attempting to grab data from `sysctl hw.acpi.battery.life`...\n");
 	print_battery();
+	dwmstatus();
 	return 0;
 }
 
@@ -56,7 +57,22 @@ print_battery(void){
 		perror("sysctl");
 		(void)fprintf(stderr,"ERROR: could not retrieve data for OID \"hw.acpi.battery.time\"\n");
 	}
-	(void)fprintf(stdout,"hw.acpi.battery.life = %d\nhw.acpi.battery.time = %d\n", value, value2);
+	(void)fprintf(stdout,"hw.acpi.battery.life = %3d\nhw.acpi.battery.time = %3d\n", value, value2);
 	(void)fprintf(stdout,"hw.acpi.battery.life = %d.%d.%d.%d.%d\nhw.acpi.battery.time = %d.%d.%d.%d.%d\n",
 		mib[0],mib[1],mib[2],mib[3],mib[4],mib2[0],mib2[1],mib2[2],mib2[3],mib2[4]);
+}
+
+void
+dwmstatus(void) { 
+	size_t len = 4;
+	int   pctmib[4] = { 6, 306, 274, 256 } ;
+	int   lifmib[4] = { 6, 306, 274, 257 } ;
+	int pct, lif;
+
+	pct = lif = 0;
+
+	sysctl(pctmib, len, &pct, &len, NULL, 0);
+	sysctl(lifmib, len, &lif, &len, NULL, 0);
+
+	fprintf(stdout,"\nBattery: %3d%%/%3dm\n", pct, lif);
 }
