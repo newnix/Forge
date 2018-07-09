@@ -61,7 +61,7 @@ extern char *__progname;
 
 int fsinfo(char **filesystems, bool walk);
 bool h2check(struct statfs *fs);
-int pfsget(char *mountpoint);
+int pfsget(struct statfs *mountpoint);
 void pfsprint(char *mountpoint, hammer2_blockref_t *h2blockref, hammer2_volconf_t *h2volconf, hammer2_inode_meta_t *h2inode, hammer2_ioc_pfs_t *h2pfs);
 static void __attribute__((noreturn)) usage(void);
 
@@ -121,7 +121,7 @@ fsinfo(char **filesystems, bool walk) {
 		} else { 
 			for (flags = 0; flags < fscount; flags++) { 
 				if (h2check(&fs[flags])) { 
-					if (pfsget(fs[flags].f_mntonname) == -1) { 
+					if (pfsget(&fs[flags]) == -1) { 
 						free(fs);
 						return(-1);
 					} else { 
@@ -141,7 +141,7 @@ fsinfo(char **filesystems, bool walk) {
 				return(-1);
 			} else { 
 				if (h2check(fs)) { 
-					if (pfsget(fs->f_mntonname) == -1) { 
+					if (pfsget(fs) == -1) { 
 						return(-1);
 					} else { 
 						rptcount++;
@@ -173,30 +173,41 @@ h2check(struct statfs *fs) {
  * Will return a simple status indication of success/fail
  */
 int
-pfsget(char *mountpoint) {
+pfsget(struct statfs *mountpoint) {
 	hammer2_ioc_inode_t h2inode;
 	hammer2_ioc_pfs_t h2pfs;
-	int fd;
+	int fd, fd1;
 
-	fd = 0;
+	fd = fd1 = 0;
 
-	if ((fd = open(mountpoint, O_RDONLY)) <= 0) {
-		err(errno, "open(%s)", mountpoint);
+	if ((fd = open(mountpoint->f_mntonname, O_RDONLY)) <= 0) {
+		err(errno, "open(%s)", mountpoint->f_mntonname);
+	}
+	if ((fd1 = open(mountpoint->f_mntfromname, O_RDONLY)) <= 0) { 
+		err(errno, "open(%s)", mountpoint->f_mntonname);
 	}
 
-	if ((ioctl(fd, HAMMER2IOC_INODE_GET, &h2inode) != -1) && (ioctl(fd, HAMMER2IOC_PFS_GET, &h2pfs) != -1)) {
-		//if (ioctl(fd, HAMMER2IOC_REMOTE_SCAN) != -1) { 
-			pfsprint(mountpoint, &h2inode.ip_data.u.blockset.blockref[0], NULL, &h2inode.ip_data.meta, &h2pfs);
-//		} else { 
-//			err(errno,"HAMMER2IOC_REMOTE_SCAN %s", mountpoint);
-//		}
+
+	if (ioctl(fd, HAMMER2IOC_INODE_GET, &h2inode) != -1) { 
+			/* currently unsure what the difference between lookup and get is o the pfs ioctls */
+			//if (ioctl(fd1, HAMMER2IOC_PFS_LOOKUP, &h2pfs) != -1) { 
+				pfsprint(mountpoint->f_mntonname, &h2inode.ip_data.u.blockset.blockref[0], 
+						NULL, &h2inode.ip_data.meta, &h2pfs);
+		//} else { 
+		//	close(fd);
+		//	close(fd1);
+		//	err(errno, "HAMMER2IOC_PFS_LOOKUP %s", mountpoint->f_mntonname);
+		//}
 	} else { 
-		err(errno,"HAMMER2IOC_INODE_GET %s", mountpoint);
+		close(fd);
+		close(fd1);
+		err(errno,"HAMMER2IOC_INODE_GET %s", mountpoint->f_mntonname);
 	}
 	
 	memset(&h2inode, 0, sizeof(h2inode));
 	memset(&h2pfs, 0, sizeof(h2pfs));
 	close(fd);
+	close(fd1);
 	return(0);
 }
 
