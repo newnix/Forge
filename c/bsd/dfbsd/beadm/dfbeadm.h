@@ -14,8 +14,10 @@
 
 extern char *__progname;
 
-static void trunc(char *longstring);
 static bool ish2(char *mountpoint);
+static void trunc(char *longstring);
+static int snapfs(char *fstarget, char *label);
+
 /*
  * activate a given boot environment
  */
@@ -79,8 +81,22 @@ create(char *label) {
 			 * means of doing this. 
 			 */
 			if (ish2(filesystems[i].f_mntonname)) {
+				/*
+				 * The 'befs' variable should be what's written to /etc/fstab for the device
+				 * name of a given mountpoint, the 'label' variable should get added onto a 
+				 * string that alreadly contains the existing PFS name 
+				 * (minus the old snapshot label, should it exist)
+				 */
 				snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
+				/* 
+				 * There will need to be some extra work in constructing the new PFS
+				 * name, mostly in ensuring the function to do so accurately detects the 
+				 * beginning of the existing boot environment, removes those characters,
+				 * and writes the new boot environment name to the ephemeral pfs struct 
+				 * before taking the snapshot
+				 */
 				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
+				snapfs(filesystems[i].f_mntfromname, label);
 				memset(befs, 0, MNAMELEN);
 			}
 		}
@@ -170,16 +186,26 @@ snapfs(char *fstarget, char *label) {
 	e = fd = 0;
 	memset(&pfs, 0, sizeof(pfs));
 
+	if ((fd = open(fstarget, O_RDONLY)) <= 0) {
+		fprintf(stderr, "Can't open %s!\n%s\n", fstarget, strerror(errno));
+	}
+
 	if (label != NULL) { 
 		snprintf(pfs.name, sizeof(pfs.name), "%s-%s", fstarget, label);
 		fprintf(stderr, "%s\n", pfs.name);
 		/* We use the following ioctl() to actually create a snapshot */
-		//if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
+		if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
 			e = 0;
-		//}
+			close(fd);
+		} else {
+			fprintf(stderr, "H2 Snap failed!\n%s\n",strerror(errno));
+			close(fd);
+		}
 	} else {
+		close(fd);
 		e = 1;
 	}
+	close(fd);
 	return(e);
 }
 
