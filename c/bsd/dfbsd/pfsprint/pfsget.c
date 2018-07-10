@@ -42,18 +42,19 @@
 
 int pfsget(char *mountpoint);
 void pfsprint(hammer2_ioc_pfs_t *pfs);
-void __attribute__((noreturn)) usage();
+void __attribute__((noreturn)) usage(void);
 
-char *__progname;
+extern char *__progname;
 
 int 
 main(int ac, char **av) {
+	av++;
 
-	if (strncmp(*av, "help", 5)) {
+	if (strncmp(*av, "help", 5) == 0) {
 		usage();
 	}
 
-	for (++av; *av != NULL; av++) {
+	for (; *av != NULL; av++) {
 		fprintf(stdout, "Found information for %d PFSes in %s\n", pfsget(*av), *av);
 	}
 	return(0);
@@ -96,6 +97,6 @@ pfsprint(hammer2_ioc_pfs_t *pfs) {
 void __attribute__((noreturn))
 usage() {
 	fprintf(stderr, "%s: Print information for all PFSes found at the given mountpoint(s)\n"
-	                "  ex: %s /home /build\n", __progname, __progname);
+	                "  eg: %s /home /build\n", __progname, __progname);
 	exit(0);
 }
