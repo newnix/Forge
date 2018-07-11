@@ -1,6 +1,7 @@
 #ifndef DFBEADM
 #define DFBEADM
 
+#define PFSDELIM '@'
 #define BESEP '-'
 #define TMAX 18
 
@@ -12,11 +13,23 @@
 /* HAMMER2 specific needs */
 #include <vfs/hammer2/hammer2_ioctl.h>
 
-extern char *__progname;
+/* this struct should be used for easier passing of necessary information */
+typedef struct snaptarget {
+	struct snaptarget *next; 
+	struct snaptarget *prev;
+	char current[MNAMELEN]; /* current pfs.name value */
+	char newfs[MNAMELEN]; /* desired pfs.name value */
+	char device[MNAMELEN]; /* where this pfs is physically */
+	char mountpoint[MNAMELEN]; /* where it's mounted */
+} snapt;
 
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
-static int snapfs(char *fstarget, char *label);
+static int snapfs(snapt *snapfs);
+static void mktarget(struct statfs *target, char *label);
+
+extern char *__progname;
+snapt **origin;
 
 /*
  * activate a given boot environment
@@ -96,7 +109,7 @@ create(char *label) {
 				 * before taking the snapshot
 				 */
 				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
-				snapfs(filesystems[i].f_mntfromname, label);
+				mktarget(&filesystems[i], label);
 				memset(befs, 0, MNAMELEN);
 			}
 		}
@@ -149,6 +162,56 @@ list(void) {
 	return(0);
 }
 
+/* 
+ * basically create a node in a doubly linked list
+ */
+static void
+mktarget(struct statfs *target, char *label) {
+	int i,j;
+	bool pfs;
+	snapt *snapfs;
+
+	snapfs = NULL;
+	pfs = false;
+
+	/* ensure we have a clean slate */
+	if ((snapfs = calloc(sizeof(snapt *), 1)) == -1) {
+		err(errno, "%s: calloc", __progname);
+	}
+
+	snapfs->next = NULL; /* always assume we're at the end of the chain */
+
+	if (*origin == NULL) {
+		*origin = snapfs;
+		*origin.prev = NULL;
+	} else {
+		snapfs->prev = *origin;
+		*origin->next = snapfs;
+		*origin = snapfs;
+	}
+
+	/* now we fill out the more important parts of the struct */
+	strlcpy(snapfs->mountpoint, target->f_mntonname, MNAMELEN);
+	/* and the slightly trickier part, actually getting the device and pfs.name values separated */
+	for (i = j = 0; label[i] != 0; i++) {
+		if (label[i] == PFSDELIM) { 
+			pfs = true; 
+			i++; 
+			snapfs->device[j] = 0;
+			j ^= j; 
+		}
+
+		if (pfs) {
+			snapfs->newfs[j] = label[i];
+			j++;
+		} else {
+			snapfs->device[j] = label[i];
+			j++;
+		}
+	}
+	snapfs->newfs[j] = 0;
+}
+
 /*
  * delete a given boot environment
  */
@@ -170,7 +233,7 @@ rmsnap(char *pfs) {
  * to create a snapshot with the given label
  */
 static int
-snapfs(char *fstarget, char *label) { 
+snapfs(snapt *fstarget) { 
 	/* 
 	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
 	 * the hammer2 utility implementation.
@@ -181,7 +244,6 @@ snapfs(char *fstarget, char *label) {
 	 */
 	hammer2_ioc_pfs_t pfs;
 	int fd, e;
-	time_t time;
 
 	e = fd = 0;
 	memset(&pfs, 0, sizeof(pfs));
@@ -190,8 +252,8 @@ snapfs(char *fstarget, char *label) {
 		fprintf(stderr, "Can't open %s!\n%s\n", fstarget, strerror(errno));
 	}
 
-	if (label != NULL) { 
-		snprintf(pfs.name, sizeof(pfs.name), "%s-%s", fstarget, label);
+	if (fstarget->newfs != NULL) { 
+		snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
 		fprintf(stderr, "%s\n", pfs.name);
 		/* We use the following ioctl() to actually create a snapshot */
 		if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {

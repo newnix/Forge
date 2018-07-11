@@ -42,6 +42,10 @@
  * make testing new builds almost completely painless
  */
 
+#ifdef _LINUX
+/* needed for strlcpy/strlcat */
+#include <bsd/string.h>
+#endif
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
