@@ -29,7 +29,7 @@ static int snapfs(snapt *snapfs);
 static void mktarget(struct statfs *target, char *label);
 
 extern char *__progname;
-snapt **origin;
+snapt *origin;
 
 /*
  * activate a given boot environment
@@ -71,28 +71,11 @@ create(char *label) {
 		if ((filesystems = calloc(sizeof(struct statfs *), fscount)) == NULL) {
 			return(-1);
 		}
-
-		/*
-		 * for the time being, I'm only going to be concerned with UTC/C time 
-		 * additionally, the timestamp in the name is unlikely to be necessary,
-		 * as HAMMER2 most likely will have timestamps available in the metadata
-		 * It looks like the timestamp data I'll need/want is going to exist in the 
-		 * struct hammer2_inode_meta members, though there's likely some pfs-specific 
-		 * values tracked and updated as well that will need to be hunted down so they
-		 * can be accessed and used appropriately.
-		 */
 		size = (sizeof(*filesystems) * fscount);
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
 		for (; i < fscount; i++) {
-			/* 
-			 * On my desktop HAMMER2 was f_type 9, but on my laptop it's 5.
-			 * will need to look into a more reliable way to determine if I'm 
-			 * working with a HAMMER2 pfs
-			 * This could be a strncmp() call, but that can't be the most efficient 
-			 * means of doing this. 
-			 */
 			if (ish2(filesystems[i].f_mntonname)) {
 				/*
 				 * The 'befs' variable should be what's written to /etc/fstab for the device
@@ -175,19 +158,8 @@ mktarget(struct statfs *target, char *label) {
 	pfs = false;
 
 	/* ensure we have a clean slate */
-	if ((snapfs = calloc(sizeof(snapt *), 1)) == -1) {
+	if ((snapfs = calloc(sizeof(snapt *), 1)) == NULL) {
 		err(errno, "%s: calloc", __progname);
-	}
-
-	snapfs->next = NULL; /* always assume we're at the end of the chain */
-
-	if (*origin == NULL) {
-		*origin = snapfs;
-		*origin.prev = NULL;
-	} else {
-		snapfs->prev = *origin;
-		*origin->next = snapfs;
-		*origin = snapfs;
 	}
 
 	/* now we fill out the more important parts of the struct */
@@ -248,25 +220,20 @@ snapfs(snapt *fstarget) {
 	e = fd = 0;
 	memset(&pfs, 0, sizeof(pfs));
 
-	if ((fd = open(fstarget, O_RDONLY)) <= 0) {
-		fprintf(stderr, "Can't open %s!\n%s\n", fstarget, strerror(errno));
+	if ((fd = open(fstarget->mountpoint, O_RDONLY)) <= 0) {
+		fprintf(stderr, "Can't open %s!\n%s\n", fstarget->mountpoint, strerror(errno));
 	}
 
-	if (fstarget->newfs != NULL) { 
-		snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
-		fprintf(stderr, "%s\n", pfs.name);
-		/* We use the following ioctl() to actually create a snapshot */
-		if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
-			e = 0;
-			close(fd);
-		} else {
-			fprintf(stderr, "H2 Snap failed!\n%s\n",strerror(errno));
-			close(fd);
-		}
-	} else {
-		close(fd);
-		e = 1;
-	}
+	snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
+	fprintf(stderr, "%s\n", pfs.name);
+	/* We use the following ioctl() to actually create a snapshot */
+	//if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
+	//	e = 0;
+	//	close(fd);
+	//} else {
+	//	fprintf(stderr, "H2 Snap failed!\n%s\n",strerror(errno));
+	//	close(fd);
+	//}
 	close(fd);
 	return(e);
 }
