@@ -63,6 +63,9 @@ int
 main(int argc, char **argv) { 
 	/* obviously, this is where we get some basic data from the user */
 	int ch;
+
+	/* bail early */
+	if ( argc == 1 ) { usage(); }
 	while((ch = getopt(argc,argv,"a:c:d:hlnr:")) != -1) { 
 		switch(ch) { 
 			case 'a': 

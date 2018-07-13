@@ -15,8 +15,6 @@
 
 /* this struct should be used for easier passing of necessary information */
 typedef struct snaptarget {
-	struct snaptarget *next; 
-	struct snaptarget *prev;
 	char current[MNAMELEN]; /* current pfs.name value */
 	char newfs[MNAMELEN]; /* desired pfs.name value */
 	char device[MNAMELEN]; /* where this pfs is physically */
@@ -26,10 +24,9 @@ typedef struct snaptarget {
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
 static int snapfs(snapt *snapfs);
-static void mktarget(struct statfs *target, char *label);
+static void mktargets(snapt *targets, struct statfs *target, int fscount, char *label);
 
 extern char *__progname;
-snapt *origin;
 
 /*
  * activate a given boot environment
@@ -56,10 +53,12 @@ create(char *label) {
 	long size;
 	int fscount, i;
 	struct statfs *filesystems;
+	snapt *snaptargets;
 	/* first we need to get a list of currently mounted HAMMER2 filesystems */
 	fscount = i = 0;
 	size = 0;
 	filesystems = NULL;
+	snaptargets = NULL;
 
 	if (strlen(label) >= MNAMELEN) { 
 		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
@@ -75,6 +74,10 @@ create(char *label) {
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
+		if ((snaptargets = calloc(sizeof(snapt *), fscount)) == NULL) { 
+			free(filesystems);
+			err(errno, "calloc");
+		}
 		for (; i < fscount; i++) {
 			if (ish2(filesystems[i].f_mntonname)) {
 				/*
@@ -92,12 +95,14 @@ create(char *label) {
 				 * before taking the snapshot
 				 */
 				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
-				mktarget(&filesystems[i], label);
 				memset(befs, 0, MNAMELEN);
 			}
 		}
+		mktargets(snaptargets, filesystems, fscount, label);
 	}
 
+	free(filesystems);
+	free(snaptargets);
 	return(0);
 }
 
@@ -149,39 +154,46 @@ list(void) {
  * basically create a node in a doubly linked list
  */
 static void
-mktarget(struct statfs *target, char *label) {
-	int i,j;
+mktargets(snapt *targets, struct statfs *target, int fscount, char *label) {
+	int i, j, k;
 	bool pfs;
-	snapt *snapfs;
 
-	snapfs = NULL;
 	pfs = false;
 
-	/* ensure we have a clean slate */
-	if ((snapfs = calloc(sizeof(snapt *), 1)) == NULL) {
-		err(errno, "%s: calloc", __progname);
-	}
+	/* fill in the structs */
+	for(k = 0; k < fscount; k++) { 
+		if (ish2(target[k].f_mntonname)) { 
+			strlcpy(targets[k].mountpoint, target[k].f_mntonname, MNAMELEN);
+			strlcpy(targets[k].newfs, label, MNAMELEN);
+			/* 
+			 * For reliability, at least with HAMMER2, we should instead grab the 
+			 * location of PFSDELIM. Which can then allow two separate loops to be 
+			 * run, potentially concurrently, to fill out the two remaining fields
+			 * targets[k].current and targets[k].device
+			 */
+			for (i = j = 0; target[k].f_mntfromname[i] != 0; i++) {
+				if (target[k].f_mntfromname[i] == PFSDELIM) { 
+					pfs = true; 
+					i++; 
+					targets[k].device[j] = 0;
+					j ^= j; 
+				}
 
-	/* now we fill out the more important parts of the struct */
-	strlcpy(snapfs->mountpoint, target->f_mntonname, MNAMELEN);
-	/* and the slightly trickier part, actually getting the device and pfs.name values separated */
-	for (i = j = 0; label[i] != 0; i++) {
-		if (label[i] == PFSDELIM) { 
-			pfs = true; 
-			i++; 
-			snapfs->device[j] = 0;
-			j ^= j; 
-		}
-
-		if (pfs) {
-			snapfs->newfs[j] = label[i];
-			j++;
-		} else {
-			snapfs->device[j] = label[i];
-			j++;
+				if (pfs) {
+					targets[k].current[j] = target[k].f_mntfromname[i];
+					j++;
+				} else {
+					targets[k].device[j] = target[k].f_mntfromname[i];
+					j++;
+				}
+			}
+			targets[k].newfs[j] = 0;
+			fprintf(stderr,"targets[%d]:\n---------------\n"
+										 "current: %s\nnewfs: %s\ndevice: %s\nmountpoint: %s\n"
+										 "---------------\n",
+										 k, targets[k].current, targets[k].newfs, targets[k].device, targets[k].mountpoint);
 		}
 	}
-	snapfs->newfs[j] = 0;
 }
 
 /*
