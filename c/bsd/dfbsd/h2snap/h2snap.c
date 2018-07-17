@@ -31,19 +31,25 @@
  * DAMAGE.
  */
 
+#include <err.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#include <sys/mount.h>
+#include <sys/param.h>
+
 #include <vfs/hammer2/hammer2_ioctl.h>
 
 #define PFSDELIM '@'
-#define BESEP '-'
 
 extern char *__progname;
 
-int getpfs(char *mountpoint);
+int getpfs(char *mountpoint, char *label);
 int snapfs(hammer2_ioc_pfs_t *pfs, char *label);
 void __attribute__((noreturn)) usage(void);
 
@@ -68,7 +74,7 @@ main(int ac, char **av) {
 
 	/* now go through and create snapshots */
 	for (; *av != NULL; av++) {
-		getpfs(*av);
+		getpfs(*av, label);
 	}
 
 	return(0);
@@ -80,16 +86,56 @@ main(int ac, char **av) {
  * nonzero number
  */
 int
-getpfs (char *mountpoint) {
-	return(0);
-}
+getpfs (char *mountpoint, char *label) {
+	char curpfs[NAME_MAX];
+	int fd, i, j;
+	struct statfs fs;
+	bool ispfs;
+	hammer2_ioc_pfs_t pfs;
 
-/* 
- * take the pfs pulled up via getpfs() and create a snapshot with the 
- * label of *label
- */
-int
-snapfs (hammer2_ioc_pfs_t *pfs, char *label) {
+	/* ensure everything is zero'd out */
+	fd = 0;
+	ispfs = false;
+	memset(curpfs, 0, NAME_MAX);
+	memset(&pfs, 0, sizeof(pfs));
+	memset(&fs, 0, sizeof(fs));
+
+	if ((fd = open(mountpoint, O_RDONLY)) == -1) {
+		err(errno, "open(%s)", mountpoint);
+	}
+	if (fstatfs(fd, &fs) == -1) {
+		close(fd);
+		err(errno, "fstatfs(%d)", fd);
+	}
+
+	for (i = j = 0; fs.f_mntfromname[i] != 0; i++) {
+		if (ispfs) {
+			curpfs[j] = fs.f_mntfromname[i];
+			j++;
+		}
+		if (fs.f_mntfromname[i] == PFSDELIM) {
+			ispfs = true;
+		}
+	}
+	curpfs[j] = 0;
+
+	strlcpy(pfs.name, curpfs, NAME_MAX);
+	fprintf(stderr, "%s -> %s\n", fs.f_mntfromname, pfs.name);
+
+	/* we need to get the current PFS of the given mountpoint */
+	if (ioctl(fd, HAMMER2IOC_PFS_LOOKUP, &pfs) < 0) {
+		close(fd);
+		err(errno, "ioctl(%d, LOOKUP)", fd);
+	}
+	fprintf(stderr, "pfs_type: %hhu\tpfs_subtype: %hhu\npfs_flags: %u\tpfs_name: %s\n",
+	               pfs.pfs_type, pfs.pfs_subtype, pfs.pfs_flags, pfs.name);
+	
+	snprintf(pfs.name, NAME_MAX, "%s-%s", pfs.name, label);
+	if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) < 0) {
+		fprintf(stderr, "Error creating snapshot: %s\n", strerror(errno));
+	}
+
+	close(fd);
 	return(0);
 }
 
