@@ -2,7 +2,7 @@
 #define DFBEADM
 
 #define PFSDELIM '@'
-#define BESEP '-'
+#define BESEP ':'
 #define TMAX 18
 
 /* necessary inclusions for vfs layer data */
@@ -23,8 +23,9 @@ typedef struct snaptarget {
 
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
-static int snapfs(snapt *snapfs);
-static void mktargets(snapt *targets, struct statfs *target, int fscount, char *label);
+/* TODO: replace void pointer with actual type (pfs/snapfs) */
+static int snapfs(void *snapfs, int fscount, char *label);
+static void mktargets(struct statfs *target, int fscount, char *label);
 
 extern char *__progname;
 
@@ -53,12 +54,10 @@ create(char *label) {
 	long size;
 	int fscount, i;
 	struct statfs *filesystems;
-	snapt *snaptargets;
 	/* first we need to get a list of currently mounted HAMMER2 filesystems */
 	fscount = i = 0;
 	size = 0;
 	filesystems = NULL;
-	snaptargets = NULL;
 
 	if (strlen(label) >= MNAMELEN) { 
 		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
@@ -67,18 +66,11 @@ create(char *label) {
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
-		if ((filesystems = calloc(sizeof(struct statfs *), fscount)) == NULL) {
-			return(-1);
-		}
 		size = (sizeof(*filesystems) * fscount);
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
-		if ((snaptargets = calloc(sizeof(snapt *), fscount)) == NULL) { 
-			free(filesystems);
-			err(errno, "calloc");
-		}
-		for (; i < fscount; i++) {
+		for (i = 0; i < fscount; i++) {
 			if (ish2(filesystems[i].f_mntonname)) {
 				/*
 				 * The 'befs' variable should be what's written to /etc/fstab for the device
@@ -98,11 +90,10 @@ create(char *label) {
 				memset(befs, 0, MNAMELEN);
 			}
 		}
-		mktargets(snaptargets, filesystems, fscount, label);
+		//mktargets(filesystems, fscount, label);
 	}
 
 	free(filesystems);
-	free(snaptargets);
 	return(0);
 }
 
@@ -154,46 +145,18 @@ list(void) {
  * basically create a node in a doubly linked list
  */
 static void
-mktargets(snapt *targets, struct statfs *target, int fscount, char *label) {
-	int i, j, k;
-	bool pfs;
-
-	pfs = false;
-
-	/* fill in the structs */
-	for(k = 0; k < fscount; k++) { 
-		if (ish2(target[k].f_mntonname)) { 
-			strlcpy(targets[k].mountpoint, target[k].f_mntonname, MNAMELEN);
-			strlcpy(targets[k].newfs, label, MNAMELEN);
-			/* 
-			 * For reliability, at least with HAMMER2, we should instead grab the 
-			 * location of PFSDELIM. Which can then allow two separate loops to be 
-			 * run, potentially concurrently, to fill out the two remaining fields
-			 * targets[k].current and targets[k].device
-			 */
-			for (i = j = 0; target[k].f_mntfromname[i] != 0; i++) {
-				if (target[k].f_mntfromname[i] == PFSDELIM) { 
-					pfs = true; 
-					i++; 
-					targets[k].device[j] = 0;
-					j ^= j; 
-				}
-
-				if (pfs) {
-					targets[k].current[j] = target[k].f_mntfromname[i];
-					j++;
-				} else {
-					targets[k].device[j] = target[k].f_mntfromname[i];
-					j++;
-				}
-			}
-			targets[k].newfs[j] = 0;
-			fprintf(stderr,"targets[%d]:\n---------------\n"
-										 "current: %s\nnewfs: %s\ndevice: %s\nmountpoint: %s\n"
-										 "---------------\n",
-										 k, targets[k].current, targets[k].newfs, targets[k].device, targets[k].mountpoint);
-		}
-	}
+mktargets(struct statfs *target, int fscount, char *label) {
+	snapt *targets;
+	targets = NULL;
+	/* TODO: get buffer managed by calloc() and appended via realloc() */
+	/* 
+	 * this should only take the given mountpoints through the statfs buffer
+	 * and build a buffer of snapfs targets (or even just build the new pfs structs directly)
+	 * that then get passed off to the snapfs() function, but we would ideally 
+	 * update fscount and pass that as well so we aren't doing a test for NULL that could
+	 * potentially fail if we get uninitialized code
+	 */
+	snapfs(targets, fscount, label);
 }
 
 /*
@@ -217,7 +180,7 @@ rmsnap(char *pfs) {
  * to create a snapshot with the given label
  */
 static int
-snapfs(snapt *fstarget) { 
+snapfs(void *fstarget, int fscount, char *label) { 
 	/* 
 	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
 	 * the hammer2 utility implementation.
@@ -232,12 +195,12 @@ snapfs(snapt *fstarget) {
 	e = fd = 0;
 	memset(&pfs, 0, sizeof(pfs));
 
-	if ((fd = open(fstarget->mountpoint, O_RDONLY)) <= 0) {
-		fprintf(stderr, "Can't open %s!\n%s\n", fstarget->mountpoint, strerror(errno));
-	}
+	//if ((fd = open(fstarget->mountpoint, O_RDONLY)) <= 0) {
+	//	fprintf(stderr, "Can't open %s!\n%s\n", fstarget->mountpoint, strerror(errno));
+	//}
 
-	snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
-	fprintf(stderr, "%s\n", pfs.name);
+	//snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
+	//fprintf(stderr, "%s\n", pfs.name);
 	/* We use the following ioctl() to actually create a snapshot */
 	//if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
 	//	e = 0;
@@ -246,8 +209,8 @@ snapfs(snapt *fstarget) {
 	//	fprintf(stderr, "H2 Snap failed!\n%s\n",strerror(errno));
 	//	close(fd);
 	//}
-	close(fd);
-	return(e);
+	//close(fd);
+	return(0);
 }
 
 /*
