@@ -15,12 +15,13 @@
 
 /* this struct should be used for easier passing of necessary information */
 typedef struct snaptarget {
-	char current[MNAMELEN]; /* current pfs.name value */
-	char newfs[MNAMELEN]; /* desired pfs.name value */
-	char device[MNAMELEN]; /* where this pfs is physically */
-	char mountpoint[MNAMELEN]; /* where it's mounted */
+	char current[NAME_MAX]; /* current pfs.name value */
+	char newfs[NAME_MAX]; /* desired pfs.name value */
+	char device[NAME_MAX]; /* where this pfs is physically */
+	char mountpoint[NAME_MAX]; /* where it's mounted */
 } snapt;
 
+static int create(char *label);
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
 /* TODO: replace void pointer with actual type (pfs/snapfs) */
@@ -50,7 +51,7 @@ create(char *label) {
 	 * /usr/local/bin -> usr.local.bin-20180601, so it's distinct from other 
 	 * snapshots of the same PFS, without potentially stomping on reserved characters
 	 */
-	char befs[MNAMELEN];
+	char befs[NAME_MAX];
 	long size;
 	int fscount, i;
 	struct statfs *filesystems;
@@ -59,7 +60,7 @@ create(char *label) {
 	size = 0;
 	filesystems = NULL;
 
-	if (strlen(label) >= MNAMELEN) { 
+	if (strlen(label) >= NAME_MAX) { 
 		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
 		trunc(label);
 		fprintf(stderr," truncated to %s\n",label);
@@ -71,24 +72,22 @@ create(char *label) {
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
 		for (i = 0; i < fscount; i++) {
-			if (ish2(filesystems[i].f_mntonname)) {
-				/*
-				 * The 'befs' variable should be what's written to /etc/fstab for the device
-				 * name of a given mountpoint, the 'label' variable should get added onto a 
-				 * string that alreadly contains the existing PFS name 
-				 * (minus the old snapshot label, should it exist)
-				 */
-				snprintf(befs, MNAMELEN, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
-				/* 
-				 * There will need to be some extra work in constructing the new PFS
-				 * name, mostly in ensuring the function to do so accurately detects the 
-				 * beginning of the existing boot environment, removes those characters,
-				 * and writes the new boot environment name to the ephemeral pfs struct 
-				 * before taking the snapshot
-				 */
-				fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
-				memset(befs, 0, MNAMELEN);
-			}
+			/*
+			 * The 'befs' variable should be what's written to /etc/fstab for the device
+			 * name of a given mountpoint, the 'label' variable should get added onto a 
+			 * string that alreadly contains the existing PFS name 
+			 * (minus the old snapshot label, should it exist)
+			 */
+			snprintf(befs, NAME_MAX, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
+			/* 
+			 * There will need to be some extra work in constructing the new PFS
+			 * name, mostly in ensuring the function to do so accurately detects the 
+			 * beginning of the existing boot environment, removes those characters,
+			 * and writes the new boot environment name to the ephemeral pfs struct 
+			 * before taking the snapshot
+			 */
+			fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
+			memset(befs, 0, NAME_MAX);
 		}
 		//mktargets(filesystems, fscount, label);
 	}
@@ -218,7 +217,7 @@ snapfs(void *fstarget, int fscount, char *label) {
  */
 static void
 trunc(char *longstring) { 
-	snprintf(longstring, MNAMELEN, "%s", longstring);
+	snprintf(longstring, NAME_MAX, "%s", longstring);
 }
 
 /*
