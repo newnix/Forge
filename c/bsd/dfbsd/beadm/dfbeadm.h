@@ -60,6 +60,8 @@ create(char *label) {
 	size = 0;
 	filesystems = NULL;
 
+	/* ensure befs is 0'd */
+	memset(&befs, 0, sizeof(befs));
 	if (strlen(label) >= NAME_MAX) { 
 		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
 		trunc(label);
@@ -68,6 +70,10 @@ create(char *label) {
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
 		size = (sizeof(*filesystems) * fscount);
+	}
+
+	if ((filesystems = calloc(sizeof(struct statfs), fscount)) == -1) { 
+		err(errno, "calloc");
 	}
 
 	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
@@ -86,10 +92,10 @@ create(char *label) {
 			 * and writes the new boot environment name to the ephemeral pfs struct 
 			 * before taking the snapshot
 			 */
-			fprintf(stderr,"befs[%d/%d]: %s\n", i, fscount, befs);
+			fprintf(stderr,"befs[%02d/%02d]: %s\n", i, fscount, befs);
 			memset(befs, 0, NAME_MAX);
 		}
-		//mktargets(filesystems, fscount, label);
+		mktargets(filesystems, fscount, label);
 	}
 
 	free(filesystems);
