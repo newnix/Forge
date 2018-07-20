@@ -55,3 +55,25 @@ been taken. We then print a message to the user that they'll need to run the sam
 again with sudo/doas/root/pfexec to actually commit the changes.
 There will be a check before continuing to any other functions to verify that using "-n" or "-l"
 doesn't require root access. 
+
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+The most basic invocation of this tool would be:
+	dfbeadm -ac v5.2
+
+Which will both create and then activate a new collection of snapshots for the given boot environment "v5.2"
+This will of course, require root access for /etc/fstab and actually issuing the snapshot commands. 
+internally, the tool grabs mount info from the vfs layer using getfsstat(3), and writes out the necessary
+PFS information before creating snapshots for each mountpoint.
+
+Updating the fstab should be fairly simple to do through the setfsent(3) function and writing to an fstab struct, 
+but first, I'd need to ensure that a temporary file is used, ideally something like `/tmp/fstab.${pid}`.
+The temporary file is then read back, optionally printed out for the user to see, and if no errors are encountered
+the existing fstab gets moved to `/etc/fstab.bak`, and the temporary file takes place of `/etc/fstab`.
+
+The variable PATH_FSTAB will need to be set before any operations can be made on the new file. The temp file creation
+and testing should be done before the snapshots are created as well, as it should be discared if errors are encountered. 
+Additionally, the fstab swap should only take place after the snapshots have been completed.

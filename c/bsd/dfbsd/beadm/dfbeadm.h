@@ -13,14 +13,6 @@
 /* HAMMER2 specific needs */
 #include <vfs/hammer2/hammer2_ioctl.h>
 
-/* this struct should be used for easier passing of necessary information */
-typedef struct snaptarget {
-	char current[NAME_MAX]; /* current pfs.name value */
-	char newfs[NAME_MAX]; /* desired pfs.name value */
-	char device[NAME_MAX]; /* where this pfs is physically */
-	char mountpoint[NAME_MAX]; /* where it's mounted */
-} snapt;
-
 static int create(char *label);
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
