@@ -1,8 +1,11 @@
 .POSIX:
 
+include ../../../../defaults.mk
+
 SRC = fsup.c
 TARGET = fsup
 
 HELP = "-h"
-
-include ../../../../defaults.mk
+LDFLAGS = 
+DBG = gdb
+CFLAGS += -g${DBG}
