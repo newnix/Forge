@@ -32,6 +32,7 @@
  */
 
 #include <sys/types.h>
+#include <sys/mman.h>
 
 #include <fstab.h>
 #include <stdio.h>
@@ -123,9 +124,15 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	fp = NULL;
 	written = 0; /* default to erroring out */
 
-	if ((efs = calloc(sizeof(struct fstab), fscount)) == NULL) { 
+	fprintf(stderr, "Attempting to get a buffer of %lu * %lu bytes...\n", sizeof(struct fstab), fscount);
+	if ((efs = calloc(fscount, sizeof(struct fstab))) == NULL) { 
 		fprintf(stderr, "Cannot allocate memory for efstab()\n");
 		return(written);
+	}
+	if (mprotect(efs, sizeof(efs), PROT_READ|PROT_WRITE) == -1) {
+		fprintf(stderr,"Could not set memory allocation RW\n");
+	} else {
+		fprintf(stderr,"Buffer of %luB at %p created RW\n", sizeof(*efs), efs);
 	}
 
 	/* open the system file to copy out */
@@ -135,6 +142,8 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	/* actually need to open the ephemeral file */
 	for (written = 0; written < fscount; written++) {
 		current = getfsent();
+		fprintf(stderr,"current targets:\nefs->fs_spec: %p\nefs->fs_file: %p\nefs->fs_vfstype: %p\nefs->fs_mntops: %p\nefs->fs_type: %p\n",
+		              &efs[written].fs_spec, &efs[written].fs_file, &efs[written].fs_vfstype, &efs[written].fs_mntops, &efs[written].fs_type);
 		if (ish2(current->fs_vfstype)) {
 			/* tediously copy everything into place */
 			snprintf(efs[written].fs_spec, FSTAB_MAX, "%s%c%s", current->fs_spec, BESEP, label);
@@ -188,6 +197,8 @@ printfs(const char *fstab) {
 	struct fstab *fsent;
 
 	fsent = NULL;
+
+	setfstab(fstab);
 
 	while ((fsent = getfsent()) != NULL) {
 		fprintf(stdout,"%s\t%s\t%s\t%s\t%s\t%d\t%d\n",
