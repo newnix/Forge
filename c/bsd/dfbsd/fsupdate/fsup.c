@@ -79,7 +79,6 @@ main(int ac, char **av) {
 				break;
 			default:
 				usage();
-				break;
 		}
 	}
 
@@ -125,25 +124,41 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	written = 0; /* default to erroring out */
 
 	fprintf(stderr, "Attempting to get a buffer of %lu * %lu bytes...\n", sizeof(struct fstab), fscount);
+	/* 
+	 * this actually isn't necessary for the purpose of generating and reading back an
+	 * fstab file, but since this is meant to create a modified copy, we want to be able to 
+	 * dynamically allocate enough space for the modified version to be held in RAM before
+	 * writing to the temp file.
+	 */
 	if ((efs = calloc(fscount, sizeof(struct fstab))) == NULL) { 
 		fprintf(stderr, "Cannot allocate memory for efstab()\n");
 		return(written);
-	}
-	if (mprotect(efs, sizeof(efs), PROT_READ|PROT_WRITE) == -1) {
-		fprintf(stderr,"Could not set memory allocation RW\n");
 	} else {
-		fprintf(stderr,"Buffer of %luB at %p created RW\n", sizeof(*efs), efs);
+		fprintf(stderr, "*efs created at %p, with total size of %luB\n", efs, sizeof(efs) * fscount);
 	}
+	/* stupid simple test to ensure we can write to *efs */
+	memset(efs, 'h', sizeof(*efs)); /* this works, but obviously creates garbage data */
+	strlcpy(efs[0].fs_spec, "testing", FSTAB_MAX); /* this segfaults, apparently unable to write to efs[0] members */
+	/* 
+	 * from the above, maybe this is a flaw in how I'm allocating the buffer? it appears to work just fine for 
+	 * the fsstat/getfsstat functions, but not here for some reason.
+	 * Will need to look at other possible means of generating such a buffer, perhaps through use of a double
+	 * pointer.
+	 */
 
 	/* open the system file to copy out */
 	setfstab("/etc/fstab");
 	fprintf(stdout,"System fstab info: (%s, %lu filesystems)\n-----------------------------------\n",getfstab(), fscount);
 	printfs(getfstab());
+	endfsent();
+	setfstab("/etc/fstab");
 	/* actually need to open the ephemeral file */
 	for (written = 0; written < fscount; written++) {
 		current = getfsent();
-		fprintf(stderr,"current targets:\nefs->fs_spec: %p\nefs->fs_file: %p\nefs->fs_vfstype: %p\nefs->fs_mntops: %p\nefs->fs_type: %p\n",
-		              &efs[written].fs_spec, &efs[written].fs_file, &efs[written].fs_vfstype, &efs[written].fs_mntops, &efs[written].fs_type);
+		fprintf(stderr,"current targets:\nefs[%lu].fs_spec: %p\nefs[%lu].fs_file: %p\nefs[%lu].fs_vfstype: %p\nefs[%lu].fs_mntops: %p\nefs[%lu].fs_type: %p\n",
+		              written, &efs[written].fs_spec, written, &efs[written].fs_file, written, &efs[written].fs_vfstype, 
+									written, &efs[written].fs_mntops, written, &efs[written].fs_type);
+
 		if (ish2(current->fs_vfstype)) {
 			/* tediously copy everything into place */
 			snprintf(efs[written].fs_spec, FSTAB_MAX, "%s%c%s", current->fs_spec, BESEP, label);
