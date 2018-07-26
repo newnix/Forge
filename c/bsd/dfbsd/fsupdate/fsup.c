@@ -129,6 +129,16 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	 * fstab file, but since this is meant to create a modified copy, we want to be able to 
 	 * dynamically allocate enough space for the modified version to be held in RAM before
 	 * writing to the temp file.
+	 * Forgot to allocate space for the actual char * members. Since the struct is built like so:
+	 * struct fstab { 
+	 *	char *fs_spec;
+	 *	char *fs_file;
+	 *	char *fs_vfstype;
+	 *	char *fs_mntops;
+	 *	char *fs_type;
+	 *	int fs_freq;
+	 *	int fs_passno;
+	 * };
 	 */
 	if ((efs = calloc(fscount, sizeof(struct fstab))) == NULL) { 
 		fprintf(stderr, "Cannot allocate memory for efstab()\n");
@@ -136,15 +146,6 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	} else {
 		fprintf(stderr, "*efs created at %p, with total size of %luB\n", efs, sizeof(efs) * fscount);
 	}
-	/* stupid simple test to ensure we can write to *efs */
-	memset(efs, 'h', sizeof(*efs)); /* this works, but obviously creates garbage data */
-	strlcpy(efs[0].fs_spec, "testing", FSTAB_MAX); /* this segfaults, apparently unable to write to efs[0] members */
-	/* 
-	 * from the above, maybe this is a flaw in how I'm allocating the buffer? it appears to work just fine for 
-	 * the fsstat/getfsstat functions, but not here for some reason.
-	 * Will need to look at other possible means of generating such a buffer, perhaps through use of a double
-	 * pointer.
-	 */
 
 	/* open the system file to copy out */
 	setfstab("/etc/fstab");
