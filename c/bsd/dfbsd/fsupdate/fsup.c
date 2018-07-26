@@ -92,6 +92,7 @@ main(int ac, char **av) {
 		printfs(fstab);
 		return(0);
 	} else { 
+		fprintf(stderr, "Something went wrong! No filesystems written to %s!\n", fstab);
 		return(2);
 	}
 }
@@ -144,7 +145,29 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 		fprintf(stderr, "Cannot allocate memory for efstab()\n");
 		return(written);
 	} else {
-		fprintf(stderr, "*efs created at %p, with total size of %luB\n", efs, sizeof(efs) * fscount);
+		for (written = 0; written < fscount; written++) {
+			/* now try allocating space for all the members of the struct */
+			if ((efs[written].fs_spec = calloc(1, FSTAB_MAX)) == NULL) {
+				free(efs);
+				return(0);
+			}
+			if ((efs[written].fs_file = calloc(1, FSTAB_MAX)) == NULL) {
+				free(efs);
+				return(0);
+			}
+			if ((efs[written].fs_vfstype = calloc(1, FSTAB_MAX)) == NULL) {
+				free(efs);
+				return(0);
+			}
+			if ((efs[written].fs_mntops = calloc(1, FSTAB_MAX)) == NULL) {
+				free(efs);
+				return(0);
+			}
+			if ((efs[written].fs_type = calloc(1, FSTAB_MAX)) == NULL) {
+				free(efs);
+				return(0);
+			}
+		}
 	}
 
 	/* open the system file to copy out */
@@ -181,6 +204,8 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	}
 	/* close system file, switch to ephemeral file */
 	endfsent();
+	fstab = getenv("PATH_FSTAB");
+	setfstab(fstab);
 
 	if ((fp = fopen(fstab, "a")) == NULL) {
 		fprintf(stderr, "Could not open %s for writing, bailing out...\n", fstab);
