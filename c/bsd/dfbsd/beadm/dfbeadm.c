@@ -56,8 +56,20 @@
 #include <time.h>
 #include <unistd.h>
 
-/* more inclusions are likely to follow, but at least these will be needed */
+/* holds prototypes */
 #include "dfbeadm.h"
+/* collect the filesystems into a struct buffer */
+#include "fscollect.h"
+/* functions to destroy boot environments */
+#include "fsdestroy.h"
+/* functions to get the available environments */
+#include "fslist.h"
+/* functions to test filesystems */
+#include "fstest.h"
+/* generate and install the new fstab */
+#include "fsupdate.h"
+/* make the snapshots */
+#include "snapfs.h"
 
 int 
 main(int argc, char **argv) { 
