@@ -88,11 +88,14 @@ main(int ac, char **av) {
 	 * and write the modifications to a separate struct dynamically built,
 	 * which then is written to the ephemeral file before verification
 	 */
-	if (efstab("/etc/fstab", label, countfs()) > 0) {
+	if (efstab(fstab, label, countfs()) > 0) {
 		printfs(fstab);
-		return(0);
+		fprintf(stdout, "Cleaning up...\nRemoving %s from filesystem...\n",fstab);
+		return(unlink(fstab));
 	} else { 
 		fprintf(stderr, "Something went wrong! No filesystems written to %s!\n", fstab);
+		fprintf(stderr, "Deleting empty file at %s...\n", fstab);
+		unlink(fstab);
 		return(2);
 	}
 }
@@ -204,7 +207,6 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	}
 	/* close system file, switch to ephemeral file */
 	endfsent();
-	fstab = getenv("PATH_FSTAB");
 	setfstab(fstab);
 
 	if ((fp = fopen(fstab, "a")) == NULL) {
@@ -219,6 +221,14 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 								efs[written].fs_freq, efs[written].fs_passno);
 	}
 	fclose(fp);
+	/* ensure we clean up */
+	for (written = 0; written < fscount; written++) {
+		free(efs[written].fs_spec);
+		free(efs[written].fs_file);
+		free(efs[written].fs_vfstype);
+		free(efs[written].fs_mntops);
+		free(efs[written].fs_type);
+	}
 	free(efs);
 	return(written);
 }
@@ -241,6 +251,7 @@ printfs(const char *fstab) {
 
 	setfstab(fstab);
 
+	fprintf(stdout,"Reading from %s:\n--------------------------------------------------\n",fstab);
 	while ((fsent = getfsent()) != NULL) {
 		fprintf(stdout,"%s\t%s\t%s\t%s\t%s\t%d\t%d\n",
 		               fsent->fs_spec, fsent->fs_file, fsent->fs_vfstype,
