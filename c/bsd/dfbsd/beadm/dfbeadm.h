@@ -10,6 +10,9 @@
 #include <sys/param.h>
 #include <sys/ucred.h>
 
+/* for fstab manipulation/verification */
+#include <fstab.h>
+
 /* HAMMER2 specific needs */
 #include <vfs/hammer2/hammer2_ioctl.h>
 
@@ -21,6 +24,14 @@ static int snapfs(void *snapfs, int fscount, char *label);
 static void mktargets(struct statfs *target, int fscount, char *label);
 
 extern char *__progname;
+
+/* struct to hold the relevant data to rebuild the fstab */
+typedef struct bootenv_data { 
+	struct fstab fstab; /* this should be pretty obvious, but this is each PFS's description in the fstab */
+	char curlabel[NAME_MAX]; /* this may actually not be necessary, bubt it's the current label of the PFS */
+	struct hammer2_ioc_pfs snapshot; /* this is the PFS we'll be creating a snapshot with */
+	int label_start; /* this is the offset of the fs_spec string where we find the @ sign */
+} bedata;
 
 /*
  * activate a given boot environment
@@ -64,7 +75,7 @@ create(char *label) {
 		size = (sizeof(*filesystems) * fscount);
 	}
 
-	if ((filesystems = calloc(sizeof(struct statfs), fscount)) == -1) { 
+	if ((filesystems = calloc(sizeof(struct statfs), fscount)) == NULL) { 
 		err(errno, "calloc");
 	}
 
@@ -143,7 +154,8 @@ list(void) {
  */
 static void
 mktargets(struct statfs *target, int fscount, char *label) {
-	snapt *targets;
+	int i;
+	bedata *targets;
 	targets = NULL;
 	/* TODO: get buffer managed by calloc() and appended via realloc() */
 	/* 
@@ -153,7 +165,54 @@ mktargets(struct statfs *target, int fscount, char *label) {
 	 * update fscount and pass that as well so we aren't doing a test for NULL that could
 	 * potentially fail if we get uninitialized code
 	 */
+	if ((targets = calloc(fscount, sizeof(bedata))) == NULL) {
+		err(errno, "calloc");
+	} 
+	for (i = 0; i < fscount; i++) {
+		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
+			free(targets);
+			exit(1);
+		}
+		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
+			free(targets);
+			exit(1);
+		}
+		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
+			free(targets);
+			exit(1);
+		}
+		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
+			free(targets);
+			exit(1);
+		}
+		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
+			free(targets);
+			exit(1);
+		}
+	}
+
+	/* now we need to actually fill the structs using the data we have from create() */
+	for (i ^= i; i < fscount; i++) {
+		if (ish2(target[i].f_fstypename)) {
+		} else { 
+			strlcpy(targets[i].fstab.fs_spec, target[i].f_mntfromname, MNAMELEN);
+			strlcpy(targets[i].fstab.fs_file, target[i].f_mntonname, MNAMELEN);
+			strlcpy(targets[i].fstab.fs_vfstype, target[i].f_fstypename, MNAMELEN);
+		}
+	}
+
+	/* send the targets off to have snapshots created */
 	snapfs(targets, fscount, label);
+
+	/* cleanup */
+	for (i = 0; i < fscount; i++) { 
+		free(targets[i].fstab.fs_spec);
+		free(targets[i].fstab.fs_file);
+		free(targets[i].fstab.fs_vfstype);
+		free(targets[i].fstab.fs_mntops);
+		free(targets[i].fstab.fs_type);
+	}
+	free(targets);
 }
 
 /*
@@ -186,11 +245,9 @@ snapfs(void *fstarget, int fscount, char *label) {
 	 * though this could be expanded to any filesystem with the same functionality of snapshots. Possibly 
 	 * including both HAMMER and UFS in later versions
 	 */
-	hammer2_ioc_pfs_t pfs;
 	int fd, e;
 
 	e = fd = 0;
-	memset(&pfs, 0, sizeof(pfs));
 
 	//if ((fd = open(fstarget->mountpoint, O_RDONLY)) <= 0) {
 	//	fprintf(stderr, "Can't open %s!\n%s\n", fstarget->mountpoint, strerror(errno));
