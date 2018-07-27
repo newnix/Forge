@@ -182,10 +182,6 @@ efstab(const char *fstab, const char *label, size_t fscount) {
 	/* actually need to open the ephemeral file */
 	for (written = 0; written < fscount; written++) {
 		current = getfsent();
-		fprintf(stderr,"current targets:\nefs[%lu].fs_spec: %p\nefs[%lu].fs_file: %p\nefs[%lu].fs_vfstype: %p\nefs[%lu].fs_mntops: %p\nefs[%lu].fs_type: %p\n",
-		              written, &efs[written].fs_spec, written, &efs[written].fs_file, written, &efs[written].fs_vfstype, 
-									written, &efs[written].fs_mntops, written, &efs[written].fs_type);
-
 		if (ish2(current->fs_vfstype)) {
 			/* tediously copy everything into place */
 			snprintf(efs[written].fs_spec, FSTAB_MAX, "%s%c%s", current->fs_spec, BESEP, label);
@@ -251,7 +247,7 @@ printfs(const char *fstab) {
 
 	setfstab(fstab);
 
-	fprintf(stdout,"Reading from %s:\n--------------------------------------------------\n",fstab);
+	fprintf(stdout,"\nReading from %s:\n--------------------------------------------------\n",fstab);
 	while ((fsent = getfsent()) != NULL) {
 		fprintf(stdout,"%s\t%s\t%s\t%s\t%s\t%d\t%d\n",
 		               fsent->fs_spec, fsent->fs_file, fsent->fs_vfstype,
