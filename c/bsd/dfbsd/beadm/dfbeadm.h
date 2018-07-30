@@ -16,22 +16,23 @@
 /* HAMMER2 specific needs */
 #include <vfs/hammer2/hammer2_ioctl.h>
 
-static int create(char *label);
-static bool ish2(char *mountpoint);
-static void trunc(char *longstring);
-/* TODO: replace void pointer with actual type (pfs/snapfs) */
-static int snapfs(void *snapfs, int fscount, char *label);
-static void mktargets(struct statfs *target, int fscount, char *label);
-
-extern char *__progname;
-
 /* struct to hold the relevant data to rebuild the fstab */
-typedef struct bootenv_data { 
+struct bootenv_data { 
 	struct fstab fstab; /* this should be pretty obvious, but this is each PFS's description in the fstab */
 	char curlabel[NAME_MAX]; /* this may actually not be necessary, bubt it's the current label of the PFS */
 	struct hammer2_ioc_pfs snapshot; /* this is the PFS we'll be creating a snapshot with */
 	int label_start; /* this is the offset of the fs_spec string where we find the @ sign */
-} bedata;
+};
+
+typedef struct bootenv_data bedata;
+static int create(char *label);
+static bool ish2(char *mountpoint);
+static void trunc(char *longstring);
+static void mktargets(bedata *target, int fscount, char *label);
+static int snapfs(bedata *snapfs, int fscount, char *label);
+
+extern char *__progname;
+
 
 /*
  * tell the user how this program works

@@ -31,133 +31,99 @@
  * DAMAGE.
  */
 
+/* only define things once */
+#ifndef FSCOLLECT_H
+#define FSCOLLECT_H
+
 /* 
  * create a boot environment
+ * returns 0 if successful, 1 if error, >=2 if things have gone horribly wrong
  */
 static int
 create(char *label) { 
-	/*
-	 * I'm not sure that there's a library way to handle this yet, but
-	 * using hammer2(8) to create snapshots is effectively the same as creating a
-	 * new PFS, but it's created with the type "snapshot". So we'll need to use 
-	 * a naming convention like mountpoint-label. Current scheme would be:
-	 * /usr/local/bin -> usr.local.bin-20180601, so it's distinct from other 
-	 * snapshots of the same PFS, without potentially stomping on reserved characters
-	 */
-	char befs[NAME_MAX];
-	long size;
-	int fscount, i;
-	struct statfs *filesystems;
-	/* first we need to get a list of currently mounted HAMMER2 filesystems */
-	fscount = i = 0;
-	size = 0;
-	filesystems = NULL;
+	/* since we can't rely on the VFS layer for all of our fstab data, we need to be sure what exists */
+	int i, fstabcount, vfscount;
+	struct fstab *fsptr;
+	struct statfs *vfsptr;
+	bedata *befs;
+	
+	fstabcount = vfscount = 0;
+	fsptr = NULL;
+	vfsptr = NULL;
 
-	/* ensure befs is 0'd */
-	memset(&befs, 0, sizeof(befs));
-	if (strlen(label) >= NAME_MAX) { 
-		fprintf(stderr,"Cannot fit all of %s into boot a environment label,",label);
-		trunc(label);
-		fprintf(stderr," truncated to %s\n",label);
+	if ((vfscount = getfsstat(vfsptr, 0, MNT_WAIT)) == 0) { 
+		fprintf(stderr, "Something's wrong, no filesystems found\n");
+	}
+	do {
+		fstabcount++;
+	} while ((fsptr = getfsent()) != NULL);
+	/* ensure that if we start reading the system fstab again, we start from the top */
+	endfsent();
+
+	/* since there's bound to be a swap partition, decrement fstabcount by one */
+	if ((fstabcount - 1) != vfscount) {
+		fprintf(stderr, "Filesystem counts differ! May have unintended side-effects!\n"
+		                "fstab count: %d\nvfs count: %d\n",fstabcount, vfscount);
+	} else {
+		fprintf(stdout, "VFS Layer and FSTAB(5) are in agreement, generating list of boot environment targets...\n");
 	}
 
-	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
-		size = (sizeof(*filesystems) * fscount);
+	/* now that we have an idea what we're working with, let's go about cloning this data */
+	if ((befs = calloc((size_t) fstabcount, sizeof(bedata))) == NULL) {
+		fprintf(stderr,"Could not allocate initial buffer!\n");
+		return(2); /* probably OOM */
 	}
 
-	if ((filesystems = calloc((size_t)fscount, sizeof(struct statfs))) == NULL) { 
-		err(errno, "calloc");
-	}
-
-	if ((fscount = getfsstat(filesystems, size, MNT_WAIT)) > 0) {
-		for (i = 0; i < fscount; i++) {
-			/*
-			 * The 'befs' variable should be what's written to /etc/fstab for the device
-			 * name of a given mountpoint, the 'label' variable should get added onto a 
-			 * string that alreadly contains the existing PFS name 
-			 * (minus the old snapshot label, should it exist)
-			 */
-			snprintf(befs, NAME_MAX, "%s%c%s", filesystems[i].f_mntfromname, BESEP, label);
-			/* 
-			 * There will need to be some extra work in constructing the new PFS
-			 * name, mostly in ensuring the function to do so accurately detects the 
-			 * beginning of the existing boot environment, removes those characters,
-			 * and writes the new boot environment name to the ephemeral pfs struct 
-			 * before taking the snapshot
-			 */
-			fprintf(stderr,"befs[%02d/%02d]: %s\n", i, fscount, befs);
-			memset(befs, 0, NAME_MAX);
+	/* now allocate space for the members */
+	for (i = 0; i < fstabcount; i++) {
+		if ((befs[i].fstab.fs_spec = calloc(MNAMELEN, 1)) == NULL) {
+			fprintf(stderr, "Could not allocate buffer\n");
+			free(befs);
+			return(2);
 		}
-		mktargets(filesystems, fscount, label);
+		if ((befs[i].fstab.fs_file = calloc(MNAMELEN, 1)) == NULL) {
+			fprintf(stderr, "Could not allocate buffer\n");
+			free(befs);
+			return(2);
+		}
+		if ((befs[i].fstab.fs_vfstype = calloc(MNAMELEN, 1)) == NULL) {
+			fprintf(stderr, "Could not allocate buffer\n");
+			free(befs);
+			return(2);
+		}
+		if ((befs[i].fstab.fs_mntops = calloc(MNAMELEN, 1)) == NULL) {
+			fprintf(stderr, "Could not allocate buffer\n");
+			free(befs);
+			return(2);
+		}
+		if ((befs[i].fstab.fs_type = calloc(MNAMELEN, 1)) == NULL) {
+			fprintf(stderr, "Could not allocate buffer\n");
+			free(befs);
+			return(2);
+		}
 	}
 
-	free(filesystems);
+	/* now pass the buffers to the next step */
+	mktargets(befs, fstabcount, label);
+
+	/* ensure we clean up after ourselves */
+	for (i ^= i; i < fstabcount; i++) { 
+		free(befs[i].fstab.fs_spec);
+		free(befs[i].fstab.fs_file);
+		free(befs[i].fstab.fs_vfstype);
+		free(befs[i].fstab.fs_mntops);
+		free(befs[i].fstab.fs_type);
+	}
+	free(fefs);
 	return(0);
 }
 
 /* 
- * basically create a node in a doubly linked list
+ * Creates a buffer of targets to be handed off to snapfs()
+ * This function should be called directly from create(), and provided
+ * with a buffer of currently existing filesystems
  */
 static void
-mktargets(struct statfs *target, int fscount, char *label) {
-	int i;
-	bedata *targets;
-	targets = NULL;
-	/* TODO: get buffer managed by calloc() and appended via realloc() */
-	/* 
-	 * this should only take the given mountpoints through the statfs buffer
-	 * and build a buffer of snapfs targets (or even just build the new pfs structs directly)
-	 * that then get passed off to the snapfs() function, but we would ideally 
-	 * update fscount and pass that as well so we aren't doing a test for NULL that could
-	 * potentially fail if we get uninitialized code
-	 */
-	if ((targets = calloc(fscount, sizeof(bedata))) == NULL) {
-		err(errno, "calloc");
-	} 
-	for (i = 0; i < fscount; i++) {
-		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
-			free(targets);
-			exit(1);
-		}
-		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
-			free(targets);
-			exit(1);
-		}
-		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
-			free(targets);
-			exit(1);
-		}
-		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
-			free(targets);
-			exit(1);
-		}
-		if ((targets[i].fstab.fs_spec = calloc(1, MNAMELEN)) == NULL) {
-			free(targets);
-			exit(1);
-		}
-	}
-
-	/* now we need to actually fill the structs using the data we have from create() */
-	for (i ^= i; i < fscount; i++) {
-		if (ish2(target[i].f_fstypename)) {
-		} else { 
-			strlcpy(targets[i].fstab.fs_spec, target[i].f_mntfromname, MNAMELEN);
-			strlcpy(targets[i].fstab.fs_file, target[i].f_mntonname, MNAMELEN);
-			strlcpy(targets[i].fstab.fs_vfstype, target[i].f_fstypename, MNAMELEN);
-		}
-	}
-
-	/* send the targets off to have snapshots created */
-	snapfs(targets, fscount, label);
-
-	/* cleanup */
-	for (i = 0; i < fscount; i++) { 
-		free(targets[i].fstab.fs_spec);
-		free(targets[i].fstab.fs_file);
-		free(targets[i].fstab.fs_vfstype);
-		free(targets[i].fstab.fs_mntops);
-		free(targets[i].fstab.fs_type);
-	}
-	free(targets);
+mktargets(bedata *target, int fscount, char *label) {
 }
-
+#endif

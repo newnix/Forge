@@ -1,9 +1,11 @@
+#ifndef SNAPFS_H
+#define SNAPFS_H
 /* 
  * This should ideall be a filesystem agnostic function
  * to create a snapshot with the given label
  */
 static int
-snapfs(void *fstarget, int fscount, char *label) { 
+snapfs(bedata *fstarget, int fscount, char *label) { 
 	/* 
 	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
 	 * the hammer2 utility implementation.
@@ -34,3 +36,4 @@ snapfs(void *fstarget, int fscount, char *label) {
 	return(0);
 }
 
+#endif
