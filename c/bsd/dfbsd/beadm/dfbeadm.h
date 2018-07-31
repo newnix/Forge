@@ -1,8 +1,8 @@
 #ifndef DFBEADM
 #define DFBEADM
 
-#define PFSDELIM '@'
-#define BESEP ':'
+#define PFSDELIM ':'
+#define BESEP '@'
 #define TMAX 18
 
 /* necessary inclusions for vfs layer data */
@@ -15,6 +15,9 @@
 
 /* HAMMER2 specific needs */
 #include <vfs/hammer2/hammer2_ioctl.h>
+
+/* borderline useless "debug" printout */
+#define dbg fprintf(stderr, "Something went wrong in %s: %d!\n", __FILE__, __LINE__);
 
 /* struct to hold the relevant data to rebuild the fstab */
 struct bootenv_data { 
@@ -29,6 +32,7 @@ static int create(char *label);
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
 static void mktargets(bedata *target, int fscount, char *label);
+static int relabel(bedata *fs, char *label);
 static int snapfs(bedata *snapfs, int fscount, char *label);
 
 extern char *__progname;

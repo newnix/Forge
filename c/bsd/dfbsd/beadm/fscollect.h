@@ -54,14 +54,14 @@ create(char *label) {
 	if ((vfscount = getfsstat(vfsptr, 0, MNT_WAIT)) == 0) { 
 		fprintf(stderr, "Something's wrong, no filesystems found\n");
 	}
-	do {
+	while ((fsptr = getfsent()) != NULL) { 
 		fstabcount++;
-	} while ((fsptr = getfsent()) != NULL);
+	}
 	/* ensure that if we start reading the system fstab again, we start from the top */
 	endfsent();
 
 	/* since there's bound to be a swap partition, decrement fstabcount by one */
-	if ((fstabcount - 1) != vfscount) {
+	if (fstabcount != vfscount) {
 		fprintf(stderr, "Filesystem counts differ! May have unintended side-effects!\n"
 		                "fstab count: %d\nvfs count: %d\n",fstabcount, vfscount);
 	} else {
@@ -114,7 +114,7 @@ create(char *label) {
 		free(befs[i].fstab.fs_mntops);
 		free(befs[i].fstab.fs_type);
 	}
-	free(fefs);
+	free(befs);
 	return(0);
 }
 
@@ -125,5 +125,63 @@ create(char *label) {
  */
 static void
 mktargets(bedata *target, int fscount, char *label) {
+	int i;
+	struct fstab *current;
+
+	/* 
+	 * now that we have the number of existing filesystems and the 
+	 * bedata struct to fill in, we can go about updating the information
+	 * this is still prior to actually generating the ephemeral fstab though 
+	 * we're just building the struct.
+	 */
+	for (i = 0; i < fscount; i++) { 
+		current = getfsent();
+
+		/* these steps are done for every filesystem */
+		strlcpy(target[i].fstab.fs_spec, current->fs_spec, MNAMELEN);
+		strlcpy(target[i].fstab.fs_file, current->fs_file, MNAMELEN);
+		strlcpy(target[i].fstab.fs_vfstype, current->fs_vfstype, MNAMELEN);
+		strlcpy(target[i].fstab.fs_mntops, current->fs_mntops, MNAMELEN);
+		strlcpy(target[i].fstab.fs_type, current->fs_type, MNAMELEN);
+		target[i].fstab.fs_freq = current->fs_freq;
+		target[i].fstab.fs_passno = current->fs_passno;
+
+		/* now do some additional work in the same loop */
+		if (ish2(current->fs_file)) { 
+			/* 
+			 * this should scan for the existence of an existing BE label 
+			 * if found, write it to target[i].curlabel, else write NULL
+			 * additionally, if the existing label is found, replace it with the 
+			 * new label, writing NUL bytes to the end if need be
+			 */
+			if (relabel(&target[i], label) != 0) { 
+				dbg;
+			}
+		} 
+		fprintf(stderr, "%s written to target[%02d/%02d]\n", target[i].fstab.fs_spec, i, fscount);
+	}
+}
+
+static int
+relabel (bedata *fs, char *label) {
+	char *found;
+	int i;
+
+	found = NULL;
+
+	/* simply check for the existence of a boot environment */
+	if ((found = strchr(fs->fstab.fs_spec, BESEP)) == NULL) {
+		dbg;
+		return(-1);
+	} else { 
+	/* this is incorrect */
+		for (; *found != 0; found++) { 
+			i ^= i;
+			fs->curlabel[i] = found;
+		} 
+		fprintf(stderr, "fs->curlabel: %s\n", fs->curlabel);
+	}
+
+	return(0);
 }
 #endif
