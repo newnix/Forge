@@ -1,8 +1,8 @@
 #ifndef DFBEADM
 #define DFBEADM
 
-#define PFSDELIM ':'
-#define BESEP '@'
+#define PFSDELIM '@'
+#define BESEP ':'
 #define TMAX 18
 
 /* necessary inclusions for vfs layer data */

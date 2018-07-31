@@ -167,18 +167,20 @@ relabel (bedata *fs, char *label) {
 	char *found;
 	int i;
 
+	i = 0;
 	found = NULL;
 
 	/* simply check for the existence of a boot environment */
-	if ((found = strchr(fs->fstab.fs_spec, BESEP)) == NULL) {
+	if ((found = strchr(fs->fstab.fs_spec, PFSDELIM)) == NULL) {
 		dbg;
 		return(-1);
 	} else { 
 	/* this is incorrect */
-		for (; *found != 0; found++) { 
-			i ^= i;
-			fs->curlabel[i] = found;
+		for (i ^= i; *found != 0 && i < NAME_MAX; found++) { 
+			fs->curlabel[i] = *found;
+			i++;
 		} 
+		fs->curlabel[i] = 0; /* ensure NULL termination */
 		fprintf(stderr, "fs->curlabel: %s\n", fs->curlabel);
 	}
 
