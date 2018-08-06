@@ -169,9 +169,17 @@ relabel (bedata *fs, char *label) {
 
 	i = 0;
 	found = NULL;
+	/* 
+	 * this function, along with ish2(), will almost certainly need significant rewriting
+	 * as the current mean sof detecting a NULLFS mount vs a HAMMER2 mount are 
+	 * ill-defined at this point. It's definitely possible to fail silently, but that shouldn't be 
+	 * necessary. 
+	 */
 
 	/* simply check for the existence of a boot environment */
 	if ((found = strchr(fs->fstab.fs_spec, PFSDELIM)) == NULL) {
+		fprintf(stderr, "Are you certain %s mounted %s is a HAMMER2 filesystem?\n", fs->fstab.fs_spec, fs->fstab.fs_file);
+		/* this can throw false positives if there's no existing snapshot/PFS mountpoints */
 		dbg;
 		return(-1);
 	} else { 
