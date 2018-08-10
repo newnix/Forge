@@ -65,8 +65,8 @@ print_battery(void){
 void
 dwmstatus(void) { 
 	size_t len = 4;
-	int   pctmib[4] = { 6, 306, 274, 256 } ;
-	int   lifmib[4] = { 6, 306, 274, 257 } ;
+	int   pctmib[4] = { 6, 302, 274, 256 } ;
+	int   lifmib[4] = { 6, 302, 274, 257 } ;
 	int pct, lif;
 
 	pct = lif = 0;

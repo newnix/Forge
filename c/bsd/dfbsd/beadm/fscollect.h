@@ -156,12 +156,19 @@ mktargets(bedata *target, int fscount, char *label) {
 			 */
 			if (relabel(&target[i], label) != 0) { 
 				dbg;
+			} else {
+				snapfs(target, fscount, label);
 			}
 		} 
-		fprintf(stderr, "%s written to target[%02d/%02d]\n", target[i].fstab.fs_spec, i, fscount);
+		//fprintf(stderr, "%s written to target[%02d/%02d]\n", target[i].fstab.fs_spec, i, fscount);
 	}
 }
 
+/* 
+ * return 0 if relabeling is done successfully
+ * nonzero indicates error, no meaning assigned to 
+ * return values yet
+ */
 static int
 relabel (bedata *fs, char *label) {
 	char *found;
@@ -188,14 +195,14 @@ relabel (bedata *fs, char *label) {
 			fs->curlabel[i] = *found;
 			i++;
 		} 
-		if ((NAME_MAX - 1)< (i + strlen(label)) {
+		if ((NAME_MAX - 1)< ((unsigned int)i + strlen(label))) {
 			fprintf(stderr,"Given name of %s is too long!\n", label);
 		} else {
 			snprintf(fs->fstab.fs_spec, NAME_MAX, "%s%c%s", fs->fstab.fs_spec, BESEP, label);
 		}
 		fs->curlabel[i] = 0; /* ensure NULL termination */
-		fprintf(stderr, "fs->curlabel: %s\n", fs->curlabel);
-		fprintf(stderr, "BEFS: %s\n", fs->fstab.fs_spec);
+//		fprintf(stderr, "fs->curlabel: %s\n", fs->curlabel);
+//		fprintf(stderr, "BEFS: %s\n", fs->fstab.fs_spec);
 	}
 
 	return(0);
