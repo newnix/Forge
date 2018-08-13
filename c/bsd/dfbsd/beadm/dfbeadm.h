@@ -25,6 +25,7 @@ struct bootenv_data {
 	char curlabel[NAME_MAX]; /* this may actually not be necessary, bubt it's the current label of the PFS */
 	struct hammer2_ioc_pfs snapshot; /* this is the PFS we'll be creating a snapshot with */
 	int label_start; /* this is the offset of the fs_spec string where we find the @ sign */
+	bool snap;
 };
 
 typedef struct bootenv_data bedata;

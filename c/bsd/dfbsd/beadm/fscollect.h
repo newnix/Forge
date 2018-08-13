@@ -148,20 +148,19 @@ mktargets(bedata *target, int fscount, char *label) {
 
 		/* now do some additional work in the same loop */
 		if (ish2(current->fs_file)) { 
-			/* 
-			 * this should scan for the existence of an existing BE label 
-			 * if found, write it to target[i].curlabel, else write NULL
-			 * additionally, if the existing label is found, replace it with the 
-			 * new label, writing NUL bytes to the end if need be
-			 */
+			target[i].snap = true;
 			if (relabel(&target[i], label) != 0) { 
 				dbg;
-			} else {
-				snapfs(target, fscount, label);
 			}
-		} 
-		//fprintf(stderr, "%s written to target[%02d/%02d]\n", target[i].fstab.fs_spec, i, fscount);
+		} else {
+			target[i].snap = false;
+		}
 	}
+	/* 
+	 * now everything should be in place to create snapshots 
+	 * looping is handled internally
+	 */
+	snapfs(target, fscount, label);
 }
 
 /* 
