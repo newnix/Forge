@@ -160,7 +160,7 @@ mktargets(bedata *target, int fscount, char *label) {
 	 * now everything should be in place to create snapshots 
 	 * looping is handled internally
 	 */
-	snapfs(target, fscount, label);
+	snapfs(target, fscount);
 }
 
 /* 

@@ -6,7 +6,7 @@
  * Honestly, with the current bedata definitions, fscount and label may not be necessary parameters
  */
 static int
-snapfs(bedata *fstarget, int fscount, char *label) { 
+snapfs(bedata *fstarget, int fscount) { 
 	/* 
 	 * This likely uses HAMMER2IOC_PFS_SNAPSHOT to create hammer2 snapshots, will need to reference
 	 * the hammer2 utility implementation.
@@ -16,9 +16,15 @@ snapfs(bedata *fstarget, int fscount, char *label) {
 	 * including both HAMMER and UFS in later versions
 	 */
 	int fd, i;
-	char newfs[NAME_MAX];
+	char *newfs;
 
 	i = fd = 0;
+
+	if ((newfs = calloc(NAME_MAX, sizeof(char))) == NULL) { 
+		dbg;
+		return(-1);
+	}
+
 	for (i ^= i; i < fscount; i++) {
 		if (fstarget[i].snap) {
 			if ((fd = open(fstarget[i].fstab.fs_file, O_RDONLY)) <= 0) {
@@ -26,27 +32,44 @@ snapfs(bedata *fstarget, int fscount, char *label) {
 			}
 			fprintf(stderr, "Creating snapshot %s...\nOld label: %s\n", fstarget[i].fstab.fs_spec, fstarget[i].curlabel);
 
-			newfs = xtractLabel(fstarget[i].fstab.fs_spec);
-			//snprintf(pfs.name, sizeof(pfs.name), "%s%c%s", fstarget->current, BESEP, fstarget->newfs);
-			//fprintf(stderr, "%s\n", pfs.name);
+			xtractLabel(fstarget[i].fstab.fs_spec, newfs);
+			/* 
+			 * This is one of the two sections of this program that actually requires 
+			 * root access as far as I'm aware. The other being the obvious installation of the
+			 * new fstab file. 
+			 */
+			strlcpy(fstarget[i].snapshot.name, newfs, NAME_MAX);
 			/* We use the following ioctl() to actually create a snapshot */
-			//if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &pfs) != -1) {
-			//	e = 0;
-			//	close(fd);
-			//} else {
-			//	fprintf(stderr, "H2 Snap failed!\n%s\n",strerror(errno));
-			//	close(fd);
-			//}
+			if (ioctl(fd, HAMMER2IOC_PFS_SNAPSHOT, &fstarget[i].snapshot) != -1) {
+				fprintf(stdout, "Created new snapshot: %s\n", fstarget[i].snapshot.name);
+			} else {
+				fprintf(stderr, "H2 Snap failed!\n%s\n(target: %s)\n",strerror(errno), fstarget[i].snapshot.name);
+			}
 			fprintf(stderr, "Closing fd %d for mountpoint %s\n", fd, fstarget[i].fstab.fs_file);
 			close(fd);
 			memset(newfs, 0, NAME_MAX);
 		}
 	}
+	free(newfs);
 	return(0);
 }
 
-static char *
-xtractLabel(char *newfs) {
+static void
+xtractLabel(char *newfs, char *label) {
 	/* this function just returns the PFS label of the new snapshot */
+	char *pfssep;
+	int i;
+
+	if ((pfssep = strchr(newfs, PFSDELIM)) == NULL) {
+		dbg;
+		exit(13); /* to be handled by something else later */
+	} else {
+		dbg;
+		for (i = 0, ++pfssep; *pfssep != NULL; i++,pfssep++) {
+			label[i] = *pfssep;
+		}
+		label[i] = 0;
+		fprintf(stderr,"xtractLabel: %d\nLabel: %s\n", __LINE__, label);
+	}
 }
 #endif

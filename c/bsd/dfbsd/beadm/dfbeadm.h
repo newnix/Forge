@@ -34,7 +34,8 @@ static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
 static void mktargets(bedata *target, int fscount, char *label);
 static int relabel(bedata *fs, char *label);
-static int snapfs(bedata *snapfs, int fscount, char *label);
+static int snapfs(bedata *snapfs, int fscount);
+static void xtractLabel(char *fs, char *label);
 
 extern char *__progname;
 
