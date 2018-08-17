@@ -1,3 +1,5 @@
+#ifndef FSUP_H
+#define FSUP_H
 /*
  * Copyright (c) 2018, Exile Heavy Industries
  * All rights reserved.
@@ -31,11 +33,44 @@
  * DAMAGE.
  */
 
+/* 
+ * Special activation function, for use by the create() chain of functions
+ * since we already have all the information necessary to generate and install
+ * the fstab data
+ */
+static int
+autoactivate(bedata *snapfs, char *label) {
+	return(0);
+}
+
 /*
  * activate a given boot environment
  */
 static int
 activate(char *label) { 
+	/* 
+	 * the *label parameter is only used for the pfs lookups, by default this is called by create()
+	 * we'll scan currently mounted filesystems for the given boot environment label, and use that to 
+	 * create the ephemeral fstab, which then replaces the current fstab, putting it in fstab.label
+	 * assuming there was a label. If no label exists for the existing fstab, we'll simply call it 
+	 * fstab.bak
+	 */
+	char *efstab;
+	FILE *efd;
+
+	if ((efstab = calloc((size_t)512, sizeof(char))) == NULL) {
+		fprintf(stderr,"Error Allocating Ephemeral fstab\n");
+	}
+
+	snprintf(efstab, (size_t)512, "/tmp/.fstab.%d.%s", getpid(), label);
+	fprintf(stderr, "Created Ephemeral fstab at %s", efstab);
+
+	if ((efd = fopen(efstab, "a")) == NULL) { 
+		err(errno, "%s: %s: ", __progname, efstab);
+	}
+
+	fclose(efd);
+	free(efstab);
 	return(0);
 }
 
@@ -44,6 +79,11 @@ activate(char *label) {
  */
 static int
 deactivate(char *label) { 
+	/* 
+	 * I'm not sure what this function will do in particular as the 
+	 * naming convention described above is fstab.label, making it trivial to swap boot environments 
+	 * This function likely only needs to be called when destroying a boot environment
+	 */
 	return(0);
 }
 
@@ -63,3 +103,4 @@ rmsnap(char *pfs) {
 	return(0);
 }
 
+#endif

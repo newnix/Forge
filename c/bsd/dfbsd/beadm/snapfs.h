@@ -50,6 +50,8 @@ snapfs(bedata *fstarget, int fscount) {
 			memset(newfs, 0, NAME_MAX);
 		}
 	}
+	/* this is to separate activation from creation, despite being the same conceptually */
+	autoactivate(fstarget, newfs);
 	free(newfs);
 	return(0);
 }
@@ -65,7 +67,7 @@ xtractLabel(char *newfs, char *label) {
 		exit(13); /* to be handled by something else later */
 	} else {
 		dbg;
-		for (i = 0, ++pfssep; *pfssep != NULL; i++,pfssep++) {
+		for (i = 0, ++pfssep; *pfssep != 0; i++,pfssep++) {
 			label[i] = *pfssep;
 		}
 		label[i] = 0;

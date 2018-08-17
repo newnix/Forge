@@ -24,11 +24,16 @@ struct bootenv_data {
 	struct fstab fstab; /* this should be pretty obvious, but this is each PFS's description in the fstab */
 	char curlabel[NAME_MAX]; /* this may actually not be necessary, bubt it's the current label of the PFS */
 	struct hammer2_ioc_pfs snapshot; /* this is the PFS we'll be creating a snapshot with */
-	int label_start; /* this is the offset of the fs_spec string where we find the @ sign */
 	bool snap;
+} __packed;
+
+struct efstab_lookup {
+	char mounutpoint[1024];
+	struct fstab fsent;
 };
 
 typedef struct bootenv_data bedata;
+static int autoactivate(bedata *snapfs, char *label);
 static int create(char *label);
 static bool ish2(char *mountpoint);
 static void trunc(char *longstring);
