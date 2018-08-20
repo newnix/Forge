@@ -33,14 +33,15 @@ struct efstab_lookup {
 };
 
 typedef struct bootenv_data bedata;
-static int autoactivate(bedata *snapfs, char *label);
-static int create(char *label);
-static bool ish2(char *mountpoint);
+static int autoactivate(bedata *snapfs, const char *label);
+static int create(const char *label);
+static bool ish2(const char *mountpoint);
 static void trunc(char *longstring);
-static void mktargets(bedata *target, int fscount, char *label);
-static int relabel(bedata *fs, char *label);
+static void mktargets(bedata *target, int fscount, const char *label);
+static void printfs(const char *fstab);
+static int relabel(bedata *fs, const char *label);
 static int snapfs(bedata *snapfs, int fscount);
-static void xtractLabel(char *fs, char *label);
+static void xtractLabel(const char *fs, char *label);
 
 extern char *__progname;
 

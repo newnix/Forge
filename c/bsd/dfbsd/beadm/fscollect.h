@@ -40,7 +40,7 @@
  * returns 0 if successful, 1 if error, >=2 if things have gone horribly wrong
  */
 static int
-create(char *label) { 
+create(const char *label) { 
 	/* since we can't rely on the VFS layer for all of our fstab data, we need to be sure what exists */
 	int i, fstabcount, vfscount;
 	struct fstab *fsptr;
@@ -124,7 +124,7 @@ create(char *label) {
  * with a buffer of currently existing filesystems
  */
 static void
-mktargets(bedata *target, int fscount, char *label) {
+mktargets(bedata *target, int fscount, const char *label) {
 	int i;
 	struct fstab *current;
 
@@ -169,7 +169,7 @@ mktargets(bedata *target, int fscount, char *label) {
  * return values yet
  */
 static int
-relabel (bedata *fs, char *label) {
+relabel (bedata *fs, const char *label) {
 	char *found;
 	int i;
 

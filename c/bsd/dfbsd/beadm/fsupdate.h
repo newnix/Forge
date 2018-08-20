@@ -39,7 +39,38 @@
  * the fstab data
  */
 static int
-autoactivate(bedata *snapfs, char *label) {
+autoactivate(bedata *snapfs, const char *label) {
+	/* should probably have an int in there to ensure proper iteration */
+	char *efstab;
+	FILE *efd;
+	
+	if ((efstab = calloc((size_t)512, sizeof(char))) == NULL) { 
+		fprintf(stderr,"Unable to allocate buffer for *efstab!\n");
+		return(-1);
+	}
+
+	if ((efd = fopen(efstab, "a")) == NULL) { 
+		fprintf(stderr, "Unable to open %s for writing!\n", efstab);
+		free(efstab);
+		return(-1);
+	}
+
+	for (; snapfs != NULL; snapfs++) {
+		fprintf(efd, "%s\t%s\t%s\t%s\t%d\t%d\n", snapfs->fstab.fs_spec, snapfs->fstab.fs_file, 
+				                                         snapfs->fstab.fs_vfstype, snapfs->fstab.fs_mntops,
+                                                 snapfs->fstab.fs_freq, snapfs->fstab.fs_passno);
+	}
+
+	setfstab(efstab);
+	printfs(getfstab());
+	/* this may be doable in a more clean manner, but it should work properly */
+	fprintf(stdout,"Creating backup fstab...\n");
+	rename("/etc/fstab", "/etc/fstab.bak");
+	fprintf(stdout,"Installing new fstab...\n");
+	rename(efstab, "/etc/fstab");
+
+	fclose(efd);
+	free(efstab);
 	return(0);
 }
 
@@ -47,7 +78,7 @@ autoactivate(bedata *snapfs, char *label) {
  * activate a given boot environment
  */
 static int
-activate(char *label) { 
+activate(const char *label) { 
 	/* 
 	 * the *label parameter is only used for the pfs lookups, by default this is called by create()
 	 * we'll scan currently mounted filesystems for the given boot environment label, and use that to 
@@ -78,7 +109,7 @@ activate(char *label) {
  * deactivate the given boot environment
  */
 static int
-deactivate(char *label) { 
+deactivate(const char *label) { 
 	/* 
 	 * I'm not sure what this function will do in particular as the 
 	 * naming convention described above is fstab.label, making it trivial to swap boot environments 
@@ -91,7 +122,7 @@ deactivate(char *label) {
  * delete a given boot environment
  */
 static int
-rmenv(char *label) { 
+rmenv(const char *label) { 
 	return(0);
 }
 
@@ -99,8 +130,21 @@ rmenv(char *label) {
  * delete the given snapshot
  */
 static int
-rmsnap(char *pfs) { 
+rmsnap(const char *pfs) { 
 	return(0);
 }
 
+static void
+printfs(const char *fstab) { 
+	struct fstab *fsent;
+
+	fsent = NULL;
+	while ((fsent = getfsent()) != NULL) {
+		fprintf(stdout,"%s\t%s\t%s\t%s\t%s\t%d\t%d\n",
+		               fsent->fs_spec, fsent->fs_file, fsent->fs_vfstype,
+									 fsent->fs_mntops, fsent->fs_type, fsent->fs_freq,
+									 fsent->fs_passno);
+	}
+	endfsent();
+}
 #endif

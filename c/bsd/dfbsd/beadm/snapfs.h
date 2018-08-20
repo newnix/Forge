@@ -57,7 +57,7 @@ snapfs(bedata *fstarget, int fscount) {
 }
 
 static void
-xtractLabel(char *newfs, char *label) {
+xtractLabel(const char *newfs, char *label) {
 	/* this function just returns the PFS label of the new snapshot */
 	char *pfssep;
 	int i;

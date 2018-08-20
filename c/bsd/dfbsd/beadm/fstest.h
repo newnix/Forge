@@ -2,7 +2,7 @@
  * Determine if the given mountpoint is a HAMMER2 filesystem 
  */
 static bool
-ish2(char *mountpoint) {
+ish2(const char *mountpoint) {
 	int mp;
 	hammer2_ioc_inode_t h2ino;
 
