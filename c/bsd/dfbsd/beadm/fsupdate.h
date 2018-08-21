@@ -49,6 +49,9 @@ autoactivate(bedata *snapfs, const char *label) {
 		return(-1);
 	}
 
+	/* generate the name of the ephemeral fstab file */
+	snprintf(efstab, (size_t)512, "/tmp/.fstab.%s_%u", label, getpid());
+
 	if ((efd = fopen(efstab, "a")) == NULL) { 
 		fprintf(stderr, "Unable to open %s for writing!\n", efstab);
 		free(efstab);
@@ -68,7 +71,7 @@ autoactivate(bedata *snapfs, const char *label) {
 	rename("/etc/fstab", "/etc/fstab.bak");
 	fprintf(stdout,"Installing new fstab...\n");
 	rename(efstab, "/etc/fstab");
-
+	unlink(efstab);
 	fclose(efd);
 	free(efstab);
 	return(0);
