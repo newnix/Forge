@@ -64,6 +64,7 @@ xtractLabel(const char *newfs, char *label) {
 
 	if ((pfssep = strchr(newfs, PFSDELIM)) == NULL) {
 		dbg;
+		/* TODO: Revisit this code, seems to be causing trouble with NULLFS mounts */
 		exit(13); /* to be handled by something else later */
 	} else {
 		dbg;
