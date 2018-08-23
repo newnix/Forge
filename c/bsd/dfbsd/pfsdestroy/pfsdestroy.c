@@ -35,6 +35,8 @@
  * this is meant to be a simple tool for locating and destroying HAMMER2 PFS-es
  * that may or may not have been created during the testing of dfbeadm
  */
+#include <sys/mount.h>
+#include <sys/types.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -45,6 +47,7 @@
 #include <vfs/hammer2/hammer2_disk.h>
 #include <vfs/hammer2/hammer2_ioctl.h>
 
+static int fswalk(char *label);
 static int h2lookup(char *label, char *fs);
 static int h2destroy(struct hammer2_ioc_pfs *pfs, int pfsd);
 static int list(void);
@@ -73,6 +76,57 @@ main(int ac, char **av) {
 				usage();
 		}
 	}
+
+	ac -= optind;
+	av += optind;
+
+	for(; *av != NULL; av++) {
+		if (fswalk(*av) < 0) {
+			break;
+		}
+	}
+	return(0);
+}
+
+/* 
+ * This function loops through the mounted filesystems, examining 
+ * HAMMER2 filesystems for the given labels to destroy
+ */
+static int
+fswalk(char *label) {
+	struct statfs *fsbuf;
+	long fsbufsize;
+	int flags, fscount;
+
+	fsbuf = NULL;
+	fsbufsize = 0;
+	fscount = 0;
+	flags = MNT_WAIT;
+
+	if ((fscount = getfsstat(fsbuf, fsbufsize, flags)) > 0) { 
+		fprintf(stdout, "Fonud %d filesystems to search through...\n", fscount);
+	} 
+	/* use the results from the previous call to allocate the necessary buffer size */
+	if ((fsbuf = calloc(fscount, sizeof(struct statfs *))) == NULL) {
+		fprintf(stderr, "Unable to allocate space for FS buffer!\n");
+		return(-1);
+	}
+	fsbufsize = (sizeof(*fsbuf) * (fscount * 2));
+	if (getfsstat(fsbuf, fsbufsize, flags) < 0) { 
+		fprintf(stderr, "something went wrong, bailing out\n");
+		free(fsbuf);
+		return(-2);
+	} 
+
+	for (flags = 0; flags < fscount; flags++) {
+		fprintf(stderr,"Checking %s...\n",fsbuf[flags].f_mntonname); 
+		if (strcmp(fsbuf[flags].f_fstypename, "hammer2") == 0) {
+			h2lookup(label, fsbuf[flags].f_mntonname);
+		} else {
+			fprintf(stdout, "%s is not a HAMMER2 filesystem, skipping...\n", fsbuf[flags].f_mntonname);
+		}
+	}
+	free(fsbuf);
 	return(0);
 }
 
@@ -91,14 +145,14 @@ h2lookup(char *label, char *fs) {
 		return(-1);
 	}
 
+	memset(&dpfs, 0, sizeof(dpfs));
 	for(; dpfs.name_key != (hammer2_key_t)-1; dpfs.name_key = dpfs.name_next) {
-		if(ioctl(lpfsd, HAMMER2IOC_PFS_GET, &lpfsd) < 0) {
+		if(ioctl(lpfsd, HAMMER2IOC_PFS_GET, &dpfs) < 0) {
 			fprintf(stderr, "Unable to read PFS data in %s\n", fs);
-			break;
+			return(2);
 		}
-		if(strnstrt(dpfs.name, label, NAME_MAX) == NULL) {
-			/* the requested target does not exist, check next PFS */
-			break;
+		if(strnstr(dpfs.name, label, NAME_MAX) == NULL) {
+			/* do nothing */
 		} else {
 			if(noconfirm) {
 				if(ioctl(lpfsd, HAMMER2IOC_PFS_DELETE, &dpfs) < 0) {
@@ -106,13 +160,13 @@ h2lookup(char *label, char *fs) {
 				}
 			} else {
 				fprintf(stderr, "You're about to destroy %s, this CANNOT be undone, continue? [y/N]: ", dpfs.name);
-				if((fgetc(stdin) | 0x0032) == 'Y') {
+				fpurge(stdin);
+				if((fgetc(stdin) & 223) == 'Y') {
 					if(ioctl(lpfsd, HAMMER2IOC_PFS_DELETE, &dpfs) < 0) {
 						fprintf(stderr, "Unable to delete %s\n", dpfs.name);
 					}
 				} else {
-					fprintf(stdout, "Skipping matching PFS: %s\n", dfps.name);
-					break;
+					fprintf(stdout, "Skipping matching PFS: %s\n", dpfs.name);
 				}
 			}
 		}
@@ -139,10 +193,11 @@ list(void) {
 	char dir[1024];
 	
 	if ((lpfsd = open(getcwd(&dir,1024), O_RDONLY)) < 0) {
-		fprintf(stderr, "Unable to open %s!\n", getcwd(&dir,1024));
+		fprintf(stderr, "Unable to open %s!\n", dir);
 		return(-1);
 	}
 
+	memset(&lpfs, 0, sizeof(lpfs));
 	fprintf(stdout,"HAMMER2 PFSes found in %s\n",dir);
 	for(; lpfs.name_key != (hammer2_key_t)-1; lpfs.name_key = lpfs.name_next) {
 		if(ioctl(lpfsd, HAMMER2IOC_PFS_GET, &lpfs) < 0) {
