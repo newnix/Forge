@@ -32,9 +32,7 @@
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#include <sys/gmon.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -47,14 +45,15 @@ char *gettemps(int ncpu);
 
 int
 main(int ac, char **av) { 
-	int  mib[6] = { 0, 0, 0, 0, 0 };
-	size_t miblen, mib2len;
-	int mib2[3] = { CTL_HW, HW_NCPU, 0 };
+	int  mib[6] = { 0, 0, 0, 0, 0, 0 };
+	size_t miblen, ncpulen;
+	int ncpumib[4] = { 6, 3 };
 	int ncpu;
-	mib2len = sizeof(ncpu);
-	miblen = sizeof(mib);
+	ncpulen = 4;
+	miblen = 6;
 	char *test;
 
+	fprintf(stdout, "ncpulen: %lu\nmiblen: %lu\n", ncpulen, miblen);
 	for (++av; *av != NULL; av++) { 
 		if (sysctlnametomib(*av, mib, &miblen) == -1) { 
 			fprintf(stderr, "ERR: %s: %s\n", *av, strerror(errno));
@@ -69,8 +68,13 @@ main(int ac, char **av) {
  * this part actually tries to get the cpu temp info
  */
 
-	if (sysctl(mib2, mib2len, &ncpu, &mib2len, NULL, 0) < 0) {
+	if (sysctl(ncpumib, ncpulen, &ncpu, &ncpulen, NULL, 0) < 0) {
 		fprintf(stderr,"ERR: %s: sysctl(hw.ncpu) : %d\n", strerror(errno), ncpu);
+		fprintf(stderr, "sysctl(%d.%d, %lu, %p, %p, NULL, 0) failed, trying sysctlbyname()\n",
+				            ncpumib[0], ncpumib[1], ncpulen, &ncpu, &ncpulen);
+		if (sysctlbyname("hw.ncpu", &ncpu, &ncpulen, NULL, 0) < 0) {
+			fprintf(stderr, "ERR: %s: got %d\n", strerror(errno), ncpu);
+		}
 	}
 
 	test = gettemps(ncpu);
@@ -81,19 +85,27 @@ main(int ac, char **av) {
 char *
 gettemps(int ncpu) { 
 	int cpu;
-	int thermalmib[6] = { 6, 302, 275, 259, 256, 0};
+	int thermalmib[6] = { 6, 302, 275, 259, 256 };
 	size_t mibsize, tempsize;
 	static char temps[MAXSTR];
-	char buf[32];
+	static char buf[32];
 	double tz0;
 
 	cpu = 0; 
-	mibsize = sizeof(thermalmib);
-	tempsize = sizeof(tz0);
+	mibsize = 6;
+	tempsize = sizeof(buf);
 
 	if (sysctl(thermalmib, mibsize, &tz0, &mibsize, NULL, 0) < 0) { 
-		fprintf(stderr, "ERR: sysctl(3): %s\n", strerror(errno));
-		return(NULL);
+		fprintf(stderr, "ERR: sysctl(3): %s: got %G\n", strerror(errno), tz0);
+		fprintf(stderr, "sysctl(%d.%d.%d.%d.%d.%d, %lu, %p, %p, NULL, 0) failed, trying sysctlbyname()\n",
+				            thermalmib[0], thermalmib[1], thermalmib[2], thermalmib[3], thermalmib[4], thermalmib[5],
+										mibsize, &tz0, &mibsize);
+		if (sysctlbyname("hw.acpi.thermal.tz0.temperature", &buf, &mibsize, NULL, 0) < 0) {
+				fprintf(stderr, "ERR: %s: got %G\n", strerror(errno), tz0);
+		} else {
+			fprintf(stdout, "buf: %G\n", tz0);
+		}
+		return(buf);
 	}
-	return(temps);
+	return(buf);
 }
