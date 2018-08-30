@@ -20,7 +20,7 @@ build_all(){
 	test_logfile
 	echo -e "System build starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Buildworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make -j ${buildjobs} buildworld -C /usr/src
+	make -j ${buildjobs} buildworld -C /usr/src >> ${logfile} 2>&1
 	if [ $? -ne 0 ]
 	then 
 		echo -e "Build target failed, see backlog for more information."
@@ -28,7 +28,7 @@ build_all(){
 	fi
 	echo -e "Buildworld completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Buildkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make -j ${buildjobs} buildkernel -C /usr/src
+	make -j ${buildjobs} buildkernel -C /usr/src >> ${logfile} 2>&1
 	if [ $? -ne 0 ]
 	then 
 		echo -e "Build target failed, see backlog for more information."
@@ -36,7 +36,7 @@ build_all(){
 	fi
 	echo -e "Buildkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Installkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make installkernel -C /usr/src
+	make installkernel -C /usr/src >> ${logfile} 2>&1
 	if [ $? -ne 0 ]
 	then 
 		echo -e "Build target failed, see backlog for more information."
@@ -44,7 +44,7 @@ build_all(){
 	fi
 	echo -e "Installkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	echo -e "Installworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make installworld -C /usr/src
+	make installworld -C /usr/src >> ${logfile} 2>&1
 	if [ $? -ne 0 ]
 	then 
 		echo -e "Build target failed, see backlog for more information."
@@ -56,7 +56,7 @@ build_all(){
 	if [ `uname -s` = "DragonFly" ]
 	then
 		echo -e "Upgrade running..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-		make upgrade  -C /usr/src
+		make upgrade  -C /usr/src >> ${logfile} 2>&1
 		echo -e "Upgrade completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 	fi
 	echo -e "System build completed!\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
@@ -71,7 +71,7 @@ build_all(){
 build_kernel(){
 	## Only build the kernel 
 	echo -e "Buildkernel starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make -j ${buildjobs} buildkernel -C /usr/src
+	make -j ${buildjobs} buildkernel -C /usr/src >> ${logfile} 2>&1
 	echo -e "Buildkernel completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 
 	if [ $upload -ne 0 ]
@@ -84,7 +84,7 @@ build_kernel(){
 build_world(){
 	## Only build world
 	echo -e "Buildworld starting..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
-	make -j ${buildjobs} buildworld -C /usr/src
+	make -j ${buildjobs} buildworld -C /usr/src >> ${logfile} 2>&1
 	echo -e "Buildworld completed..\t$(date +%Y%m%d\ %H%M)" | tee -a ${logfile}
 
 	if [ $upload -ne 0 ]
