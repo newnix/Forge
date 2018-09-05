@@ -39,8 +39,9 @@
  * the fstab data
  */
 static int
-autoactivate(bedata *snapfs, const char *label) {
+autoactivate(bedata *snapfs, int fscount, const char *label) {
 	/* should probably have an int in there to ensure proper iteration */
+	int i;
 	char *efstab;
 	FILE *efd;
 	
@@ -58,7 +59,7 @@ autoactivate(bedata *snapfs, const char *label) {
 		return(-1);
 	}
 
-	for (; snapfs != NULL; snapfs++) {
+	for (i = 0; i < fscount; i++) {
 		fprintf(efd, "%s\t%s\t%s\t%s\t%d\t%d\n", snapfs->fstab.fs_spec, snapfs->fstab.fs_file, 
 				                                         snapfs->fstab.fs_vfstype, snapfs->fstab.fs_mntops,
                                                  snapfs->fstab.fs_freq, snapfs->fstab.fs_passno);

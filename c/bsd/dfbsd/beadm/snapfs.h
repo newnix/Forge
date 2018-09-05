@@ -51,7 +51,7 @@ snapfs(bedata *fstarget, int fscount) {
 		}
 	}
 	/* this is to separate activation from creation, despite being the same conceptually */
-	autoactivate(fstarget, newfs);
+	autoactivate(fstarget, fscount, newfs);
 	free(newfs);
 	return(0);
 }
@@ -67,7 +67,6 @@ xtractLabel(const char *newfs, char *label) {
 		/* TODO: Revisit this code, seems to be causing trouble with NULLFS mounts */
 		exit(13); /* to be handled by something else later */
 	} else {
-		dbg;
 		for (i = 0, ++pfssep; *pfssep != 0; i++,pfssep++) {
 			label[i] = *pfssep;
 		}
