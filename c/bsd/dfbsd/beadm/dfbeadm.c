@@ -71,6 +71,8 @@
 /* make the snapshots */
 #include "snapfs.h"
 
+extern char **environ;
+
 int 
 main(int argc, char **argv) { 
 	/* obviously, this is where we get some basic data from the user */

@@ -69,6 +69,7 @@ autoactivate(bedata *snapfs, int fscount, const char *label) {
 	printfs(getfstab());
 	/* this may be doable in a more clean manner, but it should work properly */
 	fprintf(stdout,"Creating backup fstab...\n");
+	/* I'm not sure if this is necessarily correct, but it supposedly guarantees some atomicity in its operation */
 	rename("/etc/fstab", "/etc/fstab.bak");
 	fprintf(stdout,"Installing new fstab...\n");
 	rename(efstab, "/etc/fstab");
