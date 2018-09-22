@@ -44,6 +44,7 @@ autoactivate(bedata *snapfs, int fscount, const char *label) {
 	int i;
 	char *efstab;
 	FILE *efd;
+	return(0); /* temporarily disable the activation, as that seems to cause issues */
 	
 	if ((efstab = calloc((size_t)512, sizeof(char))) == NULL) { 
 		fprintf(stderr,"Unable to allocate buffer for *efstab!\n");
@@ -65,12 +66,21 @@ autoactivate(bedata *snapfs, int fscount, const char *label) {
                                                  snapfs->fstab.fs_freq, snapfs->fstab.fs_passno);
 	}
 
+	/* 
+	 * new funciton, specifically dumps current fstab into a file with a timestamp of when it was created
+	 * ideally will include the BE label in the future a swell, though that would require some extra parsing
+	 */
+	swapfstab("/etc/fstab", &efd, false);
+
 	setfstab(efstab);
 	printfs(getfstab());
 	/* this may be doable in a more clean manner, but it should work properly */
 	fprintf(stdout,"Creating backup fstab...\n");
 	/* I'm not sure if this is necessarily correct, but it supposedly guarantees some atomicity in its operation */
-	rename("/etc/fstab", "/etc/fstab.bak");
+	/* 
+	 * I suspct the issue is with these rename calls
+	 *rename("/etc/fstab", "/etc/fstab.bak");
+	 */
 	fprintf(stdout,"Installing new fstab...\n");
 	rename(efstab, "/etc/fstab");
 	unlink(efstab);
@@ -151,5 +161,30 @@ printfs(const char *fstab) {
 									 fsent->fs_passno);
 	}
 	endfsent();
+}
+
+static int
+swapfstab(const char *current, int * newfd, bool uselabel) {
+	/*
+	 * thi function will open the old fstab, clean it out after dumpting contents to a new 
+	 * backup file, then write the contents of the ephemeral fstab into it
+	 */
+	int bfd, cfd, written;
+
+	bfd = cdf = written = 0;
+
+	if ((cfd = open(current, O_RDWR)) <= 0) { 
+			fprintf(stderr,"%s: unable to open r/w, check your user and file permissions!\n",current);
+			return(-1);
+		}
+		if ((bfd = open("/etc/fstab", O_TRUNC|O_CREAT|O_RDWR)) <= 0) {
+			fprintf(stderr, "/etc/fstab.bak could not ebe created, verify file and user permissions are set properly!\n");
+			return(-2);
+		}
+
+		/* need to read from cfd into bfd */
+		
+		
+	return(0);
 }
 #endif
