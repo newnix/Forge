@@ -197,7 +197,7 @@ relabel (bedata *fs, const char *label) {
 		if ((NAME_MAX - 1)< ((unsigned int)i + strlen(label))) {
 			fprintf(stderr,"Given name of %s is too long!\n", label);
 		} else {
-			snprintf(fs->fstab.fs_spec, NAME_MAX, "%s%c%s", fs->fstab.fs_spec, BESEP, label);
+			snprintf(fs->fstab.fs_spec, (NAME_MAX - 1), "%s%c%s", fs->fstab.fs_spec, BESEP, label);
 		}
 		fs->curlabel[i] = 0; /* ensure NULL termination */
 //		fprintf(stderr, "fs->curlabel: %s\n", fs->curlabel);

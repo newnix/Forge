@@ -1,5 +1,8 @@
 #ifndef FSUP_H
 #define FSUP_H
+#ifndef PAGESIZE
+#define PAGESIZE 4096
+#endif
 /*
  * Copyright (c) 2018, Exile Heavy Industries
  * All rights reserved.
@@ -169,22 +172,99 @@ swapfstab(const char *current, int * newfd, bool uselabel) {
 	 * thi function will open the old fstab, clean it out after dumpting contents to a new 
 	 * backup file, then write the contents of the ephemeral fstab into it
 	 */
-	int bfd, cfd, written;
+	int bfd, cfd;
+	ssize_t written;
+	char tmpbuf[PAGESIZE]; /* work with a page of data at a time, defaulting to 4096 if not otherwise defined */
 
-	bfd = cdf = written = 0;
+	bfd = cfd = written = 0;
 
-	if ((cfd = open(current, O_RDWR)) <= 0) { 
-			fprintf(stderr,"%s: unable to open r/w, check your user and file permissions!\n",current);
-			return(-1);
+	if ((cfd = open(current, O_RDWR|O_NONBLOCK)) <= 0) { 
+		fprintf(stderr,"%s: unable to open r/w, check your user and file permissions!\n",current);
+		return(-1);
+	}
+	if ((bfd = open("/etc/fstab.bak", O_TRUNC|O_CREAT|O_RDWR|O_NONBLOCK)) <= 0) {
+		fprintf(stderr, "/etc/fstab.bak could not ebe created, verify file and user permissions are set properly!\n");
+		return(-2);
+	}
+
+	/* need to read from cfd into bfd */
+	/* at this point, we should have 3 available file descriptors */
+	for (;;) {
+		read(cfd, &tmpbuf, PAGESIZE);
+		/* these check errno for possible errors, may split into seprate functions later */
+		switch (errno) {
+			case EBADF:
+				/* given bad fd */
+				fprintf(stderr, "fd %d is not open for reading\n", cfd);
+				return(-3);
+			case EFAULT:
+				/* buffer pointer is outside allowed address space (should never happen) */
+				fprintf(stderr, "Something has gone horribly wrong, bailing out\n");
+				return(-3);
+			case EIO:
+				/* error encountered with the IO operations in the filesystem */
+				fprintf(stderr, "I/O error reading from fd %d\n", cfd);
+				return(-3);
+			case EINTR:
+				/* read was interrupted by a signal before data arrived */
+				fprintf(stderr, "Read was interrupted, no data recieved\n");
+				return(-3);
+			case EINVAL:
+				/* given a negative file descriptor, which should be impossible */
+				fprintf(stderr, "This should not be possible, %s, %d\n", __FILE__, __LINE__);
+				return(-3);
+			case EAGAIN:
+				/* this should not cause an issue */
+				continue;
+			default:
+				continue;
 		}
-		if ((bfd = open("/etc/fstab", O_TRUNC|O_CREAT|O_RDWR)) <= 0) {
-			fprintf(stderr, "/etc/fstab.bak could not ebe created, verify file and user permissions are set properly!\n");
-			return(-2);
+		written = write(bfd, &tmpbuf, PAGESIZE);
+		switch (errno) {
+			case EBADF:
+				/* given bad fd */
+				fprintf(stderr, "fd %d is not open for reading\n", bfd);
+				return(-4);
+			case EPIPE:
+				/* given fd is a pipe that cannot be written to, should not be possible in this usecase */
+				fprintf(stderr, "This should not be possible, %s, %d\n", __FILE__, __LINE__);
+				return(-4);
+			case EFBIG:
+				/* file being written to exceeds size limits */
+				fprintf(stderr, "Unable to write to fd %d, size exceeded\n", bfd);
+				return(-4);
+			case EFAULT:
+				/* data being written is outside usable address space, should not be possible */
+				fprintf(stderr, "This should not be possible, %s, %d\n", __FILE__, __LINE__);
+				return(-4);
+			case EINVAL:
+				fprintf(stderr, "This should not be possible, %s, %d\n", __FILE__, __LINE__);
+				return(-4);
+			case ENOSPC:
+				fprintf(stderr, "The drive holding /etc has run out of space, bailing out\n");
+				return(-4);
+			case EDQUOT:
+				fprintf(stderr, "The filesystem holding /etc has reached its quota, bailing out\n");
+				return(-4);
+			case EIO:
+				fprintf(stderr, "I/O error writing to fd %d\n", bfd);
+				return(-4);
+			case EINTR:
+				fprintf(stderr, "Interrupted before writing any data\n");
+				return(-4);
+			case EAGAIN:
+				continue;
+			case EROFS:
+			default:
+				continue;
 		}
+		if (written == 0) {
+			fprintf(stderr, "/etc/fstab should now be backed up\n");
+			break;
+		}
+	}
 
-		/* need to read from cfd into bfd */
-		
-		
+	/* next step is writing the ephemeral fstab to the actual fstab */
 	return(0);
 }
 #endif

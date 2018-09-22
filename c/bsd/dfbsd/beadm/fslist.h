@@ -24,13 +24,17 @@ list(void) {
 	}
 	memset(&h2be, 0, sizeof(h2be));
 
+	/*
+	 * this method works, but will repeat multiple entries with the same label if there's more
+	 * than one PFS on the root partition
+	 */
 	for (; h2be.name_key != (hammer2_key_t)-1; h2be.name_key = h2be.name_next) { 
 		if (ioctl(rootfd, HAMMER2IOC_PFS_GET, &h2be) < 0) {
 			fprintf(stderr, "Unable to get any pfs data from /, is it a HAMMER2 FS?\n");
 			return(-3);
 		}
 		if ((bename = strchr(h2be.name, BESEP)) != NULL) {
-			for (++bename; bename != NULL; bename++) {
+			for (++bename; *bename != 0; bename++) {
 				fprintf(stdout,"%c",*bename);
 			}
 			fprintf(stdout, "\n");

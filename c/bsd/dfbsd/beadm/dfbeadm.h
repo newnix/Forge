@@ -42,6 +42,7 @@ static void printfs(const char *fstab);
 static int relabel(bedata *fs, const char *label);
 static int snapfs(bedata *snapfs, int fscount);
 static void xtractLabel(const char *fs, char *label);
+static int swapfstab(const char *current, int * newfd, bool uselabel);
 
 extern char *__progname;
 
