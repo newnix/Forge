@@ -17,7 +17,7 @@
 #include <vfs/hammer2/hammer2_ioctl.h>
 
 /* borderline useless "debug" printout */
-#define dbg fprintf(stderr, "Something went wrong in %s: %d!\n", __FILE__, __LINE__);
+#define dbg fprintf(stderr, "Something went wrong in %s:%s: %d!\n", __func__, __FILE__, __LINE__);
 
 /* struct to hold the relevant data to rebuild the fstab */
 struct bootenv_data { 

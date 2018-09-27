@@ -27,7 +27,8 @@ snapfs(bedata *fstarget, int fscount) {
 
 	for (i ^= i; i < fscount; i++) {
 		if (fstarget[i].snap) {
-			if ((fd = open(fstarget[i].fstab.fs_file, O_RDONLY)) <= 0) {
+			/* possibly fixes the locking issue observed in recent builds */
+			if ((fd = open(fstarget[i].fstab.fs_file, O_RDONLY|O_NONBLOCK)) <= 0) {
 				fprintf(stderr, "Can't open %s!\n%s\n", fstarget[i].fstab.fs_file, strerror(errno));
 			}
 			fprintf(stderr, "Creating snapshot %s...\nOld label: %s\n", fstarget[i].fstab.fs_spec, fstarget[i].curlabel);

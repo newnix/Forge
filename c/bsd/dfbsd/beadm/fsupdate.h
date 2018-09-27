@@ -44,9 +44,9 @@
 static int
 autoactivate(bedata *snapfs, int fscount, const char *label) {
 	/* should probably have an int in there to ensure proper iteration */
-	int i;
+	int i, efd;
 	char *efstab;
-	FILE *efd;
+	
 	return(0); /* temporarily disable the activation, as that seems to cause issues */
 	
 	if ((efstab = calloc((size_t)512, sizeof(char))) == NULL) { 
@@ -57,14 +57,15 @@ autoactivate(bedata *snapfs, int fscount, const char *label) {
 	/* generate the name of the ephemeral fstab file */
 	snprintf(efstab, (size_t)512, "/tmp/.fstab.%s_%u", label, getpid());
 
-	if ((efd = fopen(efstab, "a")) == NULL) { 
+	if ((efd = open(efstab, O_RDWR|O_CREAT|O_NONBLOCK|O_APPEND)) <= 0) { 
+		dbg;
 		fprintf(stderr, "Unable to open %s for writing!\n", efstab);
 		free(efstab);
 		return(-1);
 	}
 
 	for (i = 0; i < fscount; i++) {
-		fprintf(efd, "%s\t%s\t%s\t%s\t%d\t%d\n", snapfs->fstab.fs_spec, snapfs->fstab.fs_file, 
+		dprintf(efd, "%s\t%s\t%s\t%s\t%d\t%d\n", snapfs->fstab.fs_spec, snapfs->fstab.fs_file, 
 				                                         snapfs->fstab.fs_vfstype, snapfs->fstab.fs_mntops,
                                                  snapfs->fstab.fs_freq, snapfs->fstab.fs_passno);
 	}
@@ -87,7 +88,7 @@ autoactivate(bedata *snapfs, int fscount, const char *label) {
 	fprintf(stdout,"Installing new fstab...\n");
 	rename(efstab, "/etc/fstab");
 	unlink(efstab);
-	fclose(efd);
+	close(efd);
 	free(efstab);
 	return(0);
 }

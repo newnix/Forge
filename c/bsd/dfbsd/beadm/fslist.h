@@ -18,7 +18,7 @@ list(void) {
 		fprintf(stderr, "You must be root to access this information\n");
 		return(-1);
 	}
-	if ((rootfd = open("/", O_RDONLY)) < 0) { 
+	if ((rootfd = open("/", O_RDONLY|O_NONBLOCK)) < 0) { 
 		fprintf(stderr, "Unable to open /, something has gone horribly wrong!\n");
 		return(-3);
 	}
