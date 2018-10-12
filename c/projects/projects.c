@@ -94,6 +94,7 @@ int task_upd(struct entry old_ent, struct entry new_ent);
 /* this should probably use a union, to accept either the index or name */
 int task_del(int task, const char *dbname);
 int task_list(int limit, const char *dbname); /* default action */
+static void stripnl(char *s); /* strip newlines from input strings */
 
 int
 main(int argc, char *argv[]) {
@@ -377,11 +378,14 @@ task_add_interactive(const char *dbname, const char *table_name) {
 	do {
 		fprintf(stdout,"Enter the task name: ");
 		getline(&taskname, &TASKSIZE, stdin);
+		stripnl(taskname);
 		fprintf(stdout,"Enter the task description:\n");
 		getline(&taskdesc, &DESCSIZE, stdin);
+		stripnl(taskdesc);
 		fpurge(stdin);
 		fprintf(stdout,"Enter the expiration date (YYYY-MM-DD): \n");
 		getline(&taskexpire, &TASKEXPR, stdin);
+		stripnl(taskexpire);
 		fpurge(stdin);
 		fprintf(stdout,"Is this task urgent? [Y/n] ");
 		urgent = fgetc(stdin);
@@ -398,7 +402,7 @@ task_add_interactive(const char *dbname, const char *table_name) {
 		/* we should now have enough values to add data to the database */
 		ret = sqlite3_prepare(taskdb, table_statement, 2048, &table_code, &table_tail);
 
-		if (ret == 0) {
+		if (ret == SQLITE_OK) {
 			ret = sqlite3_step(table_code);
 			if ((ret == 0) || (ret == 101)) {
 				fprintf(stdout,"Task %d sucessfully added.\nAdd another? [Y/n] ",idx);
@@ -458,19 +462,16 @@ task_list(int limit, const char *dbname) {
 	 * so we need to create a database handler.
 	 */
 	int ret;
-	sqlite3_stmt* list_statement;
+	sqlite3_stmt* table_code;
+	char *list_statement; const char *table_tail;
 	/* select id, title, description, priority from tasklist where expired=0 order by 1 asc; */
-	list_statement = "select id, title, description priority from tasklist where expired=0 order by 1 asc;"
+	list_statement = "select id, title, description priority from tasklist where expired=0 order by 1 asc limit 10;";
 	ret = sqlite3_prepare(taskdb, list_statement, 2048, &table_code, &table_tail);
-	if (ret == 0) {
+	if (ret == SQLITE_OK) {
+		/* still need to actually get the returned data from this interface though */
 		ret = sqlite3_step(table_code);
 	}
-	
-	if (ret == 0) {
-		/* clear out some memory areas we used */
-		memset(list_statement, 0, 84); /* should be the same as sizeof(list_statement) */
-	}
-
+	/* should probably add some free()'s here */
 	return(0);
 }
 
@@ -494,10 +495,11 @@ db_get_top(const char *dbname) {
 	long int ret;
 
 	table_code = NULL;
+	table_name = NULL;
 	table_statement = NULL;
 	ret = 0;
 
-	if ((ret = sqlite3_open(dbname,&taskdb)) == NULL) {
+	if ((ret = sqlite3_open(dbname,&taskdb)) == 0) {
 		/* No database handler, bail out */
 		fprintf(stderr,"Couldn't allocate space in db_get_top()\n");
 	} 
@@ -508,9 +510,9 @@ db_get_top(const char *dbname) {
 	 
 	/* this may need to be replaced with an snprintf() call */
 	/* strncat(&table_statement, "select max(id) from %s;", &table_name,  1023); */
-	snprintf(table_statement, 1024, "select max(id) from %s;", &table_name);
+	snprintf(table_statement, 1024, "select max(id) from %s;", table_name);
 
-	if (sqlite3_prepare(taskdb, table_statement, 1024, &table_code, NULL) != NULL) {
+	if (sqlite3_prepare(taskdb, table_statement, 1024, &table_code, NULL) != SQLITE_OK) {
 		ret = sqlite3_step(table_code);
 	}
 
@@ -518,7 +520,6 @@ db_get_top(const char *dbname) {
 		/* hopefully this means that we have a sqlite3 blob we can work with */
 		return(0);
 	}
-
 
 	return(0);
 }
@@ -538,4 +539,14 @@ db_reorder(const char *dbname) {
 	current_top = db_get_top(dbname);
 	new_top = db_get_top(dbname);
 	return(new_top);
+}
+
+void
+stripnl(char *s) {
+	char *m;
+
+	m = strchrnul(s, '\n');
+	if (m != NULL) { 
+		*m = 0;
+	}
 }
