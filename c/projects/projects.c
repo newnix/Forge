@@ -466,7 +466,7 @@ task_list(int limit, const char *dbname) {
 	char *list_statement; const char *table_tail;
 	/* select id, title, description, priority from tasklist where expired=0 order by 1 asc; */
 	list_statement = "select id, title, description priority from tasklist where expired=0 order by 1 asc limit 10;";
-	ret = sqlite3_prepare(taskdb, list_statement, 2048, &table_code, &table_tail);
+	ret = sqlite3_prepare_v3(taskdb, list_statement, 2048, &table_code, &table_tail);
 	if (ret == SQLITE_OK) {
 		/* still need to actually get the returned data from this interface though */
 		ret = sqlite3_step(table_code);
