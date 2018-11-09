@@ -20,7 +20,6 @@
 #define SINE 3 /* using the sin() function */
 #define COSINE 4 /* using cos() */
 #define TAN 5 /* using tan() */ 
-#define SECENT 6 /* using sec() */
 #define POW 7 /* using pow() */
 #define LOG 8 /* using log() */ 
 #define EXP 9 /* using exp() */
@@ -100,6 +99,25 @@ main(void) {
 				get_top(topvals); /* enusre we have the latest values from the stack */
 				swap_top(topvals);
 				printf("Top values: 1) %f\t2) %f\n",topvals[0], topvals[1]);
+				break;
+			case SINE:
+				push(sin(pop()));
+				break;
+			case COSINE:
+				push(cos(pop()));
+				break;
+			case TAN:
+				push(tan(pop()));
+				break;
+			case POW:
+				op2 = pop(); op1 = pop();
+				push(pow(op1, op2));
+				break;
+			case LOG:
+				push(log(pop()));
+				break;
+			case EXP:
+				push(exp(pop()));
 				break;
 			case '\n':
 				printf("\t%.8g\n", pop());
@@ -246,5 +264,5 @@ int swap_top(double pair[2]) {
 
 void
 clear_stack(void) {
-	memset(val, 0, BUFSIZE);
+	memset(&val, 0, sizeof(val));
 }
