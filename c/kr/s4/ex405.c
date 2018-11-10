@@ -194,6 +194,7 @@ getop(char s[]) {
 			return(c);
 		}
 	} 
+	
 
 	if (c == 's') { 
 		return(SWAP);
