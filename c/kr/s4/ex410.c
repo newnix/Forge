@@ -38,14 +38,10 @@ double val[MAXVAL];
 
 int
 main(void) {
-	double op1, op2;
-	double topvals[2];
 	char *inbuf;
 	ssize_t len;
 	size_t inlen;
 
-	topvals[0] = 0; topvals[1] = 0;
-	op1 = op2 = 0;
 	len = 0;
 	inlen = BUFSIZE;
 
@@ -63,8 +59,14 @@ main(void) {
 	while ((len = getdelim(&inbuf, &inlen, '\n', stdin)) > 0) {
 		/* 
 		 * Scan the input to determine what to do next
+		 * due to the line based nature of input in this scenario,
+		 * this switch statement is no longer an accurate representation of 
+		 * the data flow. 
+		 * For the purpose of this exercise, most of the logic will be pushed 
+		 * into scan_input()
 		 */
-		switch(scan_input(inbuf)) {
+		scan_input(inbuf);
+		/*
 			case NUM:
 				if (negative == 1) {
 					push(-atof(buf));
@@ -128,18 +130,19 @@ main(void) {
 			case EXP:
 				push(exp(pop()));
 				break;
-			case -1: /* bail out, something went wrong */
+			case -1: 
 				op1 = pop();
 				fprintf(stderr, "Current value: %f\n", op1);
 				free(inbuf);
 				return(1);
 			default:
-				/* default to clearing all buffers */
 				memset(&inbuf, 0, sizeof(inbuf));
 				clear_line();
 				clear_stack();
 				continue;
-		}
+		*/
+			fprintf(stdout, "%f\n", pop());
+			memset(&inbuf, 0, inlen);
 	}
 	free(inbuf);
 	return(0);
