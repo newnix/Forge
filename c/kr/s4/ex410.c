@@ -41,8 +41,9 @@ main(void) {
 	char *inbuf;
 	ssize_t len;
 	size_t inlen;
+	int ret;
 
-	len = 0;
+	ret = len = 0;
 	inlen = BUFSIZE;
 
 	if ((inbuf = calloc((size_t)BUFSIZE, (size_t)1)) == NULL) {
@@ -65,7 +66,7 @@ main(void) {
 		 * For the purpose of this exercise, most of the logic will be pushed 
 		 * into scan_input()
 		 */
-		scan_input(inbuf);
+		ret = scan_input(inbuf);
 		/*
 			case NUM:
 				if (negative == 1) {
@@ -143,6 +144,10 @@ main(void) {
 		*/
 			fprintf(stdout, "%f\n", pop());
 			memset(&inbuf, 0, inlen);
+			if (ret < 0) { 
+				free(inbuf);
+				return(0);
+			}
 	}
 	free(inbuf);
 	return(0);
@@ -193,17 +198,22 @@ scan_input(char *line) {
 				j++; i++;
 			}
 			if (line[i] == '.' && isdigit(line[i+1])) {
-				while (isdigit(line[i++])) {
+				while (isdigit(line[i])) {
 					buf[j] = line[i];
-					j++;
+					j++; i++;
 				}
 			}
 			/* likely has to be handled internally for all options now */
 			push(atof(buf));
+			memset(&buf, 0, (size_t) 100); /* clear out the temp buffer */
 		}
 		if (line[i] == '+') {
 			push(pop() + pop());
-			return(-1);
+			return(0);
+		}
+		if (line[i] == '*') {
+			push(pop() * pop());
+			return(0);
 		}
 		if (strnstr(line, "exit", (size_t)BUFSIZE) != NULL) {
 			/* 
