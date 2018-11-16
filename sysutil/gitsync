@@ -1,0 +1,79 @@
+#!/bin/sh
+
+## Simple script to assist in synchronizing 
+## fossil repos to git repos
+
+## Default to assuming we're in a valid repo
+repo=$(basename ${PWD})
+## SSH key used to push to git
+repo_root="${HOME}/code/"
+repo_path="${repo_root}${repo}"
+repo_id=""
+USE_MARKS=1
+
+## Batch mode, for pushing out all the repos to github
+batch=false
+repos=""
+
+## Export info in fossil to a git repo
+fossil_export() {
+	cd ${repo_path}
+	fossil open ${repo}.fossil
+	cd ${repo_path}.git
+	fossil export --git "${repo_path}/${repo}".fossil \
+		| git fast-import
+}
+
+fossil_marks() {
+	cd ${repo_path}.git
+	fossil export --git "${repo_path}/${repo}".fossil --import-marks ${repo_path}/fossil.marks \
+		| git fast-import --export-marks=${repo_path}git.marks
+}
+
+## Load some vars if available
+load_defs() {
+}
+
+## Push to git's remote
+push_git() {
+	## Need to verify a means to only load the key if it isn't already held in the agent
+	#ssh-add ~/.ssh/${repo_id}
+	cd ${repo_path}.git
+	git push
+}
+
+## Help text
+usage() {
+	printf "%s:\tSync fossil repos to git upstreams\n" ${0}
+	printf "  -h  This help text\n"
+	printf "  -i  SSH identity file\n"
+	printf "  -m  Use marks files to keep both repos synchronized\n"
+	printf "  -r  Use the given name for the repo target\n"
+	exit 0
+}
+
+while getopts ":mr:i:h" opt
+do
+	case ${opt} in 
+		r)
+			repo=${OPTARG}
+		;;
+		i)
+			repo_id="~/.ssh/${OPTARG}"
+		;;
+		m)
+			USE_MARKS=0
+		;;
+		h)
+			usage
+		;;
+	esac
+done
+
+if [ ${USE_MARKS} -eq 0 ] 
+then
+	fossil_marks
+else
+	fossil_export
+fi
+push_git
