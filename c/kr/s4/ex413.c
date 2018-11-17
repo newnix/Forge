@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 void r_reverse(char *s, int start, int end);
-void swap(char *s, register int l, register int r);
+void swap(register char *l, register char *r);
 
 int
 main(void) {
@@ -35,7 +35,9 @@ main(void) {
 		/* using --len since we never want the newline character */
 		r_reverse(instring, 0, --len);
 		fprintf(stdout, "%s\n", instring);
-		memset(&instring, 0, limit);
+		for (register int i = 0; i < len; i++) {
+			instring[i] ^= instring[i];
+		}
 	}
 	free(instring);
 	return(0);
@@ -43,7 +45,7 @@ main(void) {
 
 void
 r_reverse(char *s, int start, int end){
-	swap(s, start, end);
+	swap(&s[start], &s[end]);
 	start++; end--; /* move the pair to be swapped */
 	if (end <= start) { /* all values have been swapped */
 		return;
@@ -52,9 +54,9 @@ r_reverse(char *s, int start, int end){
 }
 
 void
-swap(char *s, register int l, register int r) {
+swap(register char *l, register char *r) {
 	/* Use the XOR swap algorithm to possibly reduce size and runtime */
-	s[l] = s[l] ^ s[r];
-	s[r] = s[r] ^ s[l];
-	s[l] = s[l] ^ s[r];
+	*l ^= *r;
+	*r = *r ^ *l;
+	*l = *l ^ *r;
 }
