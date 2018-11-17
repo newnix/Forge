@@ -57,6 +57,8 @@ do
 	case ${opt} in 
 		r)
 			repo=${OPTARG}
+			repo_root="${HOME}/code/"
+			repo_path="${repo_root}${repo}"
 		;;
 		i)
 			repo_id="~/.ssh/${OPTARG}"
