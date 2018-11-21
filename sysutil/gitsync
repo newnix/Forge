@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 
 ## Simple script to assist in synchronizing 
 ## fossil repos to git repos
@@ -26,8 +26,8 @@ fossil_export() {
 
 fossil_marks() {
 	cd ${repo_path}.git
-	fossil export --git "${repo_path}/${repo}".fossil --import-marks ${repo_path}/fossil.marks \
-		| git fast-import --export-marks=${repo_path}git.marks
+	fossil export --git "${repo_path}/${repo}".fossil --export-marks ${repo_path}/fossil.marks --import-marks ${repo_path}/fossil.marks \
+		| git fast-import --export-marks=${repo_path}/git.marks --import-marks=${repo_path}/git.marks
 }
 
 ## Load some vars if available
@@ -72,7 +72,7 @@ do
 	esac
 done
 
-if [ ${USE_MARKS} -eq 0 ] 
+if [ $USE_MARKS -eq 0 ] 
 then
 	fossil_marks
 else
