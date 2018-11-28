@@ -1,7 +1,8 @@
 #!/bin/sh
 
 ## Default definitions
-dhclient="/sbin/dhclient"
+dhclient="/sbin/dhcpcd"
+dhcpargs="-4qz wlan0"
 ifconfig="/sbin/ifconfig"
 interface="wlan0"
 if [ -x /usr/local/sbin/wpa_supplicant ]
@@ -16,7 +17,7 @@ tools="${dhclient} ${ifconfig} ${wpa_supplicant}"
 
 apcon() {
 	${wpa_supplicant} -i ${interface} -B -c ${wpaconf}
-	${dhclient} ${interface}
+	${dhclient} ${dhcpargs} ${interface}
 }
 
 checkenv() {
