@@ -4,12 +4,19 @@
 dhclient="/sbin/dhclient"
 ifconfig="/sbin/ifconfig"
 interface="wlan0"
-wpa_supplicant="/usr/local/sbin/wpa_supplicant"
+if [ -x /usr/local/sbin/wpa_supplicant ]
+then
+	wpa_supplicant="/usr/local/sbin/wpa_supplicant"
+else
+	wpa_supplicant="/usr/sbin/wpa_supplicant"
+fi
 wpaconf="/etc/wpa_supplicant.conf"
 
+tools="${dhclient} ${ifconfig} ${wpa_supplicant}"
+
 apcon() {
-	wpa_supplicant -i ${interface} -B -c ${wpaconf}
-	dhclient ${interface}
+	${wpa_supplicant} -i ${interface} -B -c ${wpaconf}
+	${dhclient} ${interface}
 }
 
 checkenv() {
@@ -30,8 +37,8 @@ checkenv() {
 }
 
 ifup() {
-	ifconfig ${interface} up
-	ifconfig ${interface} powersave
+	${ifconfig} ${interface} up
+	${ifconfig} ${interface} powersave
 }
 
 usage() {
