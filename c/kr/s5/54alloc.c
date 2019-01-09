@@ -65,8 +65,15 @@ str_lcpy(char *dest, char *source, int len) {
 int
 main(int ac, char **av) {
 	/* this would not normally exist in the user's program */
-	char *test;
+	char *test, *test2, *test3; /* use multiple variables to illustrate subsequent alloc() calls */
 	test = NULL;
+	test2 = NULL;
+	test3 = NULL;
+
+	if (ac < 3) {
+		fprintf(stderr, "This demo expects 3 arguments\n");
+		return(0);
+	}
 
 	for (++av; *av != NULL; av++) {
 		register int l = str_len(*av);
@@ -75,6 +82,24 @@ main(int ac, char **av) {
 		}
 		str_lcpy(test, *av, l);
 		fprintf(stdout, "Put %s at %p\n", test, &test);
+		/* again for test2 */
+		av++;
+		l = str_len(*av);
+		if ((test2 = alloc(l)) == NULL) {
+			fprintf(stderr,"Unable to allocate %d chars for buffer\n", l);
+		}
+		str_lcpy(test2, *av, l);
+		fprintf(stdout, "Put %s at %p\n", test2, &test2);
+		/* and for test3 */
+		av++;
+		l = str_len(*av);
+		if ((test3 = alloc(l)) == NULL) {
+			fprintf(stderr,"Unable to allocate %d chars for buffer\n", l);
+		}
+		str_lcpy(test3, *av, l);
+		fprintf(stdout, "Put %s at %p\n", test3, &test3);
+		afree(test3);
+		afree(test2);
 		afree(test);
 	}
 	return(0);
