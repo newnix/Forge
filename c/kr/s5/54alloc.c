@@ -12,13 +12,6 @@ static char allocbuf[BUFMAX];
 /* pointer to the next available position in the array */
 static char *allocp = allocbuf;
 
-/* ensure the buffer is 0-initialized */
-static void cbuf(char *buf) {
-	for (register int i = 0; i < BUFMAX; i++) {
-		buf[i] ^= buf[i];
-	}
-}
-
 /* rudimentary allocation function */
 static char *
 alloc(int n) {
@@ -44,21 +37,45 @@ afree(char *p) {
 	}
 }
 
+/* basic strlen, though there's bound to be a better means for this */
+static int
+str_len(char *s) {
+	register int i;
+	i ^= i;
+	for (; s[i] != 0; i++) {
+		if (i >= BUFMAX) {
+			return(-1);
+		} 
+	}
+	return(i);
+}
+
+/* same idea as strlcpy(3), just without needing string.h */
+static int
+str_lcpy(char *dest, char *source, int len) {
+	register int i;
+
+	for ( i ^= i; i < len; i++) {
+		dest[i] = source[i];
+	}
+	dest[++i] = 0;
+	return(i);
+}
+
 int
-main(void) {
+main(int ac, char **av) {
 	/* this would not normally exist in the user's program */
-	cbuf(allocbuf);
 	char *test;
 	test = NULL;
 
-	if ((test = alloc(10)) == NULL) {
-		fprintf(stderr, "Something went wrong with buffer allocation\n");
-		return(1);
+	for (++av; *av != NULL; av++) {
+		register int l = str_len(*av);
+		if ((test = alloc(l)) == NULL) {
+			fprintf(stderr,"Unable to allocate %d chars for buffer\n", l);
+		}
+		str_lcpy(test, *av, l);
+		fprintf(stdout, "Put %s at %p\n", test, &test);
+		afree(test);
 	}
-
-	getline(&test, (size_t *)10, stdin);
-	fprintf(stdout, "Captured:\t%s\n", test);
-	afree(test);
-	
 	return(0);
 }
